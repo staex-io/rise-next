@@ -34,23 +34,23 @@ contract AgreementContractTest is Test {
         console.log("Agreement creator:", agreement.creator);
         console.log("Agreement signer:", agreement.signer);
         console.log("Agreement amount:", agreement.amount);
-        console.log("Agreement isSigned:", agreement.isSigned);
+        console.log("Agreement status:", uint256(agreement.status));
         assertEq(address(this), agreement.creator);
         assertEq(SIGNER_ADDRESS, agreement.signer);
         assertEq(AMOUNT, agreement.amount);
-        assertEq(false, agreement.isSigned);
+        assertEq(0, uint256(agreement.status));
     }
 
     function test_signAgreement() public {
         uint256 agreementId = agreementContract.create(AMOUNT, SIGNER_ADDRESS);
         Agreement memory agreement_before = agreementContract.getById(agreementId);
-        assertEq(false, agreement_before.isSigned);
+        assertEq(0, uint256(agreement_before.status));
         vm.prank(SIGNER_ADDRESS);
         vm.expectEmit(true, true, false, true);
         emit Signed(0, address(this));
         agreementContract.sign(agreementId);
         Agreement memory agreement_after = agreementContract.getById(agreementId);
-        assertEq(true, agreement_after.isSigned);
+        assertEq(1, uint256(agreement_after.status));
     }
 
     function test_RevertWhen_ContractAlreadySigned() public {

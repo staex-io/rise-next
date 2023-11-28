@@ -4,11 +4,16 @@ pragma solidity ^0.8.13;
 error ErrNotASigner();
 error ErrAlreadySigned();
 
+enum Status {
+    Created,
+    Signed
+}
+
 struct Agreement {
     address creator;
     address signer;
     uint64 amount;
-    bool isSigned;
+    Status status;
 }
 
 contract Contract {
@@ -20,7 +25,7 @@ contract Contract {
 
     function create(uint64 amount, address signer) public returns (uint256) {
         uint256 id = nextId;
-        agreements[id] = Agreement(msg.sender, signer, amount, false);
+        agreements[id] = Agreement(msg.sender, signer, amount, Status.Created);
         emit Created(id, signer);
         nextId++;
         return id;
@@ -28,14 +33,14 @@ contract Contract {
 
     function sign(uint256 id) public {
         Agreement storage agreement = agreements[id];
-        if (agreement.isSigned) {
+        if (agreement.status == Status.Signed) {
             revert ErrAlreadySigned();
         }
         if (agreement.signer != msg.sender) {
             revert ErrNotASigner();
         }
         agreement.signer = msg.sender;
-        agreement.isSigned = true;
+        agreement.status = Status.Signed;
         emit Signed(id, agreement.creator);
     }
 
