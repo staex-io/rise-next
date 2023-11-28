@@ -4,48 +4,57 @@ pragma solidity ^0.8.13;
 error ErrNotASigner();
 error ErrAlreadySigned();
 
+// We need Empty because it is 0
+// and we can check it as an empty values in methods.
 enum Status {
+    Empty,
     Created,
     Signed
 }
 
 struct Agreement {
-    address creator;
-    address signer;
     uint64 amount;
     Status status;
 }
 
 contract Contract {
-    mapping(uint256 => Agreement) public agreements;
-    uint256 public nextId;
+    // We use station address as a key because station
+    // should have agreements with drones and landlords.
+    mapping(address => mapping(address => Agreement)) agreements;
 
-    event Created(uint256 id, address signer);
-    event Signed(uint256 id, address creator);
+    event Created(address indexed, address indexed);
+    event Signed(address indexed, address indexed);
 
-    function create(uint64 amount, address signer) public returns (uint256) {
-        uint256 id = nextId;
-        agreements[id] = Agreement(msg.sender, signer, amount, Status.Created);
-        emit Created(id, signer);
-        nextId++;
-        return id;
+    function create(address entity, uint64 amount) external {
+        if (agreements[msg.sender][entity].status == Status.Signed) {
+            // todo: revert and why
+        }
+        agreements[msg.sender][entity] = Agreement(amount, Status.Created);
+        emit Created(msg.sender, entity);
     }
 
-    function sign(uint256 id) public {
-        Agreement storage agreement = agreements[id];
+    function sign(address station, uint64 amount) external {
+        Agreement storage agreement = agreements[station][msg.sender];
+        // todo: not a signer?
+        if (agreement.status == Status.Empty) {
+            // todo: revert and why
+        }
         if (agreement.status == Status.Signed) {
-            revert ErrAlreadySigned();
+            // todo: revert and why
         }
-        if (agreement.signer != msg.sender) {
-            revert ErrNotASigner();
+        if (agreement.amount != amount) {
+            // todo: maybe amount as a paramenter because station can create another contract before signing?
+            // todo: revert and why
         }
-        agreement.signer = msg.sender;
         agreement.status = Status.Signed;
-        emit Signed(id, agreement.creator);
+        emit Signed(station, msg.sender);
     }
 
-    function getById(uint256 id) public view returns (Agreement memory) {
-        Agreement memory agreement = agreements[id];
+    function get(address station, address entity) external view returns (Agreement memory) {
+        Agreement memory agreement = agreements[station][entity];
+        if (agreement.status == Status.Empty) {
+            // todo: revert and why
+        }
         return agreement;
     }
 }
