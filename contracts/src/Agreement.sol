@@ -1,46 +1,66 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-struct Agreement {
-    address creator;
-    address signer;
-    uint64 amount;
-    bool isSigned;
+// We need Empty because it is 0
+// and we can check it as an empty values in methods.
+enum Status {
+    Empty,
+    Created,
+    Signed
 }
 
-error ErrNotASigner();
 error ErrAlreadySigned();
+error ErrNoAgreement();
+error ErrInvalidAmount(uint256);
 
-contract AgreementContract {
-    mapping(uint256 => Agreement) public agreements;
-    uint256 public nextAgreementId;
+struct Agreement {
+    uint256 amount;
+    Status status;
+}
 
-    event AgreementCreated(uint256 agreementId, address signer);
-    event AgreementSigned(uint256 agreementId, address creator);
+contract Contract {
+    // We use station address as a key because station
+    // should have agreements with drones and landlords.
+    mapping(address => mapping(address => Agreement)) agreements;
 
-    function createAgreement(uint64 amount, address signer) public returns (uint256) {
-        uint256 agreementId = nextAgreementId;
-        agreements[agreementId] = Agreement(msg.sender, signer, amount, false);
-        emit AgreementCreated(agreementId, signer);
-        nextAgreementId++;
-        return agreementId;
-    }
+    event Created(address indexed, address indexed);
+    event Signed(address indexed, address indexed);
 
-    function signAgreement(uint256 agreementId) public {
-        Agreement storage agreement = agreements[agreementId];
-        if (agreement.isSigned) {
+    function create(address entity, uint256 amount) external {
+        if (agreements[msg.sender][entity].status == Status.Signed) {
+            // We restrict to recreate alread signed agreement.
+            // Because it can violate signed agreement rules without entitity party.
             revert ErrAlreadySigned();
         }
-        if (agreement.signer != msg.sender) {
-            revert ErrNotASigner();
-        }
-        agreement.signer = msg.sender;
-        agreement.isSigned = true;
-        emit AgreementSigned(agreementId, agreement.creator);
+        agreements[msg.sender][entity] = Agreement(amount, Status.Created);
+        emit Created(msg.sender, entity);
     }
 
-    function getAgreementById(uint256 agreementId) public view returns (Agreement memory) {
-        Agreement memory agreement = agreements[agreementId];
+    function sign(address station, uint256 amount) external {
+        Agreement storage agreement = agreements[station][msg.sender];
+        if (agreement.status == Status.Empty) {
+            // We can't sign agreement which is not exists.
+            revert ErrNoAgreement();
+        }
+        if (agreement.status == Status.Signed) {
+            // What the point to sign signed agreement?
+            // Also it can change previous agreement rules.
+            revert ErrAlreadySigned();
+        }
+        if (agreement.amount != amount) {
+            // We check for amount because creator can create another agreement after sending to entitity.
+            // To prevent signing unexpected agreement we do such check.
+            revert ErrInvalidAmount(agreement.amount);
+        }
+        agreement.status = Status.Signed;
+        emit Signed(station, msg.sender);
+    }
+
+    function get(address station, address entity) external view returns (Agreement memory) {
+        Agreement memory agreement = agreements[station][entity];
+        if (agreement.status == Status.Empty) {
+            revert ErrNoAgreement();
+        }
         return agreement;
     }
 }
