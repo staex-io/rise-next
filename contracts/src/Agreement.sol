@@ -13,7 +13,7 @@ enum Status {
 }
 
 struct Agreement {
-    uint64 amount;
+    uint256 amount;
     Status status;
 }
 
@@ -25,7 +25,7 @@ contract Contract {
     event Created(address indexed, address indexed);
     event Signed(address indexed, address indexed);
 
-    function create(address entity, uint64 amount) external {
+    function create(address entity, uint256 amount) external {
         if (agreements[msg.sender][entity].status == Status.Signed) {
             // todo: revert and why
         }
@@ -33,7 +33,7 @@ contract Contract {
         emit Created(msg.sender, entity);
     }
 
-    function sign(address station, uint64 amount) external {
+    function sign(address station, uint256 amount) external {
         Agreement storage agreement = agreements[station][msg.sender];
         // todo: not a signer?
         if (agreement.status == Status.Empty) {
