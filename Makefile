@@ -2,8 +2,7 @@ build:
 	cd contracts && forge build
 
 test: lint
-	cd contracts && \
-		forge test --gas-report --summary --detailed -vv --fail-fast
+	cd contracts && forge test --gas-report --summary --detailed -vv
 
 .PHONY: coverage
 coverage: test

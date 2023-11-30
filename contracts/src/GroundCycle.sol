@@ -3,18 +3,17 @@ pragma solidity ^0.8.13;
 
 import {Contract as AgreementContract, Agreement, Status} from "./Agreement.sol";
 
+error ErrReceivedNotEnough(uint256);
+
 struct PendingLanding {
     address drone;
     address payable station;
     address payable landlord;
 }
 
-error ErrReceivedNotEnough();
-error ErrNoAgreement();
-
 contract Contract {
-    AgreementContract agreementContract;
     uint256 public nextId;
+    AgreementContract agreementContract;
 
     // We use station address as a key.
     // Because station is a party in agreements with drone and landlord.
@@ -79,15 +78,10 @@ contract Contract {
 
     function checkAgreement(address station, address entity) private {
         Agreement memory agreement = agreementContract.get(station, entity);
-        if (agreement.status == Status.Empty) {
-            // If there are not agreement between station and landlord
-            // we revert execetion.
-            revert ErrNoAgreement();
-        }
         if (msg.value < agreement.amount) {
             // If drone sends not enough tokens to pay for agreement
             // we revert execution.
-            revert ErrReceivedNotEnough();
+            revert ErrReceivedNotEnough(agreement.amount);
         }
     }
 

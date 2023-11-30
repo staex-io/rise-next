@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-error ErrNotASigner();
-error ErrAlreadySigned();
-
 // We need Empty because it is 0
 // and we can check it as an empty values in methods.
 enum Status {
@@ -11,6 +8,10 @@ enum Status {
     Created,
     Signed
 }
+
+error ErrAlreadySigned();
+error ErrNoAgreement();
+error ErrInvalidAmount(uint256);
 
 struct Agreement {
     uint256 amount;
@@ -27,7 +28,9 @@ contract Contract {
 
     function create(address entity, uint256 amount) external {
         if (agreements[msg.sender][entity].status == Status.Signed) {
-            // todo: revert and why
+            // We restrict to recreate alread signed agreement.
+            // Because it can violate signed agreement rules without entitity party.
+            revert ErrAlreadySigned();
         }
         agreements[msg.sender][entity] = Agreement(amount, Status.Created);
         emit Created(msg.sender, entity);
@@ -35,16 +38,19 @@ contract Contract {
 
     function sign(address station, uint256 amount) external {
         Agreement storage agreement = agreements[station][msg.sender];
-        // todo: not a signer?
         if (agreement.status == Status.Empty) {
-            // todo: revert and why
+            // We can't sign agreement which is not exists.
+            revert ErrNoAgreement();
         }
         if (agreement.status == Status.Signed) {
-            // todo: revert and why
+            // What the point to sign signed agreement?
+            // Also it can change previous agreement rules.
+            revert ErrAlreadySigned();
         }
         if (agreement.amount != amount) {
-            // todo: maybe amount as a paramenter because station can create another contract before signing?
-            // todo: revert and why
+            // We check for amount because creator can create another agreement after sending to entitity.
+            // To prevent signing unexpected agreement we do such check.
+            revert ErrInvalidAmount(agreement.amount);
         }
         agreement.status = Status.Signed;
         emit Signed(station, msg.sender);
@@ -53,7 +59,7 @@ contract Contract {
     function get(address station, address entity) external view returns (Agreement memory) {
         Agreement memory agreement = agreements[station][entity];
         if (agreement.status == Status.Empty) {
-            // todo: revert and why
+            revert ErrNoAgreement();
         }
         return agreement;
     }
