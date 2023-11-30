@@ -7,7 +7,7 @@ import {Contract as AgreementContract, ErrNoAgreement} from "../src/Agreement.so
 import "forge-std/Vm.sol";
 import {VmSafe} from "forge-std/Vm.sol";
 
-contract GroundCycleContractTest is Test {
+contract GroundCycleTest is Test {
     string constant DRONE_WALLET_NAME = "drone";
     string constant STATION_WALLET_NAME = "station";
     string constant LANDLORD_WALLET_NAME = "landlord";

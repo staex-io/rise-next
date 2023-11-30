@@ -1,3 +1,6 @@
+#!make
+include .env
+
 build:
 	cd contracts && forge build
 
@@ -10,3 +13,8 @@ coverage: test
 
 lint:
 	cd contracts && forge fmt
+
+deploy:
+	cd contracts && PRIVATE_KEY=${PRIVATE_KEY} \
+		forge script script/GroundCycle.s.sol:GroundCycleScript \
+		--fork-url ${RPC_URL} --broadcast -vvvv

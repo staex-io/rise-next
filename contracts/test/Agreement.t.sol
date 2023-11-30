@@ -11,7 +11,7 @@ import {
 } from "../src/Agreement.sol";
 import "forge-std/Vm.sol";
 
-contract AgreementContractTest is Test {
+contract AgreementTest is Test {
     address constant SIGNER_ADDRESS = address(169);
     uint256 constant AMOUNT = 691 ether;
 

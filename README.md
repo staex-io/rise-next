@@ -1,5 +1,11 @@
 # RISE-next
 
+## .env
+
+```
+
+```
+
 ## Dev Setup
 
 `.vscode/settings.json`:
