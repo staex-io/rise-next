@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import {Contract as GroundCycleContract, PendingLanding, ErrReceivedNotEnough} from "../src/GroundCycle.sol";
+import {Contract as GroundCycleContract, Landing, ErrNoLanding, ErrReceivedNotEnough} from "../src/GroundCycle.sol";
 import {Contract as AgreementContract, ErrNoAgreement} from "../src/Agreement.sol";
 import "forge-std/Vm.sol";
 import {VmSafe} from "forge-std/Vm.sol";
@@ -20,6 +20,7 @@ contract GroundCycleContractTest is Test {
 
     // We need to copy that events from contract to avoid visibility errors.
     event Landging(uint256, address indexed, address indexed, address indexed);
+    event Takeoff(uint256, address indexed, address indexed, address indexed);
 
     function setUp() public {
         agreementContract = new AgreementContract();
@@ -42,11 +43,11 @@ contract GroundCycleContractTest is Test {
         // Check for drone.
         vm.prank(drone.addr);
         vm.expectRevert(ErrNoAgreement.selector);
-        groundCycleContract.droneLanding{value: 1 ether}(payable(station.addr));
+        groundCycleContract.landingByDrone{value: 1 ether}(payable(station.addr));
         // Check for station.
         vm.prank(station.addr);
         vm.expectRevert(ErrNoAgreement.selector);
-        groundCycleContract.stationLanding{value: 1 ether}(drone.addr, payable(landlord.addr));
+        groundCycleContract.landingByStation{value: 1 ether}(drone.addr, payable(landlord.addr));
 
         // Initiate agreements between entities.
         vm.startPrank(station.addr);
@@ -61,34 +62,54 @@ contract GroundCycleContractTest is Test {
         // Check for drone.
         vm.prank(drone.addr);
         vm.expectRevert(abi.encodeWithSelector(errRecvNotEnoughSelector, DRONE_STATION_AMOUNT));
-        groundCycleContract.droneLanding{value: 1 ether}(payable(station.addr));
+        groundCycleContract.landingByDrone{value: 1 ether}(payable(station.addr));
         // Check for station.
         vm.prank(station.addr);
         vm.expectRevert(abi.encodeWithSelector(errRecvNotEnoughSelector, STATION_LANDLORD_AMOUNT));
-        groundCycleContract.stationLanding{value: 1 ether}(drone.addr, payable(landlord.addr));
+        groundCycleContract.landingByStation{value: 1 ether}(drone.addr, payable(landlord.addr));
 
         /*
           Check that drone can send their transaction first and after that station.
         */
         // Check that drone can execute their landing method.
         vm.prank(drone.addr);
-        groundCycleContract.droneLanding{value: DRONE_STATION_AMOUNT}(payable(station.addr));
+        groundCycleContract.landingByDrone{value: DRONE_STATION_AMOUNT}(payable(station.addr));
         assertEq(groundCycleContract.getBalance(), DRONE_STATION_AMOUNT);
-        PendingLanding memory pendingAfterDroneLanding = groundCycleContract.getPending(station.addr);
-        assertEq(drone.addr, pendingAfterDroneLanding.drone);
-        assertEq(station.addr, pendingAfterDroneLanding.station);
-        assertEq(address(0), pendingAfterDroneLanding.landlord);
+        Landing memory afterDroneLanding_1 = groundCycleContract.get(station.addr);
+        assertEq(0, afterDroneLanding_1.id);
+        assertEq(drone.addr, afterDroneLanding_1.drone);
+        assertEq(station.addr, afterDroneLanding_1.station);
+        assertEq(address(0), afterDroneLanding_1.landlord);
         // Check that station can execute their landing method and landing should be approved.
         vm.prank(station.addr);
         vm.expectEmit(true, true, true, true);
         emit Landging(1, drone.addr, station.addr, landlord.addr);
-        groundCycleContract.stationLanding{value: STATION_LANDLORD_AMOUNT}(drone.addr, payable(landlord.addr));
+        groundCycleContract.landingByStation{value: STATION_LANDLORD_AMOUNT}(drone.addr, payable(landlord.addr));
         // Now we have balance 0 because we send tokens from smart contract to station and to landlord.
         assertEq(groundCycleContract.getBalance(), 0);
         // Check that balances were updated.
         assertEq(START_TOKENS - DRONE_STATION_AMOUNT, drone.addr.balance);
         assertEq(START_TOKENS - STATION_LANDLORD_AMOUNT + DRONE_STATION_AMOUNT, station.addr.balance);
         assertEq(START_TOKENS + STATION_LANDLORD_AMOUNT, landlord.addr.balance);
+        Landing memory afterStationLanding_1 = groundCycleContract.get(station.addr);
+        // Now we have an id as landing was approved.
+        assertEq(1, afterStationLanding_1.id);
+        assertEq(drone.addr, afterStationLanding_1.drone);
+        assertEq(station.addr, afterStationLanding_1.station);
+        assertEq(landlord.addr, afterStationLanding_1.landlord);
+
+        /*
+         Test takeoff
+        */
+        // Test takeoff if there is no active landing.
+        vm.prank(address(777));
+        vm.expectRevert(ErrNoLanding.selector);
+        groundCycleContract.takeoff();
+        // Test real and ok takeoff.
+        vm.prank(station.addr);
+        vm.expectEmit(true, true, true, true);
+        emit Takeoff(1, drone.addr, station.addr, landlord.addr);
+        groundCycleContract.takeoff();
 
         // Revert balances for future tests.
         vm.deal(drone.addr, START_TOKENS);
@@ -100,34 +121,45 @@ contract GroundCycleContractTest is Test {
         */
         // Check that station can execute their landing method.
         vm.prank(station.addr);
-        groundCycleContract.stationLanding{value: STATION_LANDLORD_AMOUNT}(drone.addr, payable(landlord.addr));
+        groundCycleContract.landingByStation{value: STATION_LANDLORD_AMOUNT}(drone.addr, payable(landlord.addr));
         assertEq(groundCycleContract.getBalance(), STATION_LANDLORD_AMOUNT);
-        PendingLanding memory pendingAfterStationLanding = groundCycleContract.getPending(station.addr);
-        assertEq(drone.addr, pendingAfterStationLanding.drone);
-        assertEq(station.addr, pendingAfterStationLanding.station);
-        assertEq(landlord.addr, pendingAfterStationLanding.landlord);
+        Landing memory afterStationLanding_2 = groundCycleContract.get(station.addr);
+        assertEq(0, afterStationLanding_2.id);
+        assertEq(drone.addr, afterStationLanding_2.drone);
+        assertEq(station.addr, afterStationLanding_2.station);
+        assertEq(landlord.addr, afterStationLanding_2.landlord);
         // Check that drone can execute their landing method and landing should be approved.
         vm.prank(drone.addr);
         vm.expectEmit(true, true, true, true);
         emit Landging(2, drone.addr, station.addr, landlord.addr);
-        groundCycleContract.droneLanding{value: DRONE_STATION_AMOUNT}(payable(station.addr));
+        groundCycleContract.landingByDrone{value: DRONE_STATION_AMOUNT}(payable(station.addr));
         // Now we have balance 0 because we send tokens from smart contract to station and to landlord.
         assertEq(groundCycleContract.getBalance(), 0);
         // Check that balances were updated.
         assertEq(START_TOKENS - DRONE_STATION_AMOUNT, drone.addr.balance);
         assertEq(START_TOKENS - STATION_LANDLORD_AMOUNT + DRONE_STATION_AMOUNT, station.addr.balance);
         assertEq(START_TOKENS + STATION_LANDLORD_AMOUNT, landlord.addr.balance);
+        Landing memory afterDroneLanding_2 = groundCycleContract.get(station.addr);
+        // Now we have an id as landing was approved.
+        assertEq(2, afterDroneLanding_2.id);
+        assertEq(drone.addr, afterDroneLanding_2.drone);
+        assertEq(station.addr, afterDroneLanding_2.station);
+        assertEq(landlord.addr, afterDroneLanding_2.landlord);
+
+        // Make takeoff for future tests.
+        vm.prank(station.addr);
+        groundCycleContract.takeoff();
 
         /*
           Check situation when contract doens't have enough tokens to transfer to station and landlord.
         */
         vm.prank(station.addr);
-        groundCycleContract.stationLanding{value: STATION_LANDLORD_AMOUNT}(drone.addr, payable(landlord.addr));
+        groundCycleContract.landingByStation{value: STATION_LANDLORD_AMOUNT}(drone.addr, payable(landlord.addr));
         // Set contract balance to zero.
         vm.deal(address(groundCycleContract), 0);
         vm.prank(drone.addr);
         vm.expectRevert("failed to send ether");
-        groundCycleContract.droneLanding{value: DRONE_STATION_AMOUNT}(payable(station.addr));
+        groundCycleContract.landingByDrone{value: DRONE_STATION_AMOUNT}(payable(station.addr));
 
         /*
           Check fallback function.
