@@ -14,6 +14,9 @@ coverage: test
 lint:
 	cd contracts && forge fmt
 
+anvil:
+	anvil --block-time 1
+
 deploy:
 	cd contracts && PRIVATE_KEY=${PRIVATE_KEY} \
 		forge script script/GroundCycle.s.sol:GroundCycleScript \
