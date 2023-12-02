@@ -1,0 +1,22 @@
+@startuml GroundCycle
+autonumber
+
+participant Drone as drone
+participant Station as station
+participant Landlord as landlord
+participant "Smart Contract" as sc
+
+station -> sc: Create an agreement\n for drone
+drone -> sc: Sign an agreement
+station -> sc: Create an agreement\n for landlord
+landlord -> sc: Sign an agreement
+
+drone -> station: Scan qr code\n to get address
+station -> drone: Scan qr code\n to get address
+drone -> sc: Send tokens and\n execute landing
+station -> sc: Send tokens and\n execute landing
+
+sc -> station: Send tokens according\n drone - stataion agreement
+sc -> landlord: Send tokens according\n drone - stataion agreement
+
+@enduml
