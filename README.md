@@ -24,6 +24,25 @@ make build
 Sometime it is better to delete `contracts/out` and `agent/src/contracts` to remove old files to generate only actual contracts.
 It happens when you rename some contract or you stopped to use some smart contract.
 
+## Create new wallets
+
+```shell
+cast wallet new
+```
+
+### Send some tokens to created wallet
+
+```shell
+source .env
+cast send --value 0.01ether --private-key ${PRIVATE_KEY} %address% --rpc-url ${RPC_URL}
+cast balance %address% --rpc-url ${RPC_URL}
+cast to-unit 19903268211300622 ether
+```
+
+## Faucet
+
+As now we use Sepolia testnet you can use this faucet for test tokens: https://sepolia-faucet.pk910.de/#/mine/
+
 ## Dev setup
 
 `.vscode/settings.json`:
