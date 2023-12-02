@@ -2,16 +2,10 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import {
-    Contract as AgreementContract,
-    Agreement,
-    ErrAlreadySigned,
-    ErrNoAgreement,
-    ErrInvalidAmount
-} from "../src/Agreement.sol";
+import {AgreementContract, Agreement, ErrAlreadySigned, ErrNoAgreement, ErrInvalidAmount} from "../src/Agreement.sol";
 import "forge-std/Vm.sol";
 
-contract AgreementContractTest is Test {
+contract AgreementTest is Test {
     address constant SIGNER_ADDRESS = address(169);
     uint256 constant AMOUNT = 691 ether;
 
