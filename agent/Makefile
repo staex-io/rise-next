@@ -3,3 +3,6 @@ lint:
 
 run:
 	cargo run
+
+test:
+	cargo test --jobs 1 -- --nocapture --test-threads 1 $(name)
