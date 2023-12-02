@@ -3,6 +3,8 @@ pragma solidity ^0.8.13;
 
 // We need Empty because it is 0
 // and we can check it as an empty values in methods.
+// Note: we have this enum in Rust code.
+// Be careful when add new variant and do not forget to update Rust files.
 enum Status {
     Empty,
     Created,
@@ -18,7 +20,7 @@ struct Agreement {
     Status status;
 }
 
-contract Contract {
+contract AgreementContract {
     // We use station address as a key because station
     // should have agreements with drones and landlords.
     mapping(address => mapping(address => Agreement)) agreements;

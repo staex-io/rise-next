@@ -12,14 +12,23 @@ RPC_URL=http://127.0.0.1:8545
 ```shell
 make anvil
 make deploy
-cd agent && cargo run
+cd agent && make run
 ```
 
-## Dev Setup
+## Generate binding for Rust
+
+```shell
+make build
+```
+
+Sometime it is better to delete `contracts/out` and `agent/src/contracts` to remove old files to generate only actual contracts.
+It happens when you rename some contract or you stopped to use some smart contract.
+
+## Dev setup
 
 `.vscode/settings.json`:
 
-```
+```json
 {
   "solidity.packageDefaultDependenciesContractsDirectory": "contracts/src",
   "solidity.packageDefaultDependenciesDirectory": "contracts/lib",
