@@ -35,6 +35,8 @@ cast wallet new
 ```shell
 source .env
 cast send --value 0.01ether --private-key ${PRIVATE_KEY} %address% --rpc-url ${RPC_URL}
+cast balance %address% --rpc-url ${RPC_URL}
+cast to-unit 19903268211300622 ether
 ```
 
 ## Faucet

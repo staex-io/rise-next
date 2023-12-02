@@ -1,21 +1,20 @@
-use std::{str::FromStr, sync::Arc, time::Duration};
+use std::{fmt::Debug, str::FromStr, sync::Arc};
 
 use clap::{Parser, Subcommand};
+use contracts::Agreement;
 use ethers::{
     contract::ContractError,
     middleware::SignerMiddleware,
     providers::{Http, Middleware, PendingTransaction, Provider},
-    signers::{LocalWallet, Signer},
-    types::{Address, U256},
-    utils,
+    signers::LocalWallet,
+    signers::Signer,
+    types::Address,
+    utils::{format_ether, parse_ether},
 };
-use log::{debug, LevelFilter};
+use log::{info, LevelFilter};
 
-use crate::contracts::agreement_contract::{
-    Agreement, AgreementContract, AgreementContractErrors, AgreementContractEvents,
-};
-use crate::contracts::ground_cycle_contract::{
-    GroundCycleContract, GroundCycleContractErrors, GroundCycleContractEvents,
+use crate::contracts::{
+    AgreementContract, AgreementContractErrors, GroundCycleContract, GroundCycleContractErrors,
 };
 
 mod contracts;
@@ -25,6 +24,22 @@ mod contracts;
 #[clap(name = "agent")]
 #[command(author, version, about, long_about = None)]
 struct Cli {
+    /// RPC url to Ethereum node.
+    #[arg(short, long)]
+    #[arg(default_value = "https://ethereum-sepolia.publicnode.com")]
+    rpc_url: String,
+    /// Ethereum node chain id.
+    #[arg(short, long)]
+    #[arg(default_value = "11155111")]
+    chain_id: u64,
+    /// Agreement contract address.
+    #[arg(short, long)]
+    #[arg(default_value = "0x61d6C8D1a59d2e191b5204EaA9C736017B963e95")]
+    agreement_contract_addr: String,
+    /// Ground cycle contract address.
+    #[arg(short, long)]
+    #[arg(default_value = "0x9D78aBf1Da69F46227E136Be06d2F1b4a0aaEc52")]
+    ground_cycle_contract_addr: String,
     #[clap(subcommand)]
     command: Commands,
 }
@@ -47,31 +62,262 @@ enum Commands {
         /// Amount in a form like "0.1" in ether.
         amount: String,
     },
+    LandingByDrone {
+        /// Drone private key.
+        drone_private_key: String,
+        /// Station address.
+        station_address: String,
+    },
+    LandingByStation {
+        /// Station private key.
+        station_private_key: String,
+        /// Drone address.
+        drone_address: String,
+        /// Landlord address.
+        landlord_address: String,
+    },
+    Takeoff {
+        /// Station private key.
+        station_private_key: String,
+    },
+    Events {
+        /// Use any private key.
+        private_key: String,
+        /// Choose block to start query from.
+        #[arg(short, long)]
+        #[arg(default_value = "4807184")]
+        from_block: u64,
+    },
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::builder()
-        .filter_level(LevelFilter::Trace)
+        .filter_level(LevelFilter::Debug)
         .init();
     let cli = Cli::parse();
-    return match cli.command {
+    let app = App::new(
+        cli.rpc_url,
+        cli.chain_id,
+        cli.agreement_contract_addr,
+        cli.ground_cycle_contract_addr,
+    )?;
+    match cli.command {
         Commands::CreateAgreement {
             station_private_key,
             entity_address,
             amount,
-        } => create_agreement(amount),
+        } => {
+            app.create_agreement(station_private_key, entity_address, amount)
+                .await?
+        }
         Commands::SignAgreement {
             station_address,
             entity_private_key,
             amount,
-        } => Ok(()),
-    };
+        } => {
+            app.sign_agreement(station_address, entity_private_key, amount)
+                .await?
+        }
+        Commands::LandingByDrone {
+            drone_private_key,
+            station_address,
+        } => {
+            app.landing_by_drone(drone_private_key, station_address)
+                .await?
+        }
+        Commands::LandingByStation {
+            station_private_key,
+            drone_address,
+            landlord_address,
+        } => {
+            app.landing_by_station(station_private_key, drone_address, landlord_address)
+                .await?
+        }
+        Commands::Takeoff {
+            station_private_key,
+        } => app.takeoff(station_private_key).await?,
+        Commands::Events {
+            private_key,
+            from_block,
+        } => app.events(private_key, from_block).await?,
+    }
+    Ok(())
 }
 
-fn create_agreement(amount: String) -> Result<(), Box<dyn std::error::Error>> {
-    eprintln!("{:?}", utils::parse_ether(amount)?);
-    Ok(())
+struct App {
+    _provider: Provider<Http>,
+    chain_id: u64,
+    contracts_client: Client,
+}
+
+impl App {
+    fn new(
+        rpc_url: String,
+        chain_id: u64,
+        agreement_contract_addr: String,
+        ground_cycle_contract_addr: String,
+    ) -> Result<Self, Box<dyn std::error::Error>> {
+        let provider: Provider<Http> = Provider::<Http>::try_from(rpc_url)?;
+        let agreement_contract_addr: Address = agreement_contract_addr.parse()?;
+        let ground_cycle_contract_addr: Address = ground_cycle_contract_addr.parse()?;
+        let contracts_client = Client::new(
+            provider.clone(),
+            agreement_contract_addr,
+            ground_cycle_contract_addr,
+        );
+        Ok(Self {
+            _provider: provider,
+            chain_id,
+            contracts_client,
+        })
+    }
+
+    async fn create_agreement(
+        &self,
+        station_private_key: String,
+        entity_address: String,
+        amount: String,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let wallet = LocalWallet::from_str(&station_private_key)?.with_chain_id(self.chain_id);
+        let entity_address: Address = entity_address.parse()?;
+        let amount = parse_ether(amount)?;
+        let create_call = self
+            .contracts_client
+            .agreement(wallet)
+            .create(entity_address, amount);
+        let call_res = create_call.send().await;
+        check_contract_res(call_res)?.await?;
+        Ok(())
+    }
+
+    async fn sign_agreement(
+        &self,
+        station_address: String,
+        entity_private_key: String,
+        amount: String,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let wallet = LocalWallet::from_str(&entity_private_key)?.with_chain_id(self.chain_id);
+        let station_address: Address = station_address.parse()?;
+        let amount = parse_ether(amount)?;
+        let sign_call = self
+            .contracts_client
+            .agreement(wallet)
+            .sign(station_address, amount);
+        let call_res = sign_call.send().await;
+        check_contract_res(call_res)?.await?;
+        Ok(())
+    }
+
+    async fn landing_by_drone(
+        &self,
+        drone_private_key: String,
+        station_address: String,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let wallet = LocalWallet::from_str(&drone_private_key)?.with_chain_id(self.chain_id);
+        let station_address: Address = station_address.parse()?;
+        let agreement: Agreement = self
+            .contracts_client
+            .agreement(wallet.clone())
+            .get(station_address, wallet.address())
+            .call()
+            .await?;
+        let landing_call = self
+            .contracts_client
+            .ground_cycle(wallet)
+            .landing_by_drone(station_address)
+            .value(agreement.amount);
+        let call_res = landing_call.send().await;
+        check_contract_res(call_res)?.await?;
+        Ok(())
+    }
+
+    async fn landing_by_station(
+        &self,
+        station_private_key: String,
+        drone_address: String,
+        landlord_address: String,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let wallet = LocalWallet::from_str(&station_private_key)?.with_chain_id(self.chain_id);
+        let drone_address: Address = drone_address.parse()?;
+        let landlord_address: Address = landlord_address.parse()?;
+        let agreement: Agreement = self
+            .contracts_client
+            .agreement(wallet.clone())
+            .get(wallet.address(), landlord_address)
+            .call()
+            .await?;
+        let landing_call = self
+            .contracts_client
+            .ground_cycle(wallet)
+            .landing_by_station(drone_address, landlord_address)
+            .value(agreement.amount);
+        let call_res = landing_call.send().await;
+        check_contract_res(call_res)?.await?;
+        Ok(())
+    }
+
+    async fn takeoff(&self, station_private_key: String) -> Result<(), Box<dyn std::error::Error>> {
+        let wallet = LocalWallet::from_str(&station_private_key)?.with_chain_id(self.chain_id);
+        self.contracts_client
+            .ground_cycle(wallet)
+            .takeoff()
+            .send()
+            .await?
+            .await?;
+        Ok(())
+    }
+
+    async fn events(
+        &self,
+        private_key: String,
+        from_block: u64,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let wallet = LocalWallet::from_str(&private_key)?.with_chain_id(self.chain_id);
+        const STEP: u64 = 50_000;
+        let stop_block = self._provider.get_block_number().await?.as_u64();
+        {
+            let mut start_from = from_block;
+            loop {
+                let events = self
+                    .contracts_client
+                    .agreement(wallet.clone())
+                    .events()
+                    .from_block(start_from)
+                    .to_block(start_from + STEP)
+                    .query()
+                    .await?;
+                for event in events {
+                    info!("{:?}", event);
+                }
+                if start_from + STEP > stop_block {
+                    break;
+                }
+                start_from += STEP;
+            }
+        }
+        {
+            let mut start_from = from_block;
+            loop {
+                let events = self
+                    .contracts_client
+                    .ground_cycle(wallet.clone())
+                    .events()
+                    .from_block(start_from)
+                    .to_block(start_from + STEP)
+                    .query()
+                    .await?;
+                for event in events {
+                    info!("{:?}", event);
+                }
+                if start_from + STEP > stop_block {
+                    break;
+                }
+                start_from += STEP;
+            }
+        }
+        Ok(())
+    }
 }
 
 // Client to interact with smart contract on behalf of face of some wallet.
@@ -159,8 +405,8 @@ fn check_contract_res(
                 return Err(match contract_err {
                     GroundCycleContractErrors::ErrReceivedNotEnough(tokens) => format!(
                         "required to send {} tokens while execute this method but sent: {}",
-                        utils::format_ether(tokens.1),
-                        utils::format_ether(tokens.0)
+                        format_ether(tokens.1),
+                        format_ether(tokens.0)
                     ),
                     GroundCycleContractErrors::ErrNoLanding(_) => {
                         "there was no landing for these entities".to_string()
@@ -179,7 +425,13 @@ fn check_contract_res(
 
 #[cfg(test)]
 mod tests {
+    use std::time::Duration;
+
     use assertables::{assert_in_delta, assert_in_delta_as_result};
+    use ethers::{providers::Middleware, signers::Signer, types::U256};
+    use log::debug;
+
+    use crate::contracts::{Agreement, AgreementContractEvents, GroundCycleContractEvents};
 
     use super::*;
 
@@ -224,8 +476,8 @@ mod tests {
         debug!("landlord wallet address: {:?}", landlord_wallet.address());
 
         // Amounts of agreements between entities.
-        let drone_station_amount: U256 = utils::parse_ether(3).unwrap();
-        let station_landlord_amount: U256 = utils::parse_ether(5).unwrap();
+        let drone_station_amount: U256 = parse_ether(3).unwrap();
+        let station_landlord_amount: U256 = parse_ether(5).unwrap();
 
         let agreement_contract_balance = provider
             .get_balance(agreement_contract_addr, None)
@@ -421,25 +673,25 @@ mod tests {
             .await
             .unwrap();
 
-        debug!("{:?}", utils::format_ether(drone_balance_after));
-        debug!("{:?}", utils::format_ether(station_balance_after));
-        debug!("{:?}", utils::format_ether(landlord_balance_after));
+        debug!("{:?}", format_ether(drone_balance_after));
+        debug!("{:?}", format_ether(station_balance_after));
+        debug!("{:?}", format_ether(landlord_balance_after));
 
         assert!(agreement_contract_balance.is_zero());
         assert_in_delta!(
             drone_balance_after,
             drone_balance_before - drone_station_amount,
-            utils::parse_ether(0.1).unwrap()
+            parse_ether(0.1).unwrap()
         );
         assert_in_delta!(
             station_balance_after,
             station_balance_before + drone_station_amount - station_landlord_amount,
-            utils::parse_ether(0.1).unwrap()
+            parse_ether(0.1).unwrap()
         );
         assert_in_delta!(
             landlord_balance_after,
             landlord_balance_before + station_landlord_amount,
-            utils::parse_ether(0.1).unwrap()
+            parse_ether(0.1).unwrap()
         );
 
         /*
