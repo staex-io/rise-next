@@ -15,6 +15,13 @@ VITE_STATION_PRIVATE_KEY=0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5
 VITE_STATION_ADDRESS=0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f
 ```
 
+### Testnet
+
+```shell
+VITE_AGREEMENT_CONTRACT_ADDRESS=0x61d6C8D1a59d2e191b5204EaA9C736017B963e95
+VITE_RPC_URL=https://ethereum-sepolia.publicnode.com
+```
+
 ## Recommended IDE Setup
 
 - [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).

@@ -5,8 +5,8 @@ import contractABI from '@/assets/AgreementContract.json'
 export default {
   data() {
     return {
-      stationAddress: '0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f',
-      entityAddress: '0x14dC79964da2C08b23698B3D3cc7Ca32193d9955',
+      stationAddress: import.meta.env.VITE_STATION_ADDRESS,
+      entityAddress: import.meta.env.VITE_ENTITY_ADDRESS,
       error: '',
       amount: '0 ETH',
       status: 'EMPTY',
