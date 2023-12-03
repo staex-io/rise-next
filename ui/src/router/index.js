@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import CreateAgreement from '@/views/CreateAgreement.vue'
 import SignAgreement from '@/views/SignAgreement.vue'
+import GetAgreement from '@/views/GetAgreement.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -19,6 +20,11 @@ const router = createRouter({
       path: '/sign-agreement',
       name: 'signAgreement',
       component: SignAgreement,
+    },
+    {
+      path: '/get-agreement',
+      name: 'getAgreement',
+      component: GetAgreement,
     },
   ],
 })

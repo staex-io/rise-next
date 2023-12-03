@@ -11,6 +11,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@fontsource/roboto": "^5.0.8",
+    "ethers": "^6.9.0",
     "normalize.css": "^8.0.1",
     "vue": "^3.3.8",
     "vue-router": "^4.2.5"

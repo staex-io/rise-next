@@ -4,6 +4,7 @@ include .env
 build:
 	cd contracts && forge build
 	cd contracts && forge bind --overwrite --skip-build --single-file --module -b ../agent/src/contracts
+	cd contracts && cp out/Agreement.sol/AgreementContract.json ../ui/src/assets/AgreementContract.json
 
 test: lint
 	cd contracts && forge test --gas-report --summary --detailed -vv

@@ -21,6 +21,9 @@ export default {
         <li>
           <RouterLink to="/sign-agreement">Sign Agreement</RouterLink>
         </li>
+        <li>
+          <RouterLink to="/get-agreement">Get Agreement</RouterLink>
+        </li>
       </ul>
     </nav>
   </header>
