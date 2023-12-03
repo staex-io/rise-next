@@ -16,6 +16,7 @@ station -> drone: Scan qr code\n to get address
 drone -> sc: Send tokens and\n execute landing
 station -> sc: Send tokens and\n execute landing
 
+sc -> sc: Approve landing
 sc -> station: Send tokens according\n drone - stataion agreement
 sc -> landlord: Send tokens according\n drone - stataion agreement
 
