@@ -1,10 +1,13 @@
 <script>
 import { ethers } from 'ethers'
 import contractABI from '@/assets/AgreementContract.json'
+import { AccountsLocalStorageKey } from '@/constants/index.js'
 
 export default {
   data() {
     return {
+      accounts: null,
+      selectedAccount: '',
       stationPrivateKey: import.meta.env.VITE_STATION_PRIVATE_KEY,
       entityAddress: import.meta.env.VITE_ENTITY_ADDRESS,
       amount: 10,
@@ -12,7 +15,17 @@ export default {
       success: '',
     }
   },
+  computed: {
+    accountsAsArr() {
+      if (!this.accounts) return
+      return Array.from(this.accounts.entries())
+    },
+  },
   watch: {
+    selectedAccount(name) {
+      const account = this.accounts.get(name)
+      this.stationPrivateKey = account.privateKey
+    },
     stationPrivateKey(privateKey) {
       try {
         new ethers.Wallet(privateKey)
@@ -59,6 +72,16 @@ export default {
           this.error = error
         })
     },
+    loadAccounts() {
+      const accountsJSON = localStorage.getItem(AccountsLocalStorageKey)
+      if (!accountsJSON) return
+      const accountsObj = JSON.parse(accountsJSON)
+      const accounts = new Map(Object.entries(accountsObj))
+      this.accounts = accounts
+    },
+  },
+  created() {
+    this.loadAccounts()
   },
 }
 </script>
@@ -66,13 +89,12 @@ export default {
 <template>
   <h1>Create Agreement</h1>
   <div>
-    <label for="stationPrivateKey">Station private key</label>
-    <input
-      type="text"
-      name="stationPrivateKey"
-      id="stationPrivateKey"
-      v-model="stationPrivateKey"
-    />
+    <select v-model="selectedAccount">
+      <option disabled value="" selected>Select an account</option>
+      <option v-for="[key, value] in accountsAsArr" :key="key" :value="key">
+        {{ value.name }}
+      </option>
+    </select>
   </div>
   <div>
     <label for="entityAddress">Entity address</label>

@@ -13,7 +13,9 @@ export default {
 <template>
   <header>
     <nav>
-      <img class="logo" alt="Staex logo" src="@/assets/logo-light.svg" />
+      <a href="/wallet">
+        <img class="logo" alt="Staex logo" src="@/assets/logo-light.svg" />
+      </a>
       <ul>
         <li>
           <RouterLink to="/create-agreement">Create Agreement</RouterLink>

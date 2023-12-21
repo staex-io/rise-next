@@ -1,6 +1,6 @@
 <script>
 import { ethers } from 'ethers'
-import { AccountsLocalStorageKey } from '../constants/index'
+import { AccountsLocalStorageKey } from '@/constants/index'
 
 export default {
   data() {
@@ -129,6 +129,7 @@ export default {
       const accountsObj = Object.fromEntries(this.accounts)
       const accountsJSON = JSON.stringify(accountsObj)
       localStorage.setItem(AccountsLocalStorageKey, accountsJSON)
+      this.menu = 'show'
     },
   },
   created() {
