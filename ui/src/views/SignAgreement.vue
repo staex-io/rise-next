@@ -8,7 +8,7 @@ export default {
     return {
       accounts: null,
       selectedAccount: '',
-      entityPrivateKey: import.meta.env.VITE_ENTITY_PRIVATE_KEY,
+      entityPrivateKey: '',
       stationAddress: import.meta.env.VITE_STATION_ADDRESS,
       amount: 10,
       error: '',
