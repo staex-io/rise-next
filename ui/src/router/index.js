@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import CreateAgreement from '@/views/CreateAgreement.vue'
 import SignAgreement from '@/views/SignAgreement.vue'
 import GetAgreement from '@/views/GetAgreement.vue'
+import WalletManagement from '@/views/WalletManagement.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -9,7 +10,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      redirect: { name: 'createAgreement' },
+      redirect: { name: 'walletManagement' },
     },
     {
       path: '/create-agreement',
@@ -25,6 +26,11 @@ const router = createRouter({
       path: '/get-agreement',
       name: 'getAgreement',
       component: GetAgreement,
+    },
+    {
+      path: '/wallet',
+      name: 'walletManagement',
+      component: WalletManagement,
     },
   ],
 })

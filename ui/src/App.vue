@@ -24,6 +24,9 @@ export default {
         <li>
           <RouterLink to="/get-agreement">Get Agreement</RouterLink>
         </li>
+        <li>
+          <RouterLink to="/wallet">Wallet</RouterLink>
+        </li>
       </ul>
     </nav>
   </header>

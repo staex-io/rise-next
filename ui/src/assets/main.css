@@ -77,7 +77,8 @@ label {
 
 input {
   width: 100%;
-  padding: 8px;
+  padding: 16px;
+  margin: 0;
   border: 1px solid var(--staex-gray);
   border-radius: 4px;
   box-sizing: border-box;
@@ -86,7 +87,7 @@ input {
 button {
   background-color: var(--staex-gray);
   color: var(--staex-white);
-  padding: 10px 15px;
+  padding: 20px 15px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -110,4 +111,52 @@ button:hover {
 .success {
   color: var(--staex-medium-pacific-blue);
   background-color: var(--staex-green);
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto;
+  box-shadow: 0 2px 15px var(--staex-stardust-silver);
+  font-family: Arial, sans-serif;
+}
+
+th,
+td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--staex-stardust-silver);
+}
+
+th {
+  background-color: var(--staex-stardust-silver);
+}
+
+tr:nth-child(even) {
+  background-color: var(--staex-stardust-silver);
+}
+
+tr:hover {
+  background-color: var(--staex-metallic-gold);
+}
+
+thead tr {
+  box-shadow: 0 2px 10px var(--staex-stardust-silver);
 }
