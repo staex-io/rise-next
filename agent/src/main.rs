@@ -411,10 +411,11 @@ fn check_contract_res(
                     GroundCycleContractErrors::ErrNoLanding(_) => {
                         "there was no landing for these entities".to_string()
                     }
-                    GroundCycleContractErrors::ErrNotSigned(_) => {
+                    GroundCycleContractErrors::ErrAgreementNotSigned(_) => {
                         "agreement is not signed".to_string()
                     }
                     GroundCycleContractErrors::RevertString(e) => e,
+                    _ => "internal error".to_string(),
                 }
                 .into());
             }
@@ -755,6 +756,7 @@ mod tests {
                     assert_eq!(station_wallet.address(), takeoff.2);
                     assert_eq!(landlord_wallet.address(), takeoff.3);
                 }
+                GroundCycleContractEvents::RejectFilter(_) => (),
             }
         }
     }

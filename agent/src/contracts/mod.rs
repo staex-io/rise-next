@@ -777,6 +777,13 @@ pub mod ground_cycle_contract {
             constructor: ::core::option::Option::Some(::ethers::core::abi::ethabi::Constructor {
                 inputs: ::std::vec![
                     ::ethers::core::abi::ethabi::Param {
+                        name: ::std::borrow::ToOwned::to_owned("_landingWaitTime"),
+                        kind: ::ethers::core::abi::ethabi::ParamType::Uint(256usize),
+                        internal_type: ::core::option::Option::Some(
+                            ::std::borrow::ToOwned::to_owned("uint256"),
+                        ),
+                    },
+                    ::ethers::core::abi::ethabi::Param {
                         name: ::std::borrow::ToOwned::to_owned("_agreementContract"),
                         kind: ::ethers::core::abi::ethabi::ParamType::Address,
                         internal_type: ::core::option::Option::Some(
@@ -811,6 +818,7 @@ pub mod ground_cycle_contract {
                                             ::ethers::core::abi::ethabi::ParamType::Address,
                                             ::ethers::core::abi::ethabi::ParamType::Address,
                                             ::ethers::core::abi::ethabi::ParamType::Address,
+                                            ::ethers::core::abi::ethabi::ParamType::Uint(256usize),
                                         ],
                                     ),
                                     internal_type: ::core::option::Option::Some(
@@ -875,7 +883,7 @@ pub mod ground_cycle_contract {
                                     name: ::std::borrow::ToOwned::to_owned("drone"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     internal_type: ::core::option::Option::Some(
-                                        ::std::borrow::ToOwned::to_owned("address"),
+                                        ::std::borrow::ToOwned::to_owned("address payable"),
                                     ),
                                 },
                                 ::ethers::core::abi::ethabi::Param {
@@ -920,7 +928,7 @@ pub mod ground_cycle_contract {
                                     name: ::std::borrow::ToOwned::to_owned("drone"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     internal_type: ::core::option::Option::Some(
-                                        ::std::borrow::ToOwned::to_owned("address"),
+                                        ::std::borrow::ToOwned::to_owned("address payable"),
                                     ),
                                 },
                                 ::ethers::core::abi::ethabi::Param {
@@ -937,21 +945,8 @@ pub mod ground_cycle_contract {
                                         ::std::borrow::ToOwned::to_owned("address payable"),
                                     ),
                                 },
-                            ],
-                            constant: ::core::option::Option::None,
-                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
-                        },
-                    ],
-                ),
-                (
-                    ::std::borrow::ToOwned::to_owned("nextId"),
-                    ::std::vec![
-                        ::ethers::core::abi::ethabi::Function {
-                            name: ::std::borrow::ToOwned::to_owned("nextId"),
-                            inputs: ::std::vec![],
-                            outputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::string::String::new(),
+                                    name: ::std::borrow::ToOwned::to_owned("timestamp"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Uint(
                                         256usize,
                                     ),
@@ -962,6 +957,26 @@ pub mod ground_cycle_contract {
                             ],
                             constant: ::core::option::Option::None,
                             state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("reject"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("reject"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("station"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::NonPayable,
                         },
                     ],
                 ),
@@ -1013,6 +1028,27 @@ pub mod ground_cycle_contract {
                     ],
                 ),
                 (
+                    ::std::borrow::ToOwned::to_owned("Reject"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Event {
+                            name: ::std::borrow::ToOwned::to_owned("Reject"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                            ],
+                            anonymous: false,
+                        },
+                    ],
+                ),
+                (
                     ::std::borrow::ToOwned::to_owned("Takeoff"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::Event {
@@ -1048,19 +1084,32 @@ pub mod ground_cycle_contract {
             ]),
             errors: ::core::convert::From::from([
                 (
-                    ::std::borrow::ToOwned::to_owned("ErrNoLanding"),
+                    ::std::borrow::ToOwned::to_owned("ErrAgreementNotSigned"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::AbiError {
-                            name: ::std::borrow::ToOwned::to_owned("ErrNoLanding"),
+                            name: ::std::borrow::ToOwned::to_owned(
+                                "ErrAgreementNotSigned",
+                            ),
                             inputs: ::std::vec![],
                         },
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("ErrNotSigned"),
+                    ::std::borrow::ToOwned::to_owned("ErrNoApprovedLanding"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::AbiError {
-                            name: ::std::borrow::ToOwned::to_owned("ErrNotSigned"),
+                            name: ::std::borrow::ToOwned::to_owned(
+                                "ErrNoApprovedLanding",
+                            ),
+                            inputs: ::std::vec![],
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("ErrNoLanding"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::AbiError {
+                            name: ::std::borrow::ToOwned::to_owned("ErrNoLanding"),
                             inputs: ::std::vec![],
                         },
                     ],
@@ -1095,6 +1144,26 @@ pub mod ground_cycle_contract {
                         },
                     ],
                 ),
+                (
+                    ::std::borrow::ToOwned::to_owned("ErrRejectApprovedLanding"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::AbiError {
+                            name: ::std::borrow::ToOwned::to_owned(
+                                "ErrRejectApprovedLanding",
+                            ),
+                            inputs: ::std::vec![],
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("ErrRejectTooEarly"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::AbiError {
+                            name: ::std::borrow::ToOwned::to_owned("ErrRejectTooEarly"),
+                            inputs: ::std::vec![],
+                        },
+                    ],
+                ),
             ]),
             receive: true,
             fallback: true,
@@ -1105,13 +1174,13 @@ pub mod ground_cycle_contract {
         ::ethers::core::abi::Abi,
     > = ::ethers::contract::Lazy::new(__abi);
     #[rustfmt::skip]
-    const __BYTECODE: &[u8] = b"`\x80`@R4\x80\x15a\0\x10W`\0\x80\xFD[P`@Qa\t\xAA8\x03\x80a\t\xAA\x839\x81\x01`@\x81\x90Ra\0/\x91a\0YV[`\x01`\0\x81\x90U\x80T`\x01`\x01`\xA0\x1B\x03\x19\x16`\x01`\x01`\xA0\x1B\x03\x92\x90\x92\x16\x91\x90\x91\x17\x90Ua\0\x89V[`\0` \x82\x84\x03\x12\x15a\0kW`\0\x80\xFD[\x81Q`\x01`\x01`\xA0\x1B\x03\x81\x16\x81\x14a\0\x82W`\0\x80\xFD[\x93\x92PPPV[a\t\x12\x80a\0\x98`\09`\0\xF3\xFE`\x80`@R`\x046\x10a\0nW`\x005`\xE0\x1C\x80c_\x01\xFFz\x11a\0KW\x80c_\x01\xFFz\x14a\x01-W\x80ca\xB8\xCE\x8C\x14a\x01BW\x80c\xC2\xBC.\xFC\x14a\x01XW\x80c\xC8x\xA3\xAC\x14a\x02/W\0[\x80c\x12\x06_\xE0\x14a\0wW\x80c\x1C\xA8\x7F\xB4\x14a\0\x99W\x80cB\xFFS\xF5\x14a\0\xACW\0[6a\0uW\0[\0[4\x80\x15a\0\x83W`\0\x80\xFD[PG[`@Q\x90\x81R` \x01[`@Q\x80\x91\x03\x90\xF3[a\0ua\0\xA76`\x04a\x07\xDAV[a\x02BV[4\x80\x15a\0\xB8W`\0\x80\xFD[Pa\0\xFEa\0\xC76`\x04a\x08\x13V[`\x02` \x81\x90R`\0\x91\x82R`@\x90\x91 \x80T`\x01\x82\x01T\x92\x82\x01T`\x03\x90\x92\x01T\x90\x92`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x92\x81\x16\x91\x16\x84V[`@\x80Q\x94\x85R`\x01`\x01`\xA0\x1B\x03\x93\x84\x16` \x86\x01R\x91\x83\x16\x91\x84\x01\x91\x90\x91R\x16``\x82\x01R`\x80\x01a\0\x90V[4\x80\x15a\x019W`\0\x80\xFD[Pa\0ua\x03>V[4\x80\x15a\x01NW`\0\x80\xFD[Pa\0\x86`\0T\x81V[4\x80\x15a\x01dW`\0\x80\xFD[Pa\x01\xEBa\x01s6`\x04a\x08\x13V[`@\x80Q`\x80\x81\x01\x82R`\0\x80\x82R` \x82\x01\x81\x90R\x91\x81\x01\x82\x90R``\x81\x01\x91\x90\x91RP`\x01`\x01`\xA0\x1B\x03\x90\x81\x16`\0\x90\x81R`\x02` \x81\x81R`@\x92\x83\x90 \x83Q`\x80\x81\x01\x85R\x81T\x81R`\x01\x82\x01T\x86\x16\x92\x81\x01\x92\x90\x92R\x91\x82\x01T\x84\x16\x92\x81\x01\x92\x90\x92R`\x03\x01T\x90\x91\x16``\x82\x01R\x90V[`@Qa\0\x90\x91\x90\x81Q\x81R` \x80\x83\x01Q`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x91\x83\x01\x91\x90\x91R`@\x80\x84\x01Q\x82\x16\x90\x83\x01R``\x92\x83\x01Q\x16\x91\x81\x01\x91\x90\x91R`\x80\x01\x90V[a\0ua\x02=6`\x04a\x08\x13V[a\x04TV[a\x02L3\x82a\x05\x12V[3`\0\x90\x81R`\x02` R`@\x90 `\x01\x81\x01T`\x01`\x01`\xA0\x1B\x03\x16a\x02\xF2WP`@\x80Q`\x80\x81\x01\x82R`\0\x80\x82R`\x01`\x01`\xA0\x1B\x03\x94\x85\x16` \x80\x84\x01\x91\x82R3\x84\x86\x01\x81\x81R\x96\x88\x16``\x86\x01\x90\x81R\x90\x84R`\x02\x91\x82\x90R\x94\x90\x92 \x92Q\x83UQ`\x01\x83\x01\x80T\x91\x87\x16`\x01`\x01`\xA0\x1B\x03\x19\x92\x83\x16\x17\x90U\x93Q\x90\x82\x01\x80T\x91\x86\x16\x91\x85\x16\x91\x90\x91\x17\x90U\x90Q`\x03\x90\x91\x01\x80T\x91\x90\x93\x16\x91\x16\x17\x90UV[`\x03\x81\x01T`\x01`\x01`\xA0\x1B\x03\x16a\x030W3`\0\x90\x81R`\x02` R`@\x90 `\x03\x01\x80T`\x01`\x01`\xA0\x1B\x03\x19\x16`\x01`\x01`\xA0\x1B\x03\x84\x16\x17\x90U[a\x039\x81a\x05\xF3V[PPPV[3`\0\x90\x81R`\x02` \x81\x81R`@\x80\x84 \x81Q`\x80\x81\x01\x83R\x81T\x80\x82R`\x01\x83\x01T`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x95\x83\x01\x95\x90\x95R\x94\x82\x01T\x84\x16\x92\x81\x01\x92\x90\x92R`\x03\x01T\x90\x91\x16``\x82\x01R\x91\x03a\x03\xACW`@Qc=\x18\x1D\xE9`\xE0\x1B\x81R`\x04\x01`@Q\x80\x91\x03\x90\xFD[\x80``\x01Q`\x01`\x01`\xA0\x1B\x03\x16\x81`@\x01Q`\x01`\x01`\xA0\x1B\x03\x16\x82` \x01Q`\x01`\x01`\xA0\x1B\x03\x16\x7Ft\x80\x15\xBF\xCD\xB2|bFa\x17\xBD\xB4\xA7\0\xF5C~j\x08\x82\x160\xA14\xE9D,\x10\xFC\xF0\xB0\x84`\0\x01Q`@Qa\x04\x0B\x91\x81R` \x01\x90V[`@Q\x80\x91\x03\x90\xA4P3`\0\x90\x81R`\x02` \x81\x90R`@\x82 \x91\x82U`\x01\x82\x01\x80T`\x01`\x01`\xA0\x1B\x03\x19\x90\x81\x16\x90\x91U\x90\x82\x01\x80T\x82\x16\x90U`\x03\x90\x91\x01\x80T\x90\x91\x16\x90UV[a\x04^\x813a\x05\x12V[`\x01`\x01`\xA0\x1B\x03\x80\x82\x16`\0\x90\x81R`\x02` R`@\x90 `\x01\x81\x01T\x90\x91\x16a\x05\x05WP`@\x80Q`\x80\x81\x01\x82R`\0\x80\x82R3` \x80\x84\x01\x91\x82R`\x01`\x01`\xA0\x1B\x03\x95\x86\x16\x84\x86\x01\x81\x81R``\x86\x01\x85\x81R\x91\x85R`\x02\x92\x83\x90R\x95\x90\x93 \x93Q\x84U\x90Q`\x01\x84\x01\x80T\x91\x87\x16`\x01`\x01`\xA0\x1B\x03\x19\x92\x83\x16\x17\x90U\x93Q\x90\x83\x01\x80T\x91\x86\x16\x91\x85\x16\x91\x90\x91\x17\x90UQ`\x03\x90\x91\x01\x80T\x91\x90\x93\x16\x91\x16\x17\x90UV[a\x05\x0E\x81a\x05\xF3V[PPV[`\x01T`@Qc\xD8\x1E\x84#`\xE0\x1B\x81R`\x01`\x01`\xA0\x1B\x03\x84\x81\x16`\x04\x83\x01R\x83\x81\x16`$\x83\x01R`\0\x92\x16\x90c\xD8\x1E\x84#\x90`D\x01`@\x80Q\x80\x83\x03\x81\x86Z\xFA\x15\x80\x15a\x05dW=`\0\x80>=`\0\xFD[PPPP`@Q=`\x1F\x19`\x1F\x82\x01\x16\x82\x01\x80`@RP\x81\x01\x90a\x05\x88\x91\x90a\x087V[\x90P`\x02\x81` \x01Q`\x02\x81\x11\x15a\x05\xA2Wa\x05\xA2a\x08\x9FV[\x14a\x05\xC0W`@Qc\xD8\x16\xF0\x87`\xE0\x1B\x81R`\x04\x01`@Q\x80\x91\x03\x90\xFD[\x80Q4\x10\x15a\x039W\x80Q`@Qc\x92k\xDE\xA9`\xE0\x1B\x81R4`\x04\x82\x01R`$\x81\x01\x91\x90\x91R`D\x01[`@Q\x80\x91\x03\x90\xFD[`\x02\x81\x01T`\x01\x82\x01Ta\x06\x14\x91`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x91\x16\x81a\x06\xA9V[`\x02\x81\x01T`\x03\x82\x01Ta\x065\x91`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x91\x16\x80a\x06\xA9V[`\0T`\x03\x82\x01T`\x02\x83\x01T`\x01\x84\x01T`@Q\x84\x81R`\x01`\x01`\xA0\x1B\x03\x93\x84\x16\x93\x92\x83\x16\x92\x90\x91\x16\x90\x7F>\x01\xB6`\xE7T\xB0\xF3\xA7\x92w\xED\0\xCF\x07\x8C\xDF\xB1\x82\xBA\xB9\x06lN\x8F\xD8P\xB0\ni\x8DA\x90` \x01`@Q\x80\x91\x03\x90\xA4\x80\x82U`\0\x80T\x90\x80a\x06\xA0\x83a\x08\xB5V[\x91\x90PUPPPV[`\x01T`@Qc\xD8\x1E\x84#`\xE0\x1B\x81R`\x01`\x01`\xA0\x1B\x03\x85\x81\x16`\x04\x83\x01R\x84\x81\x16`$\x83\x01R`\0\x92\x16\x90c\xD8\x1E\x84#\x90`D\x01`@\x80Q\x80\x83\x03\x81\x86Z\xFA\x15\x80\x15a\x06\xFBW=`\0\x80>=`\0\xFD[PPPP`@Q=`\x1F\x19`\x1F\x82\x01\x16\x82\x01\x80`@RP\x81\x01\x90a\x07\x1F\x91\x90a\x087V[\x80Q`@Q\x91\x92P`\0\x91`\x01`\x01`\xA0\x1B\x03\x85\x16\x91\x90\x83\x81\x81\x81\x85\x87Z\xF1\x92PPP=\x80`\0\x81\x14a\x07nW`@Q\x91P`\x1F\x19`?=\x01\x16\x82\x01`@R=\x82R=`\0` \x84\x01>a\x07sV[``\x91P[PP\x90P\x80a\x07\xBBW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x14`$\x82\x01Rs30\xB4\xB62\xB2\x10:7\x909\xB2\xB72\x102\xBA42\xB9`a\x1B`D\x82\x01R`d\x01a\x05\xEAV[PPPPPV[`\x01`\x01`\xA0\x1B\x03\x81\x16\x81\x14a\x07\xD7W`\0\x80\xFD[PV[`\0\x80`@\x83\x85\x03\x12\x15a\x07\xEDW`\0\x80\xFD[\x825a\x07\xF8\x81a\x07\xC2V[\x91P` \x83\x015a\x08\x08\x81a\x07\xC2V[\x80\x91PP\x92P\x92\x90PV[`\0` \x82\x84\x03\x12\x15a\x08%W`\0\x80\xFD[\x815a\x080\x81a\x07\xC2V[\x93\x92PPPV[`\0`@\x82\x84\x03\x12\x15a\x08IW`\0\x80\xFD[`@Q`@\x81\x01\x81\x81\x10g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x82\x11\x17\x15a\x08zWcNH{q`\xE0\x1B`\0R`A`\x04R`$`\0\xFD[`@R\x82Q\x81R` \x83\x01Q`\x03\x81\x10a\x08\x93W`\0\x80\xFD[` \x82\x01R\x93\x92PPPV[cNH{q`\xE0\x1B`\0R`!`\x04R`$`\0\xFD[`\0`\x01\x82\x01a\x08\xD5WcNH{q`\xE0\x1B`\0R`\x11`\x04R`$`\0\xFD[P`\x01\x01\x90V\xFE\xA2dipfsX\"\x12 3\xF8\x942p\x85\x92\x03\xE6\xD8\x01\xDD<~\xCF\x8D\x16)\xBE\xE3\x06\x1E\x8C\xCF\xD3\x17I\x04\xA0\x1C\xA7GdsolcC\0\x08\x17\x003";
+    const __BYTECODE: &[u8] = b"`\x80`@R4\x80\x15a\0\x10W`\0\x80\xFD[P`@Qa\x0C\x8E8\x03\x80a\x0C\x8E\x839\x81\x01`@\x81\x90Ra\0/\x91a\0^V[`\x01`\0\x81\x90U\x91\x90\x91U`\x02\x80T`\x01`\x01`\xA0\x1B\x03\x19\x16`\x01`\x01`\xA0\x1B\x03\x90\x92\x16\x91\x90\x91\x17\x90Ua\0\x9BV[`\0\x80`@\x83\x85\x03\x12\x15a\0qW`\0\x80\xFD[\x82Q` \x84\x01Q\x90\x92P`\x01`\x01`\xA0\x1B\x03\x81\x16\x81\x14a\0\x90W`\0\x80\xFD[\x80\x91PP\x92P\x92\x90PV[a\x0B\xE4\x80a\0\xAA`\09`\0\xF3\xFE`\x80`@R`\x046\x10a\0nW`\x005`\xE0\x1C\x80c_\x01\xFFz\x11a\0KW\x80c_\x01\xFFz\x14a\x01:W\x80c\xAB\r\xA5\xA9\x14a\x01OW\x80c\xC2\xBC.\xFC\x14a\x01oW\x80c\xC8x\xA3\xAC\x14a\x02cW\0[\x80c\x12\x06_\xE0\x14a\0wW\x80c\x1C\xA8\x7F\xB4\x14a\0\x97W\x80cB\xFFS\xF5\x14a\0\xAAW\0[6a\0uW\0[\0[4\x80\x15a\0\x83W`\0\x80\xFD[P`@QG\x81R` \x01[`@Q\x80\x91\x03\x90\xF3[a\0ua\0\xA56`\x04a\n\x8BV[a\x02vV[4\x80\x15a\0\xB6W`\0\x80\xFD[Pa\x01\x04a\0\xC56`\x04a\n\xC4V[`\x03` \x81\x90R`\0\x91\x82R`@\x90\x91 \x80T`\x01\x82\x01T`\x02\x83\x01T\x93\x83\x01T`\x04\x90\x93\x01T\x91\x93`\x01`\x01`\xA0\x1B\x03\x91\x82\x16\x93\x90\x82\x16\x92\x91\x16\x90\x85V[`@\x80Q\x95\x86R`\x01`\x01`\xA0\x1B\x03\x94\x85\x16` \x87\x01R\x92\x84\x16\x92\x85\x01\x92\x90\x92R\x90\x91\x16``\x83\x01R`\x80\x82\x01R`\xA0\x01a\0\x8EV[4\x80\x15a\x01FW`\0\x80\xFD[Pa\0ua\x03\x88V[4\x80\x15a\x01[W`\0\x80\xFD[Pa\0ua\x01j6`\x04a\n\xC4V[a\x04\xAFV[4\x80\x15a\x01{W`\0\x80\xFD[Pa\x02\x13a\x01\x8A6`\x04a\n\xC4V[`@\x80Q`\xA0\x81\x01\x82R`\0\x80\x82R` \x82\x01\x81\x90R\x91\x81\x01\x82\x90R``\x81\x01\x82\x90R`\x80\x81\x01\x91\x90\x91RP`\x01`\x01`\xA0\x1B\x03\x90\x81\x16`\0\x90\x81R`\x03` \x81\x81R`@\x92\x83\x90 \x83Q`\xA0\x81\x01\x85R\x81T\x81R`\x01\x82\x01T\x86\x16\x92\x81\x01\x92\x90\x92R`\x02\x81\x01T\x85\x16\x93\x82\x01\x93\x90\x93R\x90\x82\x01T\x90\x92\x16``\x83\x01R`\x04\x01T`\x80\x82\x01R\x90V[`@Qa\0\x8E\x91\x90\x81Q\x81R` \x80\x83\x01Q`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x91\x83\x01\x91\x90\x91R`@\x80\x84\x01Q\x82\x16\x90\x83\x01R``\x80\x84\x01Q\x90\x91\x16\x90\x82\x01R`\x80\x91\x82\x01Q\x91\x81\x01\x91\x90\x91R`\xA0\x01\x90V[a\0ua\x02q6`\x04a\n\xC4V[a\x06\xF6V[a\x02\x803\x82a\x07\xC9V[3`\0\x90\x81R`\x03` R`@\x90 `\x01\x81\x01T`\x01`\x01`\xA0\x1B\x03\x16a\x03;WP`@\x80Q`\xA0\x81\x01\x82R`\0\x80\x82R`\x01`\x01`\xA0\x1B\x03\x94\x85\x16` \x80\x84\x01\x91\x82R3\x84\x86\x01\x81\x81R\x96\x88\x16``\x86\x01\x90\x81RB`\x80\x87\x01\x90\x81R\x91\x85R`\x03\x92\x83\x90R\x95\x90\x93 \x93Q\x84U\x90Q`\x01\x84\x01\x80T\x91\x88\x16`\x01`\x01`\xA0\x1B\x03\x19\x92\x83\x16\x17\x90U\x94Q`\x02\x84\x01\x80T\x91\x88\x16\x91\x87\x16\x91\x90\x91\x17\x90U\x92Q\x92\x82\x01\x80T\x93\x90\x95\x16\x92\x90\x93\x16\x91\x90\x91\x17\x90\x92UQ`\x04\x90\x91\x01UV[`\x03\x81\x01T`\x01`\x01`\xA0\x1B\x03\x16a\x03zW3`\0\x90\x81R`\x03` \x81\x90R`@\x90\x91 \x01\x80T`\x01`\x01`\xA0\x1B\x03\x19\x16`\x01`\x01`\xA0\x1B\x03\x84\x16\x17\x90U[a\x03\x83\x81a\x08\xA4V[PPPV[3`\0\x90\x81R`\x03` \x81\x81R`@\x80\x84 \x81Q`\xA0\x81\x01\x83R\x81T\x80\x82R`\x01\x83\x01T`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x95\x83\x01\x95\x90\x95R`\x02\x83\x01T\x85\x16\x93\x82\x01\x93\x90\x93R\x93\x81\x01T\x90\x92\x16``\x84\x01R`\x04\x90\x91\x01T`\x80\x83\x01R\x90\x91\x03a\x04\x03W`@Qc\x17\xEE\xE8\x97`\xE0\x1B\x81R`\x04\x01`@Q\x80\x91\x03\x90\xFD[\x80``\x01Q`\x01`\x01`\xA0\x1B\x03\x16\x81`@\x01Q`\x01`\x01`\xA0\x1B\x03\x16\x82` \x01Q`\x01`\x01`\xA0\x1B\x03\x16\x7Ft\x80\x15\xBF\xCD\xB2|bFa\x17\xBD\xB4\xA7\0\xF5C~j\x08\x82\x160\xA14\xE9D,\x10\xFC\xF0\xB0\x84`\0\x01Q`@Qa\x04b\x91\x81R` \x01\x90V[`@Q\x80\x91\x03\x90\xA4P3`\0\x90\x81R`\x03` \x81\x90R`@\x82 \x82\x81U`\x01\x81\x01\x80T`\x01`\x01`\xA0\x1B\x03\x19\x90\x81\x16\x90\x91U`\x02\x82\x01\x80T\x82\x16\x90U\x91\x81\x01\x80T\x90\x92\x16\x90\x91U`\x04\x01UV[`\x01`\x01`\xA0\x1B\x03\x80\x82\x16`\0\x90\x81R`\x03` \x81\x81R`@\x92\x83\x90 \x83Q`\xA0\x81\x01\x85R\x81T\x80\x82R`\x01\x83\x01T\x87\x16\x93\x82\x01\x93\x90\x93R`\x02\x82\x01T\x86\x16\x94\x81\x01\x94\x90\x94R\x91\x82\x01T\x90\x93\x16``\x83\x01R`\x04\x01T`\x80\x82\x01R\x90\x15a\x05)W`@Qc\x02\xCD\xA4\x85`\xE4\x1B\x81R`\x04\x01`@Q\x80\x91\x03\x90\xFD[` \x81\x01Q`\x01`\x01`\xA0\x1B\x03\x16a\x05TW`@Qc=\x18\x1D\xE9`\xE0\x1B\x81R`\x04\x01`@Q\x80\x91\x03\x90\xFD[`\x01T`\x80\x82\x01Qa\x05f\x90Ba\n\xFEV[\x10\x15a\x05\x85W`@Qc\x1D\xBEo\xCF`\xE1\x1B\x81R`\x04\x01`@Q\x80\x91\x03\x90\xFD[``\x81\x01Q`\x01`\x01`\xA0\x1B\x03\x16a\x06&W\x80` \x01Q`\x01`\x01`\xA0\x1B\x03\x163`\x01`\x01`\xA0\x1B\x03\x16\x14a\x06\x10W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`&`$\x82\x01R\x7Fcaller should be drone of this l`D\x82\x01Reanding`\xD0\x1B`d\x82\x01R`\x84\x01[`@Q\x80\x91\x03\x90\xFD[` \x81\x01Qa\x06!\x90\x83\x90\x80a\tZV[a\x06\xAEV[\x80`@\x01Q`\x01`\x01`\xA0\x1B\x03\x163`\x01`\x01`\xA0\x1B\x03\x16\x14a\x06\x9BW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`'`$\x82\x01R\x7Fcaller should be statin of this `D\x82\x01Rflanding`\xC8\x1B`d\x82\x01R`\x84\x01a\x06\x07V[a\x06\xAE\x82\x82``\x01Q\x83`@\x01Qa\tZV[\x80` \x01Q`\x01`\x01`\xA0\x1B\x03\x16\x82`\x01`\x01`\xA0\x1B\x03\x16\x7Fv\xA0xJ\xFAF6af\x8D\xEAeS\x85pV\xC0O}\x92-\x13\x1A\xF7o)\xA5\xCA\xD6\xEBU\xBC`@Q`@Q\x80\x91\x03\x90\xA3PPV[a\x07\0\x813a\x07\xC9V[`\x01`\x01`\xA0\x1B\x03\x80\x82\x16`\0\x90\x81R`\x03` R`@\x90 `\x01\x81\x01T\x90\x91\x16a\x07\xBCWP`@\x80Q`\xA0\x81\x01\x82R`\0\x80\x82R3` \x80\x84\x01\x91\x82R`\x01`\x01`\xA0\x1B\x03\x95\x86\x16\x84\x86\x01\x81\x81R``\x86\x01\x85\x81RB`\x80\x88\x01\x90\x81R\x92\x86R`\x03\x93\x84\x90R\x96\x90\x94 \x94Q\x85U\x91Q`\x01\x85\x01\x80T\x91\x88\x16`\x01`\x01`\xA0\x1B\x03\x19\x92\x83\x16\x17\x90U\x92Q`\x02\x85\x01\x80T\x91\x88\x16\x91\x85\x16\x91\x90\x91\x17\x90U\x93Q\x93\x83\x01\x80T\x94\x90\x95\x16\x93\x90\x91\x16\x92\x90\x92\x17\x90\x92UQ`\x04\x90\x91\x01UV[a\x07\xC5\x81a\x08\xA4V[PPV[`\x02T`@Qc\xD8\x1E\x84#`\xE0\x1B\x81R`\x01`\x01`\xA0\x1B\x03\x84\x81\x16`\x04\x83\x01R\x83\x81\x16`$\x83\x01R`\0\x92\x16\x90c\xD8\x1E\x84#\x90`D\x01`@\x80Q\x80\x83\x03\x81\x86Z\xFA\x15\x80\x15a\x08\x1BW=`\0\x80>=`\0\xFD[PPPP`@Q=`\x1F\x19`\x1F\x82\x01\x16\x82\x01\x80`@RP\x81\x01\x90a\x08?\x91\x90a\x0B\x17V[\x90P`\x02\x81` \x01Q`\x02\x81\x11\x15a\x08YWa\x08Ya\x0B\x7FV[\x14a\x08vW`@QbTp\xED`\xE3\x1B\x81R`\x04\x01`@Q\x80\x91\x03\x90\xFD[\x80Q4\x10\x15a\x03\x83W\x80Q`@Qc\x92k\xDE\xA9`\xE0\x1B\x81R4`\x04\x82\x01R`$\x81\x01\x91\x90\x91R`D\x01a\x06\x07V[`\x02\x81\x01T`\x01\x82\x01Ta\x08\xC5\x91`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x91\x16\x81a\tZV[`\x02\x81\x01T`\x03\x82\x01Ta\x08\xE6\x91`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x91\x16\x80a\tZV[`\0T`\x03\x82\x01T`\x02\x83\x01T`\x01\x84\x01T`@Q\x84\x81R`\x01`\x01`\xA0\x1B\x03\x93\x84\x16\x93\x92\x83\x16\x92\x90\x91\x16\x90\x7F>\x01\xB6`\xE7T\xB0\xF3\xA7\x92w\xED\0\xCF\x07\x8C\xDF\xB1\x82\xBA\xB9\x06lN\x8F\xD8P\xB0\ni\x8DA\x90` \x01`@Q\x80\x91\x03\x90\xA4\x80\x82U`\0\x80T\x90\x80a\tQ\x83a\x0B\x95V[\x91\x90PUPPPV[`\x02T`@Qc\xD8\x1E\x84#`\xE0\x1B\x81R`\x01`\x01`\xA0\x1B\x03\x85\x81\x16`\x04\x83\x01R\x84\x81\x16`$\x83\x01R`\0\x92\x16\x90c\xD8\x1E\x84#\x90`D\x01`@\x80Q\x80\x83\x03\x81\x86Z\xFA\x15\x80\x15a\t\xACW=`\0\x80>=`\0\xFD[PPPP`@Q=`\x1F\x19`\x1F\x82\x01\x16\x82\x01\x80`@RP\x81\x01\x90a\t\xD0\x91\x90a\x0B\x17V[\x80Q`@Q\x91\x92P`\0\x91`\x01`\x01`\xA0\x1B\x03\x85\x16\x91\x90\x83\x81\x81\x81\x85\x87Z\xF1\x92PPP=\x80`\0\x81\x14a\n\x1FW`@Q\x91P`\x1F\x19`?=\x01\x16\x82\x01`@R=\x82R=`\0` \x84\x01>a\n$V[``\x91P[PP\x90P\x80a\nlW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x14`$\x82\x01Rs30\xB4\xB62\xB2\x10:7\x909\xB2\xB72\x102\xBA42\xB9`a\x1B`D\x82\x01R`d\x01a\x06\x07V[PPPPPV[`\x01`\x01`\xA0\x1B\x03\x81\x16\x81\x14a\n\x88W`\0\x80\xFD[PV[`\0\x80`@\x83\x85\x03\x12\x15a\n\x9EW`\0\x80\xFD[\x825a\n\xA9\x81a\nsV[\x91P` \x83\x015a\n\xB9\x81a\nsV[\x80\x91PP\x92P\x92\x90PV[`\0` \x82\x84\x03\x12\x15a\n\xD6W`\0\x80\xFD[\x815a\n\xE1\x81a\nsV[\x93\x92PPPV[cNH{q`\xE0\x1B`\0R`\x11`\x04R`$`\0\xFD[\x81\x81\x03\x81\x81\x11\x15a\x0B\x11Wa\x0B\x11a\n\xE8V[\x92\x91PPV[`\0`@\x82\x84\x03\x12\x15a\x0B)W`\0\x80\xFD[`@Q`@\x81\x01\x81\x81\x10g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x82\x11\x17\x15a\x0BZWcNH{q`\xE0\x1B`\0R`A`\x04R`$`\0\xFD[`@R\x82Q\x81R` \x83\x01Q`\x03\x81\x10a\x0BsW`\0\x80\xFD[` \x82\x01R\x93\x92PPPV[cNH{q`\xE0\x1B`\0R`!`\x04R`$`\0\xFD[`\0`\x01\x82\x01a\x0B\xA7Wa\x0B\xA7a\n\xE8V[P`\x01\x01\x90V\xFE\xA2dipfsX\"\x12 \xB6\xFE\xC9\xDB\x19\xAC\xBA\xC33'?\xB55\xDEJr\xF7%\xE5\x84\x83\x9F\xD2\x87\xF0(Q\x94-'\xF7sdsolcC\0\x08\x17\x003";
     /// The bytecode of the contract.
     pub static GROUNDCYCLECONTRACT_BYTECODE: ::ethers::core::types::Bytes = ::ethers::core::types::Bytes::from_static(
         __BYTECODE,
     );
     #[rustfmt::skip]
-    const __DEPLOYED_BYTECODE: &[u8] = b"`\x80`@R`\x046\x10a\0nW`\x005`\xE0\x1C\x80c_\x01\xFFz\x11a\0KW\x80c_\x01\xFFz\x14a\x01-W\x80ca\xB8\xCE\x8C\x14a\x01BW\x80c\xC2\xBC.\xFC\x14a\x01XW\x80c\xC8x\xA3\xAC\x14a\x02/W\0[\x80c\x12\x06_\xE0\x14a\0wW\x80c\x1C\xA8\x7F\xB4\x14a\0\x99W\x80cB\xFFS\xF5\x14a\0\xACW\0[6a\0uW\0[\0[4\x80\x15a\0\x83W`\0\x80\xFD[PG[`@Q\x90\x81R` \x01[`@Q\x80\x91\x03\x90\xF3[a\0ua\0\xA76`\x04a\x07\xDAV[a\x02BV[4\x80\x15a\0\xB8W`\0\x80\xFD[Pa\0\xFEa\0\xC76`\x04a\x08\x13V[`\x02` \x81\x90R`\0\x91\x82R`@\x90\x91 \x80T`\x01\x82\x01T\x92\x82\x01T`\x03\x90\x92\x01T\x90\x92`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x92\x81\x16\x91\x16\x84V[`@\x80Q\x94\x85R`\x01`\x01`\xA0\x1B\x03\x93\x84\x16` \x86\x01R\x91\x83\x16\x91\x84\x01\x91\x90\x91R\x16``\x82\x01R`\x80\x01a\0\x90V[4\x80\x15a\x019W`\0\x80\xFD[Pa\0ua\x03>V[4\x80\x15a\x01NW`\0\x80\xFD[Pa\0\x86`\0T\x81V[4\x80\x15a\x01dW`\0\x80\xFD[Pa\x01\xEBa\x01s6`\x04a\x08\x13V[`@\x80Q`\x80\x81\x01\x82R`\0\x80\x82R` \x82\x01\x81\x90R\x91\x81\x01\x82\x90R``\x81\x01\x91\x90\x91RP`\x01`\x01`\xA0\x1B\x03\x90\x81\x16`\0\x90\x81R`\x02` \x81\x81R`@\x92\x83\x90 \x83Q`\x80\x81\x01\x85R\x81T\x81R`\x01\x82\x01T\x86\x16\x92\x81\x01\x92\x90\x92R\x91\x82\x01T\x84\x16\x92\x81\x01\x92\x90\x92R`\x03\x01T\x90\x91\x16``\x82\x01R\x90V[`@Qa\0\x90\x91\x90\x81Q\x81R` \x80\x83\x01Q`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x91\x83\x01\x91\x90\x91R`@\x80\x84\x01Q\x82\x16\x90\x83\x01R``\x92\x83\x01Q\x16\x91\x81\x01\x91\x90\x91R`\x80\x01\x90V[a\0ua\x02=6`\x04a\x08\x13V[a\x04TV[a\x02L3\x82a\x05\x12V[3`\0\x90\x81R`\x02` R`@\x90 `\x01\x81\x01T`\x01`\x01`\xA0\x1B\x03\x16a\x02\xF2WP`@\x80Q`\x80\x81\x01\x82R`\0\x80\x82R`\x01`\x01`\xA0\x1B\x03\x94\x85\x16` \x80\x84\x01\x91\x82R3\x84\x86\x01\x81\x81R\x96\x88\x16``\x86\x01\x90\x81R\x90\x84R`\x02\x91\x82\x90R\x94\x90\x92 \x92Q\x83UQ`\x01\x83\x01\x80T\x91\x87\x16`\x01`\x01`\xA0\x1B\x03\x19\x92\x83\x16\x17\x90U\x93Q\x90\x82\x01\x80T\x91\x86\x16\x91\x85\x16\x91\x90\x91\x17\x90U\x90Q`\x03\x90\x91\x01\x80T\x91\x90\x93\x16\x91\x16\x17\x90UV[`\x03\x81\x01T`\x01`\x01`\xA0\x1B\x03\x16a\x030W3`\0\x90\x81R`\x02` R`@\x90 `\x03\x01\x80T`\x01`\x01`\xA0\x1B\x03\x19\x16`\x01`\x01`\xA0\x1B\x03\x84\x16\x17\x90U[a\x039\x81a\x05\xF3V[PPPV[3`\0\x90\x81R`\x02` \x81\x81R`@\x80\x84 \x81Q`\x80\x81\x01\x83R\x81T\x80\x82R`\x01\x83\x01T`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x95\x83\x01\x95\x90\x95R\x94\x82\x01T\x84\x16\x92\x81\x01\x92\x90\x92R`\x03\x01T\x90\x91\x16``\x82\x01R\x91\x03a\x03\xACW`@Qc=\x18\x1D\xE9`\xE0\x1B\x81R`\x04\x01`@Q\x80\x91\x03\x90\xFD[\x80``\x01Q`\x01`\x01`\xA0\x1B\x03\x16\x81`@\x01Q`\x01`\x01`\xA0\x1B\x03\x16\x82` \x01Q`\x01`\x01`\xA0\x1B\x03\x16\x7Ft\x80\x15\xBF\xCD\xB2|bFa\x17\xBD\xB4\xA7\0\xF5C~j\x08\x82\x160\xA14\xE9D,\x10\xFC\xF0\xB0\x84`\0\x01Q`@Qa\x04\x0B\x91\x81R` \x01\x90V[`@Q\x80\x91\x03\x90\xA4P3`\0\x90\x81R`\x02` \x81\x90R`@\x82 \x91\x82U`\x01\x82\x01\x80T`\x01`\x01`\xA0\x1B\x03\x19\x90\x81\x16\x90\x91U\x90\x82\x01\x80T\x82\x16\x90U`\x03\x90\x91\x01\x80T\x90\x91\x16\x90UV[a\x04^\x813a\x05\x12V[`\x01`\x01`\xA0\x1B\x03\x80\x82\x16`\0\x90\x81R`\x02` R`@\x90 `\x01\x81\x01T\x90\x91\x16a\x05\x05WP`@\x80Q`\x80\x81\x01\x82R`\0\x80\x82R3` \x80\x84\x01\x91\x82R`\x01`\x01`\xA0\x1B\x03\x95\x86\x16\x84\x86\x01\x81\x81R``\x86\x01\x85\x81R\x91\x85R`\x02\x92\x83\x90R\x95\x90\x93 \x93Q\x84U\x90Q`\x01\x84\x01\x80T\x91\x87\x16`\x01`\x01`\xA0\x1B\x03\x19\x92\x83\x16\x17\x90U\x93Q\x90\x83\x01\x80T\x91\x86\x16\x91\x85\x16\x91\x90\x91\x17\x90UQ`\x03\x90\x91\x01\x80T\x91\x90\x93\x16\x91\x16\x17\x90UV[a\x05\x0E\x81a\x05\xF3V[PPV[`\x01T`@Qc\xD8\x1E\x84#`\xE0\x1B\x81R`\x01`\x01`\xA0\x1B\x03\x84\x81\x16`\x04\x83\x01R\x83\x81\x16`$\x83\x01R`\0\x92\x16\x90c\xD8\x1E\x84#\x90`D\x01`@\x80Q\x80\x83\x03\x81\x86Z\xFA\x15\x80\x15a\x05dW=`\0\x80>=`\0\xFD[PPPP`@Q=`\x1F\x19`\x1F\x82\x01\x16\x82\x01\x80`@RP\x81\x01\x90a\x05\x88\x91\x90a\x087V[\x90P`\x02\x81` \x01Q`\x02\x81\x11\x15a\x05\xA2Wa\x05\xA2a\x08\x9FV[\x14a\x05\xC0W`@Qc\xD8\x16\xF0\x87`\xE0\x1B\x81R`\x04\x01`@Q\x80\x91\x03\x90\xFD[\x80Q4\x10\x15a\x039W\x80Q`@Qc\x92k\xDE\xA9`\xE0\x1B\x81R4`\x04\x82\x01R`$\x81\x01\x91\x90\x91R`D\x01[`@Q\x80\x91\x03\x90\xFD[`\x02\x81\x01T`\x01\x82\x01Ta\x06\x14\x91`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x91\x16\x81a\x06\xA9V[`\x02\x81\x01T`\x03\x82\x01Ta\x065\x91`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x91\x16\x80a\x06\xA9V[`\0T`\x03\x82\x01T`\x02\x83\x01T`\x01\x84\x01T`@Q\x84\x81R`\x01`\x01`\xA0\x1B\x03\x93\x84\x16\x93\x92\x83\x16\x92\x90\x91\x16\x90\x7F>\x01\xB6`\xE7T\xB0\xF3\xA7\x92w\xED\0\xCF\x07\x8C\xDF\xB1\x82\xBA\xB9\x06lN\x8F\xD8P\xB0\ni\x8DA\x90` \x01`@Q\x80\x91\x03\x90\xA4\x80\x82U`\0\x80T\x90\x80a\x06\xA0\x83a\x08\xB5V[\x91\x90PUPPPV[`\x01T`@Qc\xD8\x1E\x84#`\xE0\x1B\x81R`\x01`\x01`\xA0\x1B\x03\x85\x81\x16`\x04\x83\x01R\x84\x81\x16`$\x83\x01R`\0\x92\x16\x90c\xD8\x1E\x84#\x90`D\x01`@\x80Q\x80\x83\x03\x81\x86Z\xFA\x15\x80\x15a\x06\xFBW=`\0\x80>=`\0\xFD[PPPP`@Q=`\x1F\x19`\x1F\x82\x01\x16\x82\x01\x80`@RP\x81\x01\x90a\x07\x1F\x91\x90a\x087V[\x80Q`@Q\x91\x92P`\0\x91`\x01`\x01`\xA0\x1B\x03\x85\x16\x91\x90\x83\x81\x81\x81\x85\x87Z\xF1\x92PPP=\x80`\0\x81\x14a\x07nW`@Q\x91P`\x1F\x19`?=\x01\x16\x82\x01`@R=\x82R=`\0` \x84\x01>a\x07sV[``\x91P[PP\x90P\x80a\x07\xBBW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x14`$\x82\x01Rs30\xB4\xB62\xB2\x10:7\x909\xB2\xB72\x102\xBA42\xB9`a\x1B`D\x82\x01R`d\x01a\x05\xEAV[PPPPPV[`\x01`\x01`\xA0\x1B\x03\x81\x16\x81\x14a\x07\xD7W`\0\x80\xFD[PV[`\0\x80`@\x83\x85\x03\x12\x15a\x07\xEDW`\0\x80\xFD[\x825a\x07\xF8\x81a\x07\xC2V[\x91P` \x83\x015a\x08\x08\x81a\x07\xC2V[\x80\x91PP\x92P\x92\x90PV[`\0` \x82\x84\x03\x12\x15a\x08%W`\0\x80\xFD[\x815a\x080\x81a\x07\xC2V[\x93\x92PPPV[`\0`@\x82\x84\x03\x12\x15a\x08IW`\0\x80\xFD[`@Q`@\x81\x01\x81\x81\x10g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x82\x11\x17\x15a\x08zWcNH{q`\xE0\x1B`\0R`A`\x04R`$`\0\xFD[`@R\x82Q\x81R` \x83\x01Q`\x03\x81\x10a\x08\x93W`\0\x80\xFD[` \x82\x01R\x93\x92PPPV[cNH{q`\xE0\x1B`\0R`!`\x04R`$`\0\xFD[`\0`\x01\x82\x01a\x08\xD5WcNH{q`\xE0\x1B`\0R`\x11`\x04R`$`\0\xFD[P`\x01\x01\x90V\xFE\xA2dipfsX\"\x12 3\xF8\x942p\x85\x92\x03\xE6\xD8\x01\xDD<~\xCF\x8D\x16)\xBE\xE3\x06\x1E\x8C\xCF\xD3\x17I\x04\xA0\x1C\xA7GdsolcC\0\x08\x17\x003";
+    const __DEPLOYED_BYTECODE: &[u8] = b"`\x80`@R`\x046\x10a\0nW`\x005`\xE0\x1C\x80c_\x01\xFFz\x11a\0KW\x80c_\x01\xFFz\x14a\x01:W\x80c\xAB\r\xA5\xA9\x14a\x01OW\x80c\xC2\xBC.\xFC\x14a\x01oW\x80c\xC8x\xA3\xAC\x14a\x02cW\0[\x80c\x12\x06_\xE0\x14a\0wW\x80c\x1C\xA8\x7F\xB4\x14a\0\x97W\x80cB\xFFS\xF5\x14a\0\xAAW\0[6a\0uW\0[\0[4\x80\x15a\0\x83W`\0\x80\xFD[P`@QG\x81R` \x01[`@Q\x80\x91\x03\x90\xF3[a\0ua\0\xA56`\x04a\n\x8BV[a\x02vV[4\x80\x15a\0\xB6W`\0\x80\xFD[Pa\x01\x04a\0\xC56`\x04a\n\xC4V[`\x03` \x81\x90R`\0\x91\x82R`@\x90\x91 \x80T`\x01\x82\x01T`\x02\x83\x01T\x93\x83\x01T`\x04\x90\x93\x01T\x91\x93`\x01`\x01`\xA0\x1B\x03\x91\x82\x16\x93\x90\x82\x16\x92\x91\x16\x90\x85V[`@\x80Q\x95\x86R`\x01`\x01`\xA0\x1B\x03\x94\x85\x16` \x87\x01R\x92\x84\x16\x92\x85\x01\x92\x90\x92R\x90\x91\x16``\x83\x01R`\x80\x82\x01R`\xA0\x01a\0\x8EV[4\x80\x15a\x01FW`\0\x80\xFD[Pa\0ua\x03\x88V[4\x80\x15a\x01[W`\0\x80\xFD[Pa\0ua\x01j6`\x04a\n\xC4V[a\x04\xAFV[4\x80\x15a\x01{W`\0\x80\xFD[Pa\x02\x13a\x01\x8A6`\x04a\n\xC4V[`@\x80Q`\xA0\x81\x01\x82R`\0\x80\x82R` \x82\x01\x81\x90R\x91\x81\x01\x82\x90R``\x81\x01\x82\x90R`\x80\x81\x01\x91\x90\x91RP`\x01`\x01`\xA0\x1B\x03\x90\x81\x16`\0\x90\x81R`\x03` \x81\x81R`@\x92\x83\x90 \x83Q`\xA0\x81\x01\x85R\x81T\x81R`\x01\x82\x01T\x86\x16\x92\x81\x01\x92\x90\x92R`\x02\x81\x01T\x85\x16\x93\x82\x01\x93\x90\x93R\x90\x82\x01T\x90\x92\x16``\x83\x01R`\x04\x01T`\x80\x82\x01R\x90V[`@Qa\0\x8E\x91\x90\x81Q\x81R` \x80\x83\x01Q`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x91\x83\x01\x91\x90\x91R`@\x80\x84\x01Q\x82\x16\x90\x83\x01R``\x80\x84\x01Q\x90\x91\x16\x90\x82\x01R`\x80\x91\x82\x01Q\x91\x81\x01\x91\x90\x91R`\xA0\x01\x90V[a\0ua\x02q6`\x04a\n\xC4V[a\x06\xF6V[a\x02\x803\x82a\x07\xC9V[3`\0\x90\x81R`\x03` R`@\x90 `\x01\x81\x01T`\x01`\x01`\xA0\x1B\x03\x16a\x03;WP`@\x80Q`\xA0\x81\x01\x82R`\0\x80\x82R`\x01`\x01`\xA0\x1B\x03\x94\x85\x16` \x80\x84\x01\x91\x82R3\x84\x86\x01\x81\x81R\x96\x88\x16``\x86\x01\x90\x81RB`\x80\x87\x01\x90\x81R\x91\x85R`\x03\x92\x83\x90R\x95\x90\x93 \x93Q\x84U\x90Q`\x01\x84\x01\x80T\x91\x88\x16`\x01`\x01`\xA0\x1B\x03\x19\x92\x83\x16\x17\x90U\x94Q`\x02\x84\x01\x80T\x91\x88\x16\x91\x87\x16\x91\x90\x91\x17\x90U\x92Q\x92\x82\x01\x80T\x93\x90\x95\x16\x92\x90\x93\x16\x91\x90\x91\x17\x90\x92UQ`\x04\x90\x91\x01UV[`\x03\x81\x01T`\x01`\x01`\xA0\x1B\x03\x16a\x03zW3`\0\x90\x81R`\x03` \x81\x90R`@\x90\x91 \x01\x80T`\x01`\x01`\xA0\x1B\x03\x19\x16`\x01`\x01`\xA0\x1B\x03\x84\x16\x17\x90U[a\x03\x83\x81a\x08\xA4V[PPPV[3`\0\x90\x81R`\x03` \x81\x81R`@\x80\x84 \x81Q`\xA0\x81\x01\x83R\x81T\x80\x82R`\x01\x83\x01T`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x95\x83\x01\x95\x90\x95R`\x02\x83\x01T\x85\x16\x93\x82\x01\x93\x90\x93R\x93\x81\x01T\x90\x92\x16``\x84\x01R`\x04\x90\x91\x01T`\x80\x83\x01R\x90\x91\x03a\x04\x03W`@Qc\x17\xEE\xE8\x97`\xE0\x1B\x81R`\x04\x01`@Q\x80\x91\x03\x90\xFD[\x80``\x01Q`\x01`\x01`\xA0\x1B\x03\x16\x81`@\x01Q`\x01`\x01`\xA0\x1B\x03\x16\x82` \x01Q`\x01`\x01`\xA0\x1B\x03\x16\x7Ft\x80\x15\xBF\xCD\xB2|bFa\x17\xBD\xB4\xA7\0\xF5C~j\x08\x82\x160\xA14\xE9D,\x10\xFC\xF0\xB0\x84`\0\x01Q`@Qa\x04b\x91\x81R` \x01\x90V[`@Q\x80\x91\x03\x90\xA4P3`\0\x90\x81R`\x03` \x81\x90R`@\x82 \x82\x81U`\x01\x81\x01\x80T`\x01`\x01`\xA0\x1B\x03\x19\x90\x81\x16\x90\x91U`\x02\x82\x01\x80T\x82\x16\x90U\x91\x81\x01\x80T\x90\x92\x16\x90\x91U`\x04\x01UV[`\x01`\x01`\xA0\x1B\x03\x80\x82\x16`\0\x90\x81R`\x03` \x81\x81R`@\x92\x83\x90 \x83Q`\xA0\x81\x01\x85R\x81T\x80\x82R`\x01\x83\x01T\x87\x16\x93\x82\x01\x93\x90\x93R`\x02\x82\x01T\x86\x16\x94\x81\x01\x94\x90\x94R\x91\x82\x01T\x90\x93\x16``\x83\x01R`\x04\x01T`\x80\x82\x01R\x90\x15a\x05)W`@Qc\x02\xCD\xA4\x85`\xE4\x1B\x81R`\x04\x01`@Q\x80\x91\x03\x90\xFD[` \x81\x01Q`\x01`\x01`\xA0\x1B\x03\x16a\x05TW`@Qc=\x18\x1D\xE9`\xE0\x1B\x81R`\x04\x01`@Q\x80\x91\x03\x90\xFD[`\x01T`\x80\x82\x01Qa\x05f\x90Ba\n\xFEV[\x10\x15a\x05\x85W`@Qc\x1D\xBEo\xCF`\xE1\x1B\x81R`\x04\x01`@Q\x80\x91\x03\x90\xFD[``\x81\x01Q`\x01`\x01`\xA0\x1B\x03\x16a\x06&W\x80` \x01Q`\x01`\x01`\xA0\x1B\x03\x163`\x01`\x01`\xA0\x1B\x03\x16\x14a\x06\x10W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`&`$\x82\x01R\x7Fcaller should be drone of this l`D\x82\x01Reanding`\xD0\x1B`d\x82\x01R`\x84\x01[`@Q\x80\x91\x03\x90\xFD[` \x81\x01Qa\x06!\x90\x83\x90\x80a\tZV[a\x06\xAEV[\x80`@\x01Q`\x01`\x01`\xA0\x1B\x03\x163`\x01`\x01`\xA0\x1B\x03\x16\x14a\x06\x9BW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`'`$\x82\x01R\x7Fcaller should be statin of this `D\x82\x01Rflanding`\xC8\x1B`d\x82\x01R`\x84\x01a\x06\x07V[a\x06\xAE\x82\x82``\x01Q\x83`@\x01Qa\tZV[\x80` \x01Q`\x01`\x01`\xA0\x1B\x03\x16\x82`\x01`\x01`\xA0\x1B\x03\x16\x7Fv\xA0xJ\xFAF6af\x8D\xEAeS\x85pV\xC0O}\x92-\x13\x1A\xF7o)\xA5\xCA\xD6\xEBU\xBC`@Q`@Q\x80\x91\x03\x90\xA3PPV[a\x07\0\x813a\x07\xC9V[`\x01`\x01`\xA0\x1B\x03\x80\x82\x16`\0\x90\x81R`\x03` R`@\x90 `\x01\x81\x01T\x90\x91\x16a\x07\xBCWP`@\x80Q`\xA0\x81\x01\x82R`\0\x80\x82R3` \x80\x84\x01\x91\x82R`\x01`\x01`\xA0\x1B\x03\x95\x86\x16\x84\x86\x01\x81\x81R``\x86\x01\x85\x81RB`\x80\x88\x01\x90\x81R\x92\x86R`\x03\x93\x84\x90R\x96\x90\x94 \x94Q\x85U\x91Q`\x01\x85\x01\x80T\x91\x88\x16`\x01`\x01`\xA0\x1B\x03\x19\x92\x83\x16\x17\x90U\x92Q`\x02\x85\x01\x80T\x91\x88\x16\x91\x85\x16\x91\x90\x91\x17\x90U\x93Q\x93\x83\x01\x80T\x94\x90\x95\x16\x93\x90\x91\x16\x92\x90\x92\x17\x90\x92UQ`\x04\x90\x91\x01UV[a\x07\xC5\x81a\x08\xA4V[PPV[`\x02T`@Qc\xD8\x1E\x84#`\xE0\x1B\x81R`\x01`\x01`\xA0\x1B\x03\x84\x81\x16`\x04\x83\x01R\x83\x81\x16`$\x83\x01R`\0\x92\x16\x90c\xD8\x1E\x84#\x90`D\x01`@\x80Q\x80\x83\x03\x81\x86Z\xFA\x15\x80\x15a\x08\x1BW=`\0\x80>=`\0\xFD[PPPP`@Q=`\x1F\x19`\x1F\x82\x01\x16\x82\x01\x80`@RP\x81\x01\x90a\x08?\x91\x90a\x0B\x17V[\x90P`\x02\x81` \x01Q`\x02\x81\x11\x15a\x08YWa\x08Ya\x0B\x7FV[\x14a\x08vW`@QbTp\xED`\xE3\x1B\x81R`\x04\x01`@Q\x80\x91\x03\x90\xFD[\x80Q4\x10\x15a\x03\x83W\x80Q`@Qc\x92k\xDE\xA9`\xE0\x1B\x81R4`\x04\x82\x01R`$\x81\x01\x91\x90\x91R`D\x01a\x06\x07V[`\x02\x81\x01T`\x01\x82\x01Ta\x08\xC5\x91`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x91\x16\x81a\tZV[`\x02\x81\x01T`\x03\x82\x01Ta\x08\xE6\x91`\x01`\x01`\xA0\x1B\x03\x90\x81\x16\x91\x16\x80a\tZV[`\0T`\x03\x82\x01T`\x02\x83\x01T`\x01\x84\x01T`@Q\x84\x81R`\x01`\x01`\xA0\x1B\x03\x93\x84\x16\x93\x92\x83\x16\x92\x90\x91\x16\x90\x7F>\x01\xB6`\xE7T\xB0\xF3\xA7\x92w\xED\0\xCF\x07\x8C\xDF\xB1\x82\xBA\xB9\x06lN\x8F\xD8P\xB0\ni\x8DA\x90` \x01`@Q\x80\x91\x03\x90\xA4\x80\x82U`\0\x80T\x90\x80a\tQ\x83a\x0B\x95V[\x91\x90PUPPPV[`\x02T`@Qc\xD8\x1E\x84#`\xE0\x1B\x81R`\x01`\x01`\xA0\x1B\x03\x85\x81\x16`\x04\x83\x01R\x84\x81\x16`$\x83\x01R`\0\x92\x16\x90c\xD8\x1E\x84#\x90`D\x01`@\x80Q\x80\x83\x03\x81\x86Z\xFA\x15\x80\x15a\t\xACW=`\0\x80>=`\0\xFD[PPPP`@Q=`\x1F\x19`\x1F\x82\x01\x16\x82\x01\x80`@RP\x81\x01\x90a\t\xD0\x91\x90a\x0B\x17V[\x80Q`@Q\x91\x92P`\0\x91`\x01`\x01`\xA0\x1B\x03\x85\x16\x91\x90\x83\x81\x81\x81\x85\x87Z\xF1\x92PPP=\x80`\0\x81\x14a\n\x1FW`@Q\x91P`\x1F\x19`?=\x01\x16\x82\x01`@R=\x82R=`\0` \x84\x01>a\n$V[``\x91P[PP\x90P\x80a\nlW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x14`$\x82\x01Rs30\xB4\xB62\xB2\x10:7\x909\xB2\xB72\x102\xBA42\xB9`a\x1B`D\x82\x01R`d\x01a\x06\x07V[PPPPPV[`\x01`\x01`\xA0\x1B\x03\x81\x16\x81\x14a\n\x88W`\0\x80\xFD[PV[`\0\x80`@\x83\x85\x03\x12\x15a\n\x9EW`\0\x80\xFD[\x825a\n\xA9\x81a\nsV[\x91P` \x83\x015a\n\xB9\x81a\nsV[\x80\x91PP\x92P\x92\x90PV[`\0` \x82\x84\x03\x12\x15a\n\xD6W`\0\x80\xFD[\x815a\n\xE1\x81a\nsV[\x93\x92PPPV[cNH{q`\xE0\x1B`\0R`\x11`\x04R`$`\0\xFD[\x81\x81\x03\x81\x81\x11\x15a\x0B\x11Wa\x0B\x11a\n\xE8V[\x92\x91PPV[`\0`@\x82\x84\x03\x12\x15a\x0B)W`\0\x80\xFD[`@Q`@\x81\x01\x81\x81\x10g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x82\x11\x17\x15a\x0BZWcNH{q`\xE0\x1B`\0R`A`\x04R`$`\0\xFD[`@R\x82Q\x81R` \x83\x01Q`\x03\x81\x10a\x0BsW`\0\x80\xFD[` \x82\x01R\x93\x92PPPV[cNH{q`\xE0\x1B`\0R`!`\x04R`$`\0\xFD[`\0`\x01\x82\x01a\x0B\xA7Wa\x0B\xA7a\n\xE8V[P`\x01\x01\x90V\xFE\xA2dipfsX\"\x12 \xB6\xFE\xC9\xDB\x19\xAC\xBA\xC33'?\xB55\xDEJr\xF7%\xE5\x84\x83\x9F\xD2\x87\xF0(Q\x94-'\xF7sdsolcC\0\x08\x17\x003";
     /// The deployed bytecode of the contract.
     pub static GROUNDCYCLECONTRACT_DEPLOYED_BYTECODE: ::ethers::core::types::Bytes = ::ethers::core::types::Bytes::from_static(
         __DEPLOYED_BYTECODE,
@@ -1241,18 +1310,20 @@ pub mod ground_cycle_contract {
                 ::ethers::core::types::Address,
                 ::ethers::core::types::Address,
                 ::ethers::core::types::Address,
+                ::ethers::core::types::U256,
             ),
         > {
             self.0
                 .method_hash([66, 255, 83, 245], p0)
                 .expect("method not found (this should never happen)")
         }
-        ///Calls the contract's `nextId` (0x61b8ce8c) function
-        pub fn next_id(
+        ///Calls the contract's `reject` (0xab0da5a9) function
+        pub fn reject(
             &self,
-        ) -> ::ethers::contract::builders::ContractCall<M, ::ethers::core::types::U256> {
+            station: ::ethers::core::types::Address,
+        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
             self.0
-                .method_hash([97, 184, 206, 140], ())
+                .method_hash([171, 13, 165, 169], station)
                 .expect("method not found (this should never happen)")
         }
         ///Calls the contract's `takeoff` (0x5f01ff7a) function
@@ -1265,6 +1336,12 @@ pub mod ground_cycle_contract {
         pub fn landing_filter(
             &self,
         ) -> ::ethers::contract::builders::Event<::std::sync::Arc<M>, M, LandingFilter> {
+            self.0.event()
+        }
+        ///Gets the contract's `Reject` event
+        pub fn reject_filter(
+            &self,
+        ) -> ::ethers::contract::builders::Event<::std::sync::Arc<M>, M, RejectFilter> {
             self.0.event()
         }
         ///Gets the contract's `Takeoff` event
@@ -1290,6 +1367,36 @@ pub mod ground_cycle_contract {
             Self::new(contract.address(), contract.client())
         }
     }
+    ///Custom Error type `ErrAgreementNotSigned` with signature `ErrAgreementNotSigned()` and selector `0x02a38768`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthError,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[etherror(name = "ErrAgreementNotSigned", abi = "ErrAgreementNotSigned()")]
+    pub struct ErrAgreementNotSigned;
+    ///Custom Error type `ErrNoApprovedLanding` with signature `ErrNoApprovedLanding()` and selector `0x17eee897`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthError,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[etherror(name = "ErrNoApprovedLanding", abi = "ErrNoApprovedLanding()")]
+    pub struct ErrNoApprovedLanding;
     ///Custom Error type `ErrNoLanding` with signature `ErrNoLanding()` and selector `0x3d181de9`
     #[derive(
         Clone,
@@ -1305,21 +1412,6 @@ pub mod ground_cycle_contract {
     )]
     #[etherror(name = "ErrNoLanding", abi = "ErrNoLanding()")]
     pub struct ErrNoLanding;
-    ///Custom Error type `ErrNotSigned` with signature `ErrNotSigned()` and selector `0xd816f087`
-    #[derive(
-        Clone,
-        ::ethers::contract::EthError,
-        ::ethers::contract::EthDisplay,
-        serde::Serialize,
-        serde::Deserialize,
-        Default,
-        Debug,
-        PartialEq,
-        Eq,
-        Hash
-    )]
-    #[etherror(name = "ErrNotSigned", abi = "ErrNotSigned()")]
-    pub struct ErrNotSigned;
     ///Custom Error type `ErrReceivedNotEnough` with signature `ErrReceivedNotEnough(uint256,uint256)` and selector `0x926bdea9`
     #[derive(
         Clone,
@@ -1341,6 +1433,36 @@ pub mod ground_cycle_contract {
         pub ::ethers::core::types::U256,
         pub ::ethers::core::types::U256,
     );
+    ///Custom Error type `ErrRejectApprovedLanding` with signature `ErrRejectApprovedLanding()` and selector `0x2cda4850`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthError,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[etherror(name = "ErrRejectApprovedLanding", abi = "ErrRejectApprovedLanding()")]
+    pub struct ErrRejectApprovedLanding;
+    ///Custom Error type `ErrRejectTooEarly` with signature `ErrRejectTooEarly()` and selector `0x3b7cdf9e`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthError,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[etherror(name = "ErrRejectTooEarly", abi = "ErrRejectTooEarly()")]
+    pub struct ErrRejectTooEarly;
     ///Container type for all of the contract's custom errors
     #[derive(
         Clone,
@@ -1353,9 +1475,12 @@ pub mod ground_cycle_contract {
         Hash
     )]
     pub enum GroundCycleContractErrors {
+        ErrAgreementNotSigned(ErrAgreementNotSigned),
+        ErrNoApprovedLanding(ErrNoApprovedLanding),
         ErrNoLanding(ErrNoLanding),
-        ErrNotSigned(ErrNotSigned),
         ErrReceivedNotEnough(ErrReceivedNotEnough),
+        ErrRejectApprovedLanding(ErrRejectApprovedLanding),
+        ErrRejectTooEarly(ErrRejectTooEarly),
         /// The standard solidity revert string, with selector
         /// Error(string) -- 0x08c379a0
         RevertString(::std::string::String),
@@ -1370,20 +1495,35 @@ pub mod ground_cycle_contract {
             ) {
                 return Ok(Self::RevertString(decoded));
             }
+            if let Ok(decoded) = <ErrAgreementNotSigned as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::ErrAgreementNotSigned(decoded));
+            }
+            if let Ok(decoded) = <ErrNoApprovedLanding as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::ErrNoApprovedLanding(decoded));
+            }
             if let Ok(decoded) = <ErrNoLanding as ::ethers::core::abi::AbiDecode>::decode(
                 data,
             ) {
                 return Ok(Self::ErrNoLanding(decoded));
             }
-            if let Ok(decoded) = <ErrNotSigned as ::ethers::core::abi::AbiDecode>::decode(
-                data,
-            ) {
-                return Ok(Self::ErrNotSigned(decoded));
-            }
             if let Ok(decoded) = <ErrReceivedNotEnough as ::ethers::core::abi::AbiDecode>::decode(
                 data,
             ) {
                 return Ok(Self::ErrReceivedNotEnough(decoded));
+            }
+            if let Ok(decoded) = <ErrRejectApprovedLanding as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::ErrRejectApprovedLanding(decoded));
+            }
+            if let Ok(decoded) = <ErrRejectTooEarly as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::ErrRejectTooEarly(decoded));
             }
             Err(::ethers::core::abi::Error::InvalidData.into())
         }
@@ -1391,13 +1531,22 @@ pub mod ground_cycle_contract {
     impl ::ethers::core::abi::AbiEncode for GroundCycleContractErrors {
         fn encode(self) -> ::std::vec::Vec<u8> {
             match self {
+                Self::ErrAgreementNotSigned(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::ErrNoApprovedLanding(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
                 Self::ErrNoLanding(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
-                Self::ErrNotSigned(element) => {
+                Self::ErrReceivedNotEnough(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
-                Self::ErrReceivedNotEnough(element) => {
+                Self::ErrRejectApprovedLanding(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::ErrRejectTooEarly(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
                 Self::RevertString(s) => ::ethers::core::abi::AbiEncode::encode(s),
@@ -1409,11 +1558,25 @@ pub mod ground_cycle_contract {
             match selector {
                 [0x08, 0xc3, 0x79, 0xa0] => true,
                 _ if selector
+                    == <ErrAgreementNotSigned as ::ethers::contract::EthError>::selector() => {
+                    true
+                }
+                _ if selector
+                    == <ErrNoApprovedLanding as ::ethers::contract::EthError>::selector() => {
+                    true
+                }
+                _ if selector
                     == <ErrNoLanding as ::ethers::contract::EthError>::selector() => true,
                 _ if selector
-                    == <ErrNotSigned as ::ethers::contract::EthError>::selector() => true,
-                _ if selector
                     == <ErrReceivedNotEnough as ::ethers::contract::EthError>::selector() => {
+                    true
+                }
+                _ if selector
+                    == <ErrRejectApprovedLanding as ::ethers::contract::EthError>::selector() => {
+                    true
+                }
+                _ if selector
+                    == <ErrRejectTooEarly as ::ethers::contract::EthError>::selector() => {
                     true
                 }
                 _ => false,
@@ -1423,11 +1586,20 @@ pub mod ground_cycle_contract {
     impl ::core::fmt::Display for GroundCycleContractErrors {
         fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
             match self {
+                Self::ErrAgreementNotSigned(element) => {
+                    ::core::fmt::Display::fmt(element, f)
+                }
+                Self::ErrNoApprovedLanding(element) => {
+                    ::core::fmt::Display::fmt(element, f)
+                }
                 Self::ErrNoLanding(element) => ::core::fmt::Display::fmt(element, f),
-                Self::ErrNotSigned(element) => ::core::fmt::Display::fmt(element, f),
                 Self::ErrReceivedNotEnough(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
+                Self::ErrRejectApprovedLanding(element) => {
+                    ::core::fmt::Display::fmt(element, f)
+                }
+                Self::ErrRejectTooEarly(element) => ::core::fmt::Display::fmt(element, f),
                 Self::RevertString(s) => ::core::fmt::Display::fmt(s, f),
             }
         }
@@ -1437,19 +1609,34 @@ pub mod ground_cycle_contract {
             Self::RevertString(value)
         }
     }
+    impl ::core::convert::From<ErrAgreementNotSigned> for GroundCycleContractErrors {
+        fn from(value: ErrAgreementNotSigned) -> Self {
+            Self::ErrAgreementNotSigned(value)
+        }
+    }
+    impl ::core::convert::From<ErrNoApprovedLanding> for GroundCycleContractErrors {
+        fn from(value: ErrNoApprovedLanding) -> Self {
+            Self::ErrNoApprovedLanding(value)
+        }
+    }
     impl ::core::convert::From<ErrNoLanding> for GroundCycleContractErrors {
         fn from(value: ErrNoLanding) -> Self {
             Self::ErrNoLanding(value)
         }
     }
-    impl ::core::convert::From<ErrNotSigned> for GroundCycleContractErrors {
-        fn from(value: ErrNotSigned) -> Self {
-            Self::ErrNotSigned(value)
-        }
-    }
     impl ::core::convert::From<ErrReceivedNotEnough> for GroundCycleContractErrors {
         fn from(value: ErrReceivedNotEnough) -> Self {
             Self::ErrReceivedNotEnough(value)
+        }
+    }
+    impl ::core::convert::From<ErrRejectApprovedLanding> for GroundCycleContractErrors {
+        fn from(value: ErrRejectApprovedLanding) -> Self {
+            Self::ErrRejectApprovedLanding(value)
+        }
+    }
+    impl ::core::convert::From<ErrRejectTooEarly> for GroundCycleContractErrors {
+        fn from(value: ErrRejectTooEarly) -> Self {
+            Self::ErrRejectTooEarly(value)
         }
     }
     #[derive(
@@ -1469,6 +1656,25 @@ pub mod ground_cycle_contract {
         pub ::ethers::core::types::U256,
         #[ethevent(indexed)]
         pub ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub ::ethers::core::types::Address,
+    );
+    #[derive(
+        Clone,
+        ::ethers::contract::EthEvent,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethevent(name = "Reject", abi = "Reject(address,address)")]
+    pub struct RejectFilter(
         #[ethevent(indexed)]
         pub ::ethers::core::types::Address,
         #[ethevent(indexed)]
@@ -1509,6 +1715,7 @@ pub mod ground_cycle_contract {
     )]
     pub enum GroundCycleContractEvents {
         LandingFilter(LandingFilter),
+        RejectFilter(RejectFilter),
         TakeoffFilter(TakeoffFilter),
     }
     impl ::ethers::contract::EthLogDecode for GroundCycleContractEvents {
@@ -1517,6 +1724,9 @@ pub mod ground_cycle_contract {
         ) -> ::core::result::Result<Self, ::ethers::core::abi::Error> {
             if let Ok(decoded) = LandingFilter::decode_log(log) {
                 return Ok(GroundCycleContractEvents::LandingFilter(decoded));
+            }
+            if let Ok(decoded) = RejectFilter::decode_log(log) {
+                return Ok(GroundCycleContractEvents::RejectFilter(decoded));
             }
             if let Ok(decoded) = TakeoffFilter::decode_log(log) {
                 return Ok(GroundCycleContractEvents::TakeoffFilter(decoded));
@@ -1528,6 +1738,7 @@ pub mod ground_cycle_contract {
         fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
             match self {
                 Self::LandingFilter(element) => ::core::fmt::Display::fmt(element, f),
+                Self::RejectFilter(element) => ::core::fmt::Display::fmt(element, f),
                 Self::TakeoffFilter(element) => ::core::fmt::Display::fmt(element, f),
             }
         }
@@ -1535,6 +1746,11 @@ pub mod ground_cycle_contract {
     impl ::core::convert::From<LandingFilter> for GroundCycleContractEvents {
         fn from(value: LandingFilter) -> Self {
             Self::LandingFilter(value)
+        }
+    }
+    impl ::core::convert::From<RejectFilter> for GroundCycleContractEvents {
+        fn from(value: RejectFilter) -> Self {
+            Self::RejectFilter(value)
         }
     }
     impl ::core::convert::From<TakeoffFilter> for GroundCycleContractEvents {
@@ -1624,7 +1840,7 @@ pub mod ground_cycle_contract {
     )]
     #[ethcall(name = "landings", abi = "landings(address)")]
     pub struct LandingsCall(pub ::ethers::core::types::Address);
-    ///Container type for all input parameters for the `nextId` function with signature `nextId()` and selector `0x61b8ce8c`
+    ///Container type for all input parameters for the `reject` function with signature `reject(address)` and selector `0xab0da5a9`
     #[derive(
         Clone,
         ::ethers::contract::EthCall,
@@ -1637,8 +1853,10 @@ pub mod ground_cycle_contract {
         Eq,
         Hash
     )]
-    #[ethcall(name = "nextId", abi = "nextId()")]
-    pub struct NextIdCall;
+    #[ethcall(name = "reject", abi = "reject(address)")]
+    pub struct RejectCall {
+        pub station: ::ethers::core::types::Address,
+    }
     ///Container type for all input parameters for the `takeoff` function with signature `takeoff()` and selector `0x5f01ff7a`
     #[derive(
         Clone,
@@ -1671,7 +1889,7 @@ pub mod ground_cycle_contract {
         LandingByDrone(LandingByDroneCall),
         LandingByStation(LandingByStationCall),
         Landings(LandingsCall),
-        NextId(NextIdCall),
+        Reject(RejectCall),
         Takeoff(TakeoffCall),
     }
     impl ::ethers::core::abi::AbiDecode for GroundCycleContractCalls {
@@ -1704,10 +1922,10 @@ pub mod ground_cycle_contract {
             ) {
                 return Ok(Self::Landings(decoded));
             }
-            if let Ok(decoded) = <NextIdCall as ::ethers::core::abi::AbiDecode>::decode(
+            if let Ok(decoded) = <RejectCall as ::ethers::core::abi::AbiDecode>::decode(
                 data,
             ) {
-                return Ok(Self::NextId(decoded));
+                return Ok(Self::Reject(decoded));
             }
             if let Ok(decoded) = <TakeoffCall as ::ethers::core::abi::AbiDecode>::decode(
                 data,
@@ -1733,7 +1951,7 @@ pub mod ground_cycle_contract {
                 Self::Landings(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
-                Self::NextId(element) => ::ethers::core::abi::AbiEncode::encode(element),
+                Self::Reject(element) => ::ethers::core::abi::AbiEncode::encode(element),
                 Self::Takeoff(element) => ::ethers::core::abi::AbiEncode::encode(element),
             }
         }
@@ -1746,7 +1964,7 @@ pub mod ground_cycle_contract {
                 Self::LandingByDrone(element) => ::core::fmt::Display::fmt(element, f),
                 Self::LandingByStation(element) => ::core::fmt::Display::fmt(element, f),
                 Self::Landings(element) => ::core::fmt::Display::fmt(element, f),
-                Self::NextId(element) => ::core::fmt::Display::fmt(element, f),
+                Self::Reject(element) => ::core::fmt::Display::fmt(element, f),
                 Self::Takeoff(element) => ::core::fmt::Display::fmt(element, f),
             }
         }
@@ -1776,9 +1994,9 @@ pub mod ground_cycle_contract {
             Self::Landings(value)
         }
     }
-    impl ::core::convert::From<NextIdCall> for GroundCycleContractCalls {
-        fn from(value: NextIdCall) -> Self {
-            Self::NextId(value)
+    impl ::core::convert::From<RejectCall> for GroundCycleContractCalls {
+        fn from(value: RejectCall) -> Self {
+            Self::Reject(value)
         }
     }
     impl ::core::convert::From<TakeoffCall> for GroundCycleContractCalls {
@@ -1832,22 +2050,9 @@ pub mod ground_cycle_contract {
         pub drone: ::ethers::core::types::Address,
         pub station: ::ethers::core::types::Address,
         pub landlord: ::ethers::core::types::Address,
+        pub timestamp: ::ethers::core::types::U256,
     }
-    ///Container type for all return fields from the `nextId` function with signature `nextId()` and selector `0x61b8ce8c`
-    #[derive(
-        Clone,
-        ::ethers::contract::EthAbiType,
-        ::ethers::contract::EthAbiCodec,
-        serde::Serialize,
-        serde::Deserialize,
-        Default,
-        Debug,
-        PartialEq,
-        Eq,
-        Hash
-    )]
-    pub struct NextIdReturn(pub ::ethers::core::types::U256);
-    ///`Info(uint256,address,address,address)`
+    ///`Info(uint256,address,address,address,uint256)`
     #[derive(
         Clone,
         ::ethers::contract::EthAbiType,
@@ -1865,6 +2070,7 @@ pub mod ground_cycle_contract {
         pub drone: ::ethers::core::types::Address,
         pub station: ::ethers::core::types::Address,
         pub landlord: ::ethers::core::types::Address,
+        pub timestamp: ::ethers::core::types::U256,
     }
 }
 pub use ierc721_token_receiver::*;

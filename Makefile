@@ -19,6 +19,6 @@ anvil:
 	anvil --block-time 1
 
 deploy:
-	cd contracts && PRIVATE_KEY=${PRIVATE_KEY} \
+	cd contracts && PRIVATE_KEY=${PRIVATE_KEY} LANDING_WAIT_TIME=$(landing_wait_time) \
 		forge script script/GroundCycle.s.sol:GroundCycleScript \
 		--fork-url ${RPC_URL} --broadcast -vvvv
