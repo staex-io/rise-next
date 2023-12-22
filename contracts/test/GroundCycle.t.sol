@@ -7,7 +7,10 @@ import {
     Info,
     ErrNoApprovedLanding,
     ErrReceivedNotEnough,
-    ErrAgreementNotSigned
+    ErrAgreementNotSigned,
+    ErrNoLanding,
+    ErrRejectApprovedLanding,
+    ErrRejectTooEarly
 } from "../src/GroundCycle.sol";
 import {AgreementContract, ErrNoAgreement} from "../src/Agreement.sol";
 import "forge-std/Vm.sol";
@@ -27,6 +30,7 @@ contract GroundCycleTest is Test {
     // We need to copy that events from contract to avoid visibility errors.
     event Landing(uint256, address indexed, address indexed, address indexed);
     event Takeoff(uint256, address indexed, address indexed, address indexed);
+    event Reject(address indexed, address indexed);
 
     function setUp() public {
         agreementContract = new AgreementContract();
@@ -79,6 +83,33 @@ contract GroundCycleTest is Test {
         agreementContract.sign(station.addr, STATION_LANDLORD_AMOUNT);
 
         /*
+          Check landing rejection.
+        */
+        // Check rejection no landing.
+        vm.prank(drone.addr);
+        vm.expectRevert(ErrNoLanding.selector);
+        groundCycleContract.reject(station.addr);
+        // Check reject too early.
+        vm.prank(drone.addr);
+        groundCycleContract.landingByDrone{value: DRONE_STATION_AMOUNT}(payable(station.addr));
+        assertEq(drone.addr.balance, START_TOKENS - DRONE_STATION_AMOUNT);
+        vm.prank(drone.addr);
+        vm.expectRevert(ErrRejectTooEarly.selector);
+        groundCycleContract.reject(station.addr);
+        assertEq(drone.addr.balance, START_TOKENS - DRONE_STATION_AMOUNT);
+        // Check successfull rejection.
+        vm.prank(drone.addr);
+        vm.warp(block.timestamp + 5 minutes);
+        vm.expectEmit(true, true, false, false);
+        emit Reject(drone.addr, station.addr);
+        groundCycleContract.reject(station.addr);
+        assertEq(drone.addr.balance, START_TOKENS);
+        // Check that there are no landing entry after rejection.
+        vm.prank(drone.addr);
+        Info memory landing = groundCycleContract.get(station.addr);
+        assertEq(address(0), landing.drone);
+
+        /*
           Check sent not enough tokens logic for drone and station.
         */
         bytes4 errRecvNotEnoughSelector = bytes4(keccak256("ErrReceivedNotEnough(uint256,uint256)"));
@@ -126,6 +157,11 @@ contract GroundCycleTest is Test {
         assertEq(station.addr, afterStationLanding_1.station);
         assertEq(landlord.addr, afterStationLanding_1.landlord);
 
+        // Check that we can't reject approved landing.
+        vm.prank(drone.addr);
+        vm.expectRevert(ErrRejectApprovedLanding.selector);
+        groundCycleContract.reject(station.addr);
+
         /*
          Test takeoff
         */
@@ -143,6 +179,40 @@ contract GroundCycleTest is Test {
         vm.deal(drone.addr, START_TOKENS);
         vm.deal(station.addr, START_TOKENS);
         vm.deal(landlord.addr, START_TOKENS);
+
+        // Check that station can reject landing.
+        vm.prank(station.addr);
+        groundCycleContract.landingByStation{value: STATION_LANDLORD_AMOUNT}(
+            payable(drone.addr), payable(landlord.addr)
+        );
+        vm.prank(station.addr);
+        vm.warp(block.timestamp + 5 minutes);
+        vm.expectEmit(true, true, false, false);
+        emit Reject(drone.addr, station.addr);
+        groundCycleContract.reject(station.addr);
+
+        // Check that landlord cannot execute landing rejection from drone.
+        vm.prank(drone.addr);
+        groundCycleContract.landingByDrone{value: DRONE_STATION_AMOUNT}(payable(station.addr));
+        vm.prank(landlord.addr);
+        vm.warp(block.timestamp + 5 minutes);
+        vm.expectRevert("caller should be drone of this landing");
+        groundCycleContract.reject(station.addr);
+        vm.prank(drone.addr);
+        vm.warp(block.timestamp + 5 minutes);
+        groundCycleContract.reject(station.addr);
+        // Check that landlord cannot execute landing rejection from station.
+        vm.prank(station.addr);
+        groundCycleContract.landingByStation{value: STATION_LANDLORD_AMOUNT}(
+            payable(drone.addr), payable(landlord.addr)
+        );
+        vm.prank(landlord.addr);
+        vm.warp(block.timestamp + 5 minutes);
+        vm.expectRevert("caller should be station of this landing");
+        groundCycleContract.reject(station.addr);
+        vm.prank(station.addr);
+        vm.warp(block.timestamp + 5 minutes);
+        groundCycleContract.reject(station.addr);
 
         /*
           Check that station can send their transaction first and after that drone.
@@ -184,6 +254,11 @@ contract GroundCycleTest is Test {
         // Make takeoff for future tests.
         vm.prank(station.addr);
         groundCycleContract.takeoff();
+
+        // Revert balances for future tests.
+        vm.deal(drone.addr, START_TOKENS);
+        vm.deal(station.addr, START_TOKENS);
+        vm.deal(landlord.addr, START_TOKENS);
 
         /*
           Check situation when contract doens't have enough tokens to transfer to station and landlord.

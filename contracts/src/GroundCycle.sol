@@ -115,10 +115,11 @@ contract GroundCycleContract {
             sendTokens(station, landing.drone, landing.drone);
         } else {
             // Landing was initiated by station.
-            require(msg.sender == landing.station, "caller should be statin of this landing");
+            require(msg.sender == landing.station, "caller should be station of this landing");
             sendTokens(station, landing.landlord, landing.station);
         }
-        emit Reject(station, landing.drone);
+        delete landings[station];
+        emit Reject(landing.drone, station);
     }
 
     function approve(Info storage landing) private {
