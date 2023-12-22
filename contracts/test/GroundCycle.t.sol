@@ -255,11 +255,6 @@ contract GroundCycleTest is Test {
         vm.prank(station.addr);
         groundCycleContract.takeoff();
 
-        // Revert balances for future tests.
-        vm.deal(drone.addr, START_TOKENS);
-        vm.deal(station.addr, START_TOKENS);
-        vm.deal(landlord.addr, START_TOKENS);
-
         /*
           Check situation when contract doens't have enough tokens to transfer to station and landlord.
         */

@@ -37,10 +37,10 @@ alt There is an approval
 drone ->x drone: Exit waiting
 else if There is no approval for 5m
 drone -> sc: Execute rejection method
-sc -> sc: Check ACL and check that 5 minutes have passed
+sc -> sc: Check ACL\n and check that\n 5 minutes\n have passed
 sc -> drone: Return tokens
-sc -> sc: Delete landing from state
-sc -> sc: Emit rejection event
+sc -> sc: Delete landing\n from state
+sc -> sc: Emit\n rejection event
 drone ->x drone: Exit waiting
 end
 

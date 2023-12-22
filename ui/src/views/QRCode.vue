@@ -54,6 +54,7 @@ export default {
     <input type="text" name="address" id="address" v-model="address" />
   </div>
   <div v-if="qrcode !== ''">
+    <br />
     <h2>QR code</h2>
     <img :src="qrcode" alt="QR code" class="qrcode" />
     <ul>
@@ -69,6 +70,6 @@ export default {
 <style scoped>
 .qrcode {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 20px;
 }
 </style>
