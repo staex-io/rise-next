@@ -1,4 +1,9 @@
-use std::{fmt::Debug, str::FromStr, sync::Arc};
+use std::{
+    fmt::Debug,
+    str::FromStr,
+    sync::Arc,
+    time::{Duration, SystemTime},
+};
 
 use clap::{Parser, Subcommand};
 use contracts::Agreement;
@@ -11,13 +16,17 @@ use ethers::{
     types::Address,
     utils::{format_ether, parse_ether},
 };
-use log::{info, LevelFilter};
+use log::{info, warn, LevelFilter};
+use tokio::time;
 
 use crate::contracts::{
     AgreementContract, AgreementContractErrors, GroundCycleContract, GroundCycleContractErrors,
+    GroundCycleContractEvents,
 };
 
 mod contracts;
+
+type Error = Box<dyn std::error::Error>;
 
 /// Command line utility to interact with RISE smart contracts.
 #[derive(Parser)]
@@ -40,6 +49,12 @@ struct Cli {
     #[arg(short, long)]
     #[arg(default_value = "0x9D78aBf1Da69F46227E136Be06d2F1b4a0aaEc52")]
     ground_cycle_contract_addr: String,
+    /// Landing wait time. How much time command should wait until
+    /// landing will be approved to avoid landing rejection.
+    /// Set it using seconds (ex: "300" as 5m).
+    #[arg(short, long)]
+    #[arg(default_value = "300")]
+    landing_wait_time: u64,
     #[clap(subcommand)]
     command: Commands,
 }
@@ -91,7 +106,7 @@ enum Commands {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<(), Error> {
     env_logger::builder()
         .filter_level(LevelFilter::Debug)
         .init();
@@ -101,6 +116,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         cli.chain_id,
         cli.agreement_contract_addr,
         cli.ground_cycle_contract_addr,
+        cli.landing_wait_time,
     )?;
     match cli.command {
         Commands::CreateAgreement {
@@ -140,15 +156,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Commands::Events {
             private_key,
             from_block,
-        } => app.events(private_key, from_block).await?,
+        } => app.events(&private_key, from_block).await?,
     }
     Ok(())
 }
 
 struct App {
-    _provider: Provider<Http>,
+    provider: Provider<Http>,
     chain_id: u64,
     contracts_client: Client,
+    landing_wait_time: u64,
 }
 
 impl App {
@@ -157,7 +174,8 @@ impl App {
         chain_id: u64,
         agreement_contract_addr: String,
         ground_cycle_contract_addr: String,
-    ) -> Result<Self, Box<dyn std::error::Error>> {
+        landing_wait_time: u64,
+    ) -> Result<Self, Error> {
         let provider: Provider<Http> = Provider::<Http>::try_from(rpc_url)?;
         let agreement_contract_addr: Address = agreement_contract_addr.parse()?;
         let ground_cycle_contract_addr: Address = ground_cycle_contract_addr.parse()?;
@@ -167,9 +185,10 @@ impl App {
             ground_cycle_contract_addr,
         );
         Ok(Self {
-            _provider: provider,
+            provider,
             chain_id,
             contracts_client,
+            landing_wait_time,
         })
     }
 
@@ -178,7 +197,7 @@ impl App {
         station_private_key: String,
         entity_address: String,
         amount: String,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    ) -> Result<(), Error> {
         let wallet = LocalWallet::from_str(&station_private_key)?.with_chain_id(self.chain_id);
         let entity_address: Address = entity_address.parse()?;
         let amount = parse_ether(amount)?;
@@ -196,7 +215,7 @@ impl App {
         station_address: String,
         entity_private_key: String,
         amount: String,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    ) -> Result<(), Error> {
         let wallet = LocalWallet::from_str(&entity_private_key)?.with_chain_id(self.chain_id);
         let station_address: Address = station_address.parse()?;
         let amount = parse_ether(amount)?;
@@ -213,7 +232,7 @@ impl App {
         &self,
         drone_private_key: String,
         station_address: String,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    ) -> Result<(), Error> {
         let wallet = LocalWallet::from_str(&drone_private_key)?.with_chain_id(self.chain_id);
         let station_address: Address = station_address.parse()?;
         let agreement: Agreement = self
@@ -222,6 +241,8 @@ impl App {
             .get(station_address, wallet.address())
             .call()
             .await?;
+        let block_number = self.provider.get_block_number().await?.as_u64();
+        info!("starting landing by drone");
         let landing_call = self
             .contracts_client
             .ground_cycle(wallet)
@@ -229,6 +250,9 @@ impl App {
             .value(agreement.amount);
         let call_res = landing_call.send().await;
         check_contract_res(call_res)?.await?;
+        info!("drone landed successfully, waiting for confirmation by station");
+        self.wait_for_reject(drone_private_key, station_address, block_number)
+            .await?;
         Ok(())
     }
 
@@ -237,7 +261,7 @@ impl App {
         station_private_key: String,
         drone_address: String,
         landlord_address: String,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    ) -> Result<(), Error> {
         let wallet = LocalWallet::from_str(&station_private_key)?.with_chain_id(self.chain_id);
         let drone_address: Address = drone_address.parse()?;
         let landlord_address: Address = landlord_address.parse()?;
@@ -247,17 +271,22 @@ impl App {
             .get(wallet.address(), landlord_address)
             .call()
             .await?;
+        let block_number = self.provider.get_block_number().await?.as_u64();
+        info!("starting landing by station");
         let landing_call = self
             .contracts_client
-            .ground_cycle(wallet)
+            .ground_cycle(wallet.clone())
             .landing_by_station(drone_address, landlord_address)
             .value(agreement.amount);
         let call_res = landing_call.send().await;
         check_contract_res(call_res)?.await?;
+        info!("station landed successfully, waiting for confirmation by drone");
+        self.wait_for_reject(station_private_key, wallet.address(), block_number)
+            .await?;
         Ok(())
     }
 
-    async fn takeoff(&self, station_private_key: String) -> Result<(), Box<dyn std::error::Error>> {
+    async fn takeoff(&self, station_private_key: String) -> Result<(), Error> {
         let wallet = LocalWallet::from_str(&station_private_key)?.with_chain_id(self.chain_id);
         self.contracts_client
             .ground_cycle(wallet)
@@ -268,14 +297,10 @@ impl App {
         Ok(())
     }
 
-    async fn events(
-        &self,
-        private_key: String,
-        from_block: u64,
-    ) -> Result<(), Box<dyn std::error::Error>> {
-        let wallet = LocalWallet::from_str(&private_key)?.with_chain_id(self.chain_id);
+    async fn events(&self, private_key: &str, from_block: u64) -> Result<(), Error> {
+        let wallet = LocalWallet::from_str(private_key)?.with_chain_id(self.chain_id);
         const STEP: u64 = 50_000;
-        let stop_block = self._provider.get_block_number().await?.as_u64();
+        let stop_block = self.provider.get_block_number().await?.as_u64();
         {
             let mut start_from = from_block;
             loop {
@@ -316,6 +341,60 @@ impl App {
                 start_from += STEP;
             }
         }
+        Ok(())
+    }
+
+    async fn wait_for_reject(
+        &self,
+        private_key: String,
+        station_address: Address,
+        block_number: u64,
+    ) -> Result<(), Error> {
+        let started = SystemTime::now();
+        let wallet = LocalWallet::from_str(&private_key)?.with_chain_id(self.chain_id);
+        const STEP: u64 = 50_000;
+        loop {
+            let mut start_from = block_number;
+            let stop_block = self.provider.get_block_number().await?.as_u64();
+            loop {
+                let events = self
+                    .contracts_client
+                    .ground_cycle(wallet.clone())
+                    .events()
+                    .from_block(start_from)
+                    .to_block(start_from + STEP)
+                    .query()
+                    .await?;
+                for event in events {
+                    if let GroundCycleContractEvents::LandingFilter(event) = event {
+                        if event.2 == station_address {
+                            info!("landing was approved");
+                            return Ok(());
+                        }
+                    }
+                }
+                if start_from + STEP > stop_block {
+                    break;
+                }
+                start_from += STEP;
+            }
+            if started.elapsed().unwrap() > Duration::from_secs(self.landing_wait_time) {
+                break;
+            }
+            info!("waiting for landing approval");
+            time::sleep(Duration::from_secs(1)).await;
+        }
+        warn!(
+            "no approved landing for {}s, starting for landing reject",
+            self.landing_wait_time
+        );
+        let reject_call = self
+            .contracts_client
+            .ground_cycle(wallet)
+            .reject(station_address);
+        let call_res = reject_call.send().await;
+        check_contract_res(call_res)?.await?;
+        warn!("successfully rejected landing");
         Ok(())
     }
 }
@@ -379,7 +458,7 @@ fn check_contract_res(
         PendingTransaction<Http>,
         ContractError<SignerMiddleware<Provider<Http>, LocalWallet>>,
     >,
-) -> Result<PendingTransaction<Http>, Box<dyn std::error::Error>> {
+) -> Result<PendingTransaction<Http>, Error> {
     match res {
         Ok(res) => Ok(res),
         Err(e) => {
@@ -414,8 +493,16 @@ fn check_contract_res(
                     GroundCycleContractErrors::ErrAgreementNotSigned(_) => {
                         "agreement is not signed".to_string()
                     }
+                    GroundCycleContractErrors::ErrNoApprovedLanding(_) => {
+                        "there was no approved landing for these entities".to_string()
+                    }
+                    GroundCycleContractErrors::ErrRejectApprovedLanding(_) => {
+                        "cannot reject approved landing".to_string()
+                    }
+                    GroundCycleContractErrors::ErrRejectTooEarly(_) => {
+                        "reject is too early, wait more time".to_string()
+                    }
                     GroundCycleContractErrors::RevertString(e) => e,
-                    _ => "internal error".to_string(),
                 }
                 .into());
             }

@@ -103,6 +103,9 @@ contract GroundCycleTest is Test {
         assertEq(drone.addr, afterDroneLanding_1.drone);
         assertEq(station.addr, afterDroneLanding_1.station);
         assertEq(address(0), afterDroneLanding_1.landlord);
+        // Check that drone can execute landing twice.
+        vm.prank(drone.addr);
+        groundCycleContract.landingByDrone{value: DRONE_STATION_AMOUNT}(payable(station.addr));
         // Check that station can execute their landing method and landing should be approved.
         vm.prank(station.addr);
         vm.expectEmit(true, true, true, true);
@@ -155,6 +158,11 @@ contract GroundCycleTest is Test {
         assertEq(drone.addr, afterStationLanding_2.drone);
         assertEq(station.addr, afterStationLanding_2.station);
         assertEq(landlord.addr, afterStationLanding_2.landlord);
+        // Check that station can execute landing twice.
+        vm.prank(station.addr);
+        groundCycleContract.landingByStation{value: STATION_LANDLORD_AMOUNT}(
+            payable(drone.addr), payable(landlord.addr)
+        );
         // Check that drone can execute their landing method and landing should be approved.
         vm.prank(drone.addr);
         vm.expectEmit(true, true, true, true);

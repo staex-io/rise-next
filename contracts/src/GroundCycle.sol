@@ -51,6 +51,12 @@ contract GroundCycleContract {
             landings[station] = Info(0, payable(msg.sender), station, payable(address(0)), block.timestamp);
             return;
         }
+        // It means it is second or more time when drone executes this method, so skip.
+        // But station is not land yet.
+        if (landing.landlord == address(0)) {
+            payable(msg.sender).transfer(msg.value);
+            return;
+        }
         approve(landing);
     }
 
@@ -58,10 +64,16 @@ contract GroundCycleContract {
         checkAgreement(msg.sender, landlord);
         Info storage landing = landings[msg.sender];
         if (landing.drone == address(0)) {
+            // It means there are landing from drone.
             landings[msg.sender] = Info(0, drone, payable(msg.sender), landlord, block.timestamp);
             return;
         } else if (landing.landlord == address(0)) {
+            // It means there was landing by drone.
             landings[msg.sender].landlord = landlord;
+        } else if (landing.landlord != address(0) && landing.id == 0) {
+            // It means there are no landing by drone and it is not first landing by station.
+            payable(msg.sender).transfer(msg.value);
+            return;
         }
         approve(landing);
     }
