@@ -3,6 +3,7 @@ import CreateAgreement from '@/views/CreateAgreement.vue'
 import SignAgreement from '@/views/SignAgreement.vue'
 import GetAgreement from '@/views/GetAgreement.vue'
 import WalletManagement from '@/views/WalletManagement.vue'
+import QRCode from '@/views/QRCode.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -31,6 +32,11 @@ const router = createRouter({
       path: '/wallet',
       name: 'walletManagement',
       component: WalletManagement,
+    },
+    {
+      path: '/qrcode',
+      name: 'QRCode',
+      component: QRCode,
     },
   ],
 })

@@ -6,6 +6,8 @@ participant Station as station
 participant Landlord as landlord
 participant "Smart Contract" as sc
 
+== Landing ==
+
 station -> sc: Create an agreement\n for drone
 drone -> sc: Sign an agreement
 station -> sc: Create an agreement\n for landlord
@@ -16,8 +18,30 @@ station -> drone: Scan qr code\n to get address
 drone -> sc: Send tokens and\n execute landing
 station -> sc: Send tokens and\n execute landing
 
-sc -> sc: Approve landing
+sc -> sc: Approve\n landing
 sc -> station: Send tokens according\n drone - stataion agreement
 sc -> landlord: Send tokens according\n drone - stataion agreement
+
+== Rejection ==
+
+note over drone,sc: This example is behalf of the drone but for station is the same.
+
+drone -> station: QR code scanning
+drone -> sc: Send tokens and execute landing method
+drone -> drone: Wait for 5m for landing approval
+note right drone
+Approval is when drone and station executed landing
+and there is an event from smart contract.
+end note
+alt There is an approval
+drone ->x drone: Exit waiting
+else if There is no approval for 5m
+drone -> sc: Execute rejection method
+sc -> sc: Check ACL\n and check that\n 5 minutes\n have passed
+sc -> drone: Return tokens
+sc -> sc: Delete landing\n from state
+sc -> sc: Emit\n rejection event
+drone ->x drone: Exit waiting
+end
 
 @enduml

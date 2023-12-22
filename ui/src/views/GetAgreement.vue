@@ -1,10 +1,15 @@
 <script>
 import { ethers } from 'ethers'
 import contractABI from '@/assets/AgreementContract.json'
+import { WalletLocalStorageKey, WalletAccountsKey, WalletPartnersKey } from '@/constants/index.js'
+import { ReadWallet } from '../utils'
 
 export default {
   data() {
     return {
+      wallet: null,
+      selectedAccount: '',
+      selectedPartner: '',
       stationAddress: import.meta.env.VITE_STATION_ADDRESS,
       entityAddress: import.meta.env.VITE_ENTITY_ADDRESS,
       error: '',
@@ -12,7 +17,23 @@ export default {
       status: 'EMPTY',
     }
   },
+  computed: {
+    accountsAsArr() {
+      return Array.from(this.wallet.get(WalletAccountsKey).entries())
+    },
+    partnersAsArr() {
+      return Array.from(this.wallet.get(WalletPartnersKey).entries())
+    },
+  },
   watch: {
+    selectedAccount(name) {
+      const account = this.wallet.get(WalletAccountsKey).get(name)
+      this.stationAddress = account.address
+    },
+    selectedPartner(name) {
+      const partner = this.wallet.get(WalletPartnersKey).get(name)
+      this.entityAddress = partner.address
+    },
     stationAddress(address) {
       if (ethers.isAddress(address)) {
         this.error = ''
@@ -58,6 +79,14 @@ export default {
           this.error = error
         })
     },
+    loadWallet() {
+      const walletJSON = localStorage.getItem(WalletLocalStorageKey)
+      const wallet = ReadWallet(walletJSON)
+      this.wallet = wallet
+    },
+  },
+  created() {
+    this.loadWallet()
   },
 }
 </script>
@@ -70,11 +99,21 @@ export default {
   </div>
   <div>
     <label for="stationAddress">Station address</label>
-    <input type="text" name="stationAddress" id="stationAddress" v-model="stationAddress" />
+    <select id="stationAddress" v-model="selectedAccount">
+      <option disabled value="" selected>Select an account</option>
+      <option v-for="[key, value] in accountsAsArr" :key="key" :value="key">
+        {{ value.name }}
+      </option>
+    </select>
   </div>
   <div>
     <label for="entityAddress">Entity address</label>
-    <input type="text" name="entityAddress" id="entityAddress" v-model="entityAddress" />
+    <select id="entityAddress" v-model="selectedPartner">
+      <option disabled value="" selected>Select a partner</option>
+      <option v-for="[key, value] in partnersAsArr" :key="key" :value="key">
+        {{ value.name }}
+      </option>
+    </select>
   </div>
   <div>
     <button type="button" @click="getAgreement">Get</button>
