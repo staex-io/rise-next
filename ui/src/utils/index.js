@@ -1,6 +1,13 @@
 import { WalletAccountsKey, WalletPartnersKey } from '@/constants/index'
 
 export const WriteWallet = (wallet) => {
+  // Delete useless balance field from backup.
+  for (let [key, value] of wallet.get(WalletAccountsKey)) {
+    if (Object.prototype.hasOwnProperty.call(value, 'balance')) {
+      delete value.balance
+      wallet.get(WalletAccountsKey).set(key, value)
+    }
+  }
   const walletObj = Object.fromEntries(wallet)
   walletObj[WalletAccountsKey] = Object.fromEntries(walletObj[WalletAccountsKey])
   walletObj[WalletPartnersKey] = Object.fromEntries(walletObj[WalletPartnersKey])

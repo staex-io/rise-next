@@ -46,7 +46,7 @@ export default {
       this.saveAccount(this.accountName, wallet.privateKey, wallet.address, 0.0)
       this.accountName = ''
     },
-    loadAccounts() {
+    loadWallet() {
       const provider = new ethers.getDefaultProvider(import.meta.env.VITE_RPC_URL)
       const walletJSON = localStorage.getItem(WalletLocalStorageKey)
       const wallet = ReadWallet(walletJSON)
@@ -109,9 +109,8 @@ export default {
       const reader = new FileReader()
       reader.onload = (e) => {
         try {
-          const wallet = ReadWallet(e.target.result)
           localStorage.setItem(WalletLocalStorageKey, e.target.result)
-          this.wallet = wallet
+          this.loadWallet()
         } catch (error) {
           this.error = error
         }
@@ -170,7 +169,7 @@ export default {
     this.wallet = new Map()
     this.wallet.set(WalletAccountsKey, new Map())
     this.wallet.set(WalletPartnersKey, new Map())
-    this.loadAccounts()
+    this.loadWallet()
   },
 }
 </script>
