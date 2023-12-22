@@ -1,13 +1,15 @@
 <script>
 import { ethers } from 'ethers'
 import contractABI from '@/assets/AgreementContract.json'
-import { AccountsLocalStorageKey } from '@/constants/index.js'
+import { WalletLocalStorageKey, WalletAccountsKey, WalletPartnersKey } from '@/constants/index.js'
+import { ReadWallet } from '@/utils/index.js'
 
 export default {
   data() {
     return {
-      accounts: null,
+      wallet: null,
       selectedAccount: '',
+      selectedPartner: '',
       stationPrivateKey: '',
       entityAddress: import.meta.env.VITE_ENTITY_ADDRESS,
       amount: 10,
@@ -17,14 +19,20 @@ export default {
   },
   computed: {
     accountsAsArr() {
-      if (!this.accounts) return
-      return Array.from(this.accounts.entries())
+      return Array.from(this.wallet.get(WalletAccountsKey).entries())
+    },
+    partnersAsArr() {
+      return Array.from(this.wallet.get(WalletPartnersKey).entries())
     },
   },
   watch: {
     selectedAccount(name) {
-      const account = this.accounts.get(name)
+      const account = this.wallet.get(WalletAccountsKey).get(name)
       this.stationPrivateKey = account.privateKey
+    },
+    selectedPartner(name) {
+      const partner = this.wallet.get(WalletPartnersKey).get(name)
+      this.entityAddress = partner.address
     },
     stationPrivateKey(privateKey) {
       try {
@@ -72,16 +80,14 @@ export default {
           this.error = error
         })
     },
-    loadAccounts() {
-      const accountsJSON = localStorage.getItem(AccountsLocalStorageKey)
-      if (!accountsJSON) return
-      const accountsObj = JSON.parse(accountsJSON)
-      const accounts = new Map(Object.entries(accountsObj))
-      this.accounts = accounts
+    loadWallet() {
+      const walletJSON = localStorage.getItem(WalletLocalStorageKey)
+      const wallet = ReadWallet(walletJSON)
+      this.wallet = wallet
     },
   },
   created() {
-    this.loadAccounts()
+    this.loadWallet()
   },
 }
 </script>
@@ -89,7 +95,8 @@ export default {
 <template>
   <h1>Create Agreement</h1>
   <div>
-    <select v-model="selectedAccount">
+    <label for="stationPrivateKey">Station private key</label>
+    <select id="stationPrivateKey" v-model="selectedAccount">
       <option disabled value="" selected>Select an account</option>
       <option v-for="[key, value] in accountsAsArr" :key="key" :value="key">
         {{ value.name }}
@@ -98,7 +105,12 @@ export default {
   </div>
   <div>
     <label for="entityAddress">Entity address</label>
-    <input type="text" name="entityAddress" id="entityAddress" v-model="entityAddress" />
+    <select id="entityAddress" v-model="selectedPartner">
+      <option disabled value="" selected>Select a partner</option>
+      <option v-for="[key, value] in partnersAsArr" :key="key" :value="key">
+        {{ value.name }}
+      </option>
+    </select>
   </div>
   <div>
     <label for="amount">Amount in ethers (ex: to settle 0.01 ether write just 0.01)</label>

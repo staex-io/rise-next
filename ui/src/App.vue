@@ -29,6 +29,9 @@ export default {
         <li>
           <RouterLink to="/wallet">Wallet</RouterLink>
         </li>
+        <li>
+          <RouterLink to="/qrcode">QRCode</RouterLink>
+        </li>
       </ul>
     </nav>
   </header>
