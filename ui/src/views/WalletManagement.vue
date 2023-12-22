@@ -16,8 +16,9 @@ export default {
     }
   },
   watch: {
-    menu() {
+    menu(val) {
       this.error = ''
+      if (val === 'show') this.loadWallet()
     },
     accountName() {
       this.error = ''
@@ -43,7 +44,7 @@ export default {
   methods: {
     createAccount() {
       const wallet = ethers.Wallet.createRandom()
-      this.saveAccount(this.accountName, wallet.privateKey, wallet.address, 0.0)
+      this.saveAccount(this.accountName, wallet.privateKey, wallet.address)
       this.accountName = ''
     },
     loadWallet() {
@@ -65,7 +66,7 @@ export default {
           this.error = error
         })
     },
-    clearAccounts() {
+    clearWallet() {
       localStorage.removeItem(WalletLocalStorageKey)
       this.wallet = new Map()
       this.wallet.set(WalletAccountsKey, new Map())
@@ -79,9 +80,7 @@ export default {
         this.error = error
         return
       }
-      const provider = new ethers.getDefaultProvider(import.meta.env.VITE_RPC_URL)
-      const balance = await provider.getBalance(wallet.address)
-      this.saveAccount(this.accountName, wallet.privateKey, wallet.address, balance)
+      this.saveAccount(this.accountName, wallet.privateKey, wallet.address)
       this.accountName = ''
       this.accountPrivateKey = ''
     },
@@ -117,7 +116,7 @@ export default {
       }
       reader.readAsText(file)
     },
-    saveAccount(name, privateKey, address, balance) {
+    saveAccount(name, privateKey, address) {
       if (name.length === 0) {
         this.error = 'Account name cannot be empty!'
         throw 'account name cannot be empty'
@@ -130,7 +129,6 @@ export default {
         name: name,
         privateKey: privateKey,
         address: address,
-        balance: ethers.formatEther(balance),
       })
       const walletJSON = WriteWallet(this.wallet)
       localStorage.setItem(WalletLocalStorageKey, walletJSON)
@@ -199,7 +197,7 @@ export default {
         <h2>Accounts</h2>
       </div>
       <div class="accounts-clear-btn">
-        <button type="button" @click="clearAccounts">Clear</button>
+        <button type="button" @click="clearWallet">Clear</button>
       </div>
     </div>
     <div>
@@ -244,8 +242,8 @@ export default {
       <p v-else>There are no partners at the moment.</p>
     </div>
     <div class="container backup">
-      <button class="backup-download-btn" type="button" @click="downloadBackup">Download</button>
-      <button class="backup-load-btn" type="button" @click="triggerLoadBackup">Upload JSON</button>
+      <button class="backup-download-btn" type="button" @click="downloadBackup">Backup</button>
+      <button class="backup-load-btn" type="button" @click="triggerLoadBackup">Restore</button>
       <input
         type="file"
         @change="loadBackup"
