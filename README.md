@@ -66,12 +66,3 @@ As now we use Sepolia testnet you can use this faucet for test tokens: https://s
   "solidity.formatter": "forge"
 }
 ```
-
-// todo: update scheme plantuml
-// todo: update scheme plantuml
-// todo: update scheme plantuml
-// todo: update scheme plantuml
-// todo: update scheme plantuml
-// todo: update scheme plantuml
-
-// todo: write tests for solidity rejection
