@@ -10,8 +10,8 @@ export default {
       wallet: null,
       selectedAccount: '',
       selectedPartner: '',
-      stationAddress: import.meta.env.VITE_STATION_ADDRESS,
-      entityAddress: import.meta.env.VITE_ENTITY_ADDRESS,
+      stationAddress: '',
+      entityAddress: '',
       error: '',
       amount: '0 ETH',
       status: 'EMPTY',
@@ -36,20 +36,23 @@ export default {
     },
     stationAddress(address) {
       if (ethers.isAddress(address)) {
-        this.error = ''
+        this.clearAlerts()
       } else {
         this.error = 'Failed to parse station address.'
       }
     },
     entityAddress(address) {
       if (ethers.isAddress(address)) {
-        this.error = ''
+        this.clearAlerts()
       } else {
         this.error = 'Failed to parse entity address.'
       }
     },
   },
   methods: {
+    clearAlerts() {
+      this.error = ''
+    },
     getAgreement() {
       const contractAddress = import.meta.env.VITE_AGREEMENT_CONTRACT_ADDRESS
       const provider = new ethers.getDefaultProvider(import.meta.env.VITE_RPC_URL)

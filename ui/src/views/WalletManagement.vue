@@ -17,20 +17,20 @@ export default {
   },
   watch: {
     menu(val) {
-      this.error = ''
+      this.clearAlerts()
       if (val === 'show') this.loadWallet()
     },
     accountName() {
-      this.error = ''
+      this.clearAlerts()
     },
     accountPrivateKey() {
-      this.error = ''
+      this.clearAlerts()
     },
     partnerName() {
-      this.error = ''
+      this.clearAlerts()
     },
     partnerAddress() {
-      this.error = ''
+      this.clearAlerts()
     },
   },
   computed: {
@@ -42,6 +42,9 @@ export default {
     },
   },
   methods: {
+    clearAlerts() {
+      this.error = ''
+    },
     createAccount() {
       const wallet = ethers.Wallet.createRandom()
       this.saveAccount(this.accountName, wallet.privateKey, wallet.address)
@@ -143,9 +146,7 @@ export default {
         this.error = 'This partner name is already taken!'
         throw 'this partner name is already taken'
       }
-      if (ethers.isAddress(address)) {
-        this.error = ''
-      } else {
+      if (!ethers.isAddress(address)) {
         this.error = 'Failed to parse partner address.'
         throw 'failed to parse partner address'
       }

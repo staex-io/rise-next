@@ -11,15 +11,16 @@ export default {
     }
   },
   methods: {
-    generateQrCode() {
+    clearAlerts() {
       this.error = ''
+    },
+    generateQrCode() {
+      this.clearAlerts()
       if (this.address === '') {
         this.qrcode = ''
         return
       }
-      if (ethers.isAddress(this.address)) {
-        this.error = ''
-      } else {
+      if (!ethers.isAddress(this.address)) {
         this.error = 'Failed to parse address.'
         return
       }

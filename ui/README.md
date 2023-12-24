@@ -6,11 +6,11 @@ This template should help get you started developing with Vue 3 in Vite. The tem
 
 Everything except agreement contract address and RPC URL can be empty.
 
+### Local
+
 ```shell
 VITE_AGREEMENT_CONTRACT_ADDRESS=0x5FbDB2315678afecb367f032d93F642f64180aa3
 VITE_RPC_URL=http://localhost:8545/
-VITE_ENTITY_ADDRESS=0x14dC79964da2C08b23698B3D3cc7Ca32193d9955
-VITE_STATION_ADDRESS=0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f
 ```
 
 ### Testnet
@@ -19,6 +19,10 @@ VITE_STATION_ADDRESS=0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f
 VITE_AGREEMENT_CONTRACT_ADDRESS=0x61d6C8D1a59d2e191b5204EaA9C736017B963e95
 VITE_RPC_URL=https://ethereum-sepolia.publicnode.com
 ```
+
+## Backup
+
+For local development, testing or demo you can upload [backup](../rise-backup.json).
 
 ## Recommended IDE Setup
 

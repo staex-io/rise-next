@@ -11,7 +11,7 @@ export default {
       selectedAccount: '',
       selectedPartner: '',
       stationPrivateKey: '',
-      entityAddress: import.meta.env.VITE_ENTITY_ADDRESS,
+      entityAddress: '',
       amount: 10,
       error: '',
       success: '',
@@ -37,14 +37,14 @@ export default {
     stationPrivateKey(privateKey) {
       try {
         new ethers.Wallet(privateKey)
-        this.error = ''
+        this.clearAlerts()
       } catch (error) {
         this.error = 'Failed to parse station private key.'
       }
     },
     entityAddress(address) {
       if (ethers.isAddress(address)) {
-        this.error = ''
+        this.clearAlerts()
       } else {
         this.error = 'Failed to parse entity address.'
       }
@@ -54,11 +54,15 @@ export default {
       if (isNaN(num)) {
         this.error = 'Amount is not a number.'
       } else {
-        this.error = ''
+        this.clearAlerts()
       }
     },
   },
   methods: {
+    clearAlerts() {
+      this.error = ''
+      this.success = ''
+    },
     createAgreement() {
       if (
         this.error !== '' ||
