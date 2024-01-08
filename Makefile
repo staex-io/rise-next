@@ -4,6 +4,9 @@ include .env
 build:
 	cd contracts && forge build
 	cd contracts && forge bind --overwrite --skip-build --single-file --module -b ../agent/src/contracts
+	{ echo '#![allow(warnings)]'; cat agent/src/contracts/mod.rs; } > agent/src/contracts/mod.rs_
+	rm -rf agent/src/contracts/mod.rs
+	mv agent/src/contracts/mod.rs_ agent/src/contracts/mod.rs
 	cd contracts && cp out/Agreement.sol/AgreementContract.json ../ui/src/assets/AgreementContract.json
 
 test: lint
