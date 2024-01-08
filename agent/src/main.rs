@@ -107,9 +107,7 @@ enum Commands {
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    env_logger::builder()
-        .filter_level(LevelFilter::Debug)
-        .init();
+    env_logger::builder().filter_level(LevelFilter::Debug).init();
     let cli = Cli::parse();
     let app = App::new(
         cli.rpc_url,
@@ -123,33 +121,21 @@ async fn main() -> Result<(), Error> {
             station_private_key,
             entity_address,
             amount,
-        } => {
-            app.create_agreement(station_private_key, entity_address, amount)
-                .await?
-        }
+        } => app.create_agreement(station_private_key, entity_address, amount).await?,
         Commands::SignAgreement {
             station_address,
             entity_private_key,
             amount,
-        } => {
-            app.sign_agreement(station_address, entity_private_key, amount)
-                .await?
-        }
+        } => app.sign_agreement(station_address, entity_private_key, amount).await?,
         Commands::LandingByDrone {
             drone_private_key,
             station_address,
-        } => {
-            app.landing_by_drone(drone_private_key, station_address)
-                .await?
-        }
+        } => app.landing_by_drone(drone_private_key, station_address).await?,
         Commands::LandingByStation {
             station_private_key,
             drone_address,
             landlord_address,
-        } => {
-            app.landing_by_station(station_private_key, drone_address, landlord_address)
-                .await?
-        }
+        } => app.landing_by_station(station_private_key, drone_address, landlord_address).await?,
         Commands::Takeoff {
             station_private_key,
         } => app.takeoff(station_private_key).await?,
@@ -179,11 +165,8 @@ impl App {
         let provider: Provider<Http> = Provider::<Http>::try_from(rpc_url)?;
         let agreement_contract_addr: Address = agreement_contract_addr.parse()?;
         let ground_cycle_contract_addr: Address = ground_cycle_contract_addr.parse()?;
-        let contracts_client = Client::new(
-            provider.clone(),
-            agreement_contract_addr,
-            ground_cycle_contract_addr,
-        );
+        let contracts_client =
+            Client::new(provider.clone(), agreement_contract_addr, ground_cycle_contract_addr);
         Ok(Self {
             provider,
             chain_id,
@@ -201,10 +184,7 @@ impl App {
         let wallet = LocalWallet::from_str(&station_private_key)?.with_chain_id(self.chain_id);
         let entity_address: Address = entity_address.parse()?;
         let amount = parse_ether(amount)?;
-        let create_call = self
-            .contracts_client
-            .agreement(wallet)
-            .create(entity_address, amount);
+        let create_call = self.contracts_client.agreement(wallet).create(entity_address, amount);
         let call_res = create_call.send().await;
         check_contract_res(call_res)?.await?;
         Ok(())
@@ -219,10 +199,7 @@ impl App {
         let wallet = LocalWallet::from_str(&entity_private_key)?.with_chain_id(self.chain_id);
         let station_address: Address = station_address.parse()?;
         let amount = parse_ether(amount)?;
-        let sign_call = self
-            .contracts_client
-            .agreement(wallet)
-            .sign(station_address, amount);
+        let sign_call = self.contracts_client.agreement(wallet).sign(station_address, amount);
         let call_res = sign_call.send().await;
         check_contract_res(call_res)?.await?;
         Ok(())
@@ -251,8 +228,7 @@ impl App {
         let call_res = landing_call.send().await;
         check_contract_res(call_res)?.await?;
         info!("drone landed successfully, waiting for confirmation by station");
-        self.wait_for_reject(drone_private_key, station_address, block_number)
-            .await?;
+        self.wait_for_reject(drone_private_key, station_address, block_number).await?;
         Ok(())
     }
 
@@ -281,19 +257,13 @@ impl App {
         let call_res = landing_call.send().await;
         check_contract_res(call_res)?.await?;
         info!("station landed successfully, waiting for confirmation by drone");
-        self.wait_for_reject(station_private_key, wallet.address(), block_number)
-            .await?;
+        self.wait_for_reject(station_private_key, wallet.address(), block_number).await?;
         Ok(())
     }
 
     async fn takeoff(&self, station_private_key: String) -> Result<(), Error> {
         let wallet = LocalWallet::from_str(&station_private_key)?.with_chain_id(self.chain_id);
-        self.contracts_client
-            .ground_cycle(wallet)
-            .takeoff()
-            .send()
-            .await?
-            .await?;
+        self.contracts_client.ground_cycle(wallet).takeoff().send().await?.await?;
         Ok(())
     }
 
@@ -384,14 +354,8 @@ impl App {
             info!("waiting for landing approval");
             time::sleep(Duration::from_secs(1)).await;
         }
-        warn!(
-            "no approved landing for {}s, starting for landing reject",
-            self.landing_wait_time
-        );
-        let reject_call = self
-            .contracts_client
-            .ground_cycle(wallet)
-            .reject(station_address);
+        warn!("no approved landing for {}s, starting for landing reject", self.landing_wait_time);
+        let reject_call = self.contracts_client.ground_cycle(wallet).reject(station_address);
         let call_res = reject_call.send().await;
         check_contract_res(call_res)?.await?;
         warn!("successfully rejected landing");
@@ -538,10 +502,7 @@ mod tests {
 
     #[tokio::test]
     async fn all() {
-        env_logger::builder()
-            .filter_level(LevelFilter::Trace)
-            .is_test(true)
-            .init();
+        env_logger::builder().filter_level(LevelFilter::Trace).is_test(true).init();
 
         // Client to Ethereum node.
         let provider: Provider<Http> = Provider::<Http>::try_from(RPC_URL).unwrap();
@@ -549,15 +510,12 @@ mod tests {
         let agreement_contract_addr: Address = AGREEMENT_CONTRACT_ADDR.parse().unwrap();
         let ground_cycle_contract_addr: Address = GROUND_CYCLE_CONTRACT_ADDR.parse().unwrap();
 
-        let drone_wallet: LocalWallet = LocalWallet::from_str(DRONE_PRIVATE_KEY)
-            .unwrap()
-            .with_chain_id(CHAIN_ID);
-        let station_wallet: LocalWallet = LocalWallet::from_str(STATION_PRIVATE_KEY)
-            .unwrap()
-            .with_chain_id(CHAIN_ID);
-        let landlord_wallet: LocalWallet = LocalWallet::from_str(LANDLORD_PRIVATE_KEY)
-            .unwrap()
-            .with_chain_id(CHAIN_ID);
+        let drone_wallet: LocalWallet =
+            LocalWallet::from_str(DRONE_PRIVATE_KEY).unwrap().with_chain_id(CHAIN_ID);
+        let station_wallet: LocalWallet =
+            LocalWallet::from_str(STATION_PRIVATE_KEY).unwrap().with_chain_id(CHAIN_ID);
+        let landlord_wallet: LocalWallet =
+            LocalWallet::from_str(LANDLORD_PRIVATE_KEY).unwrap().with_chain_id(CHAIN_ID);
 
         debug!("drone wallet address: {:?}", drone_wallet.address());
         debug!("station wallet address: {:?}", station_wallet.address());
@@ -567,29 +525,18 @@ mod tests {
         let drone_station_amount: U256 = parse_ether(3).unwrap();
         let station_landlord_amount: U256 = parse_ether(5).unwrap();
 
-        let agreement_contract_balance = provider
-            .get_balance(agreement_contract_addr, None)
-            .await
-            .unwrap();
+        let agreement_contract_balance =
+            provider.get_balance(agreement_contract_addr, None).await.unwrap();
         assert!(agreement_contract_balance.is_zero());
-        let drone_balance_before = provider
-            .get_balance(drone_wallet.address(), None)
-            .await
-            .unwrap();
-        let station_balance_before = provider
-            .get_balance(station_wallet.address(), None)
-            .await
-            .unwrap();
-        let landlord_balance_before = provider
-            .get_balance(landlord_wallet.address(), None)
-            .await
-            .unwrap();
+        let drone_balance_before =
+            provider.get_balance(drone_wallet.address(), None).await.unwrap();
+        let station_balance_before =
+            provider.get_balance(station_wallet.address(), None).await.unwrap();
+        let landlord_balance_before =
+            provider.get_balance(landlord_wallet.address(), None).await.unwrap();
 
-        let contracts_client = Client::new(
-            provider.clone(),
-            agreement_contract_addr,
-            ground_cycle_contract_addr,
-        );
+        let contracts_client =
+            Client::new(provider.clone(), agreement_contract_addr, ground_cycle_contract_addr);
 
         /*
             Create agreements.
@@ -672,14 +619,8 @@ mod tests {
             .call()
             .await
             .unwrap();
-        debug!(
-            "agreement between drone and station: {:?}",
-            drone_station_agreement
-        );
-        assert_eq!(
-            AgreementStatus::Signed,
-            drone_station_agreement.status.into()
-        );
+        debug!("agreement between drone and station: {:?}", drone_station_agreement);
+        assert_eq!(AgreementStatus::Signed, drone_station_agreement.status.into());
         assert_eq!(drone_station_amount, drone_station_agreement.amount);
 
         // Get station - landlord agreement.
@@ -689,14 +630,8 @@ mod tests {
             .call()
             .await
             .unwrap();
-        debug!(
-            "agreement between station and landlord: {:?}",
-            station_landlord_agreement
-        );
-        assert_eq!(
-            AgreementStatus::Signed,
-            station_landlord_agreement.status.into()
-        );
+        debug!("agreement between station and landlord: {:?}", station_landlord_agreement);
+        assert_eq!(AgreementStatus::Signed, station_landlord_agreement.status.into());
         assert_eq!(station_landlord_amount, station_landlord_agreement.amount);
 
         /*
@@ -744,22 +679,13 @@ mod tests {
             Check balances.
         */
 
-        let agreement_contract_balance = provider
-            .get_balance(agreement_contract_addr, None)
-            .await
-            .unwrap();
-        let drone_balance_after = provider
-            .get_balance(drone_wallet.address(), None)
-            .await
-            .unwrap();
-        let station_balance_after = provider
-            .get_balance(station_wallet.address(), None)
-            .await
-            .unwrap();
-        let landlord_balance_after = provider
-            .get_balance(landlord_wallet.address(), None)
-            .await
-            .unwrap();
+        let agreement_contract_balance =
+            provider.get_balance(agreement_contract_addr, None).await.unwrap();
+        let drone_balance_after = provider.get_balance(drone_wallet.address(), None).await.unwrap();
+        let station_balance_after =
+            provider.get_balance(station_wallet.address(), None).await.unwrap();
+        let landlord_balance_after =
+            provider.get_balance(landlord_wallet.address(), None).await.unwrap();
 
         debug!("{:?}", format_ether(drone_balance_after));
         debug!("{:?}", format_ether(station_balance_after));
