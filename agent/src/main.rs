@@ -10,7 +10,7 @@ use contracts::Agreement;
 use ethers::{
     contract::{ContractError, EthLogDecode, Event},
     middleware::SignerMiddleware,
-    providers::{Http, Middleware, PendingTransaction, Provider},
+    providers::{Http, Middleware, Provider},
     signers::LocalWallet,
     signers::Signer,
     types::{Address, Filter, H256},
@@ -265,8 +265,9 @@ impl App {
     ) -> Result<(), Error> {
         let wallet = LocalWallet::from_str(&drone_private_key)?.with_chain_id(self.chain_id);
         let station_address: Address = station_address.parse()?;
-        let agreement: Agreement =
-            self.contracts_client.agreement().get(station_address, wallet.address()).call().await?;
+        let agreement = check_contract_res(
+            self.contracts_client.agreement().get(station_address, wallet.address()).call().await,
+        )?;
         let block_number = self.provider.get_block_number().await?.as_u64();
         info!(
             "starting landing by drone from block {} with agreement amount {}",
@@ -294,12 +295,9 @@ impl App {
         let wallet = LocalWallet::from_str(&station_private_key)?.with_chain_id(self.chain_id);
         let drone_address: Address = drone_address.parse()?;
         let landlord_address: Address = landlord_address.parse()?;
-        let agreement: Agreement = self
-            .contracts_client
-            .agreement()
-            .get(wallet.address(), landlord_address)
-            .call()
-            .await?;
+        let agreement: Agreement = check_contract_res(
+            self.contracts_client.agreement().get(wallet.address(), landlord_address).call().await,
+        )?;
         let block_number = self.provider.get_block_number().await?.as_u64();
         info!("starting landing by station");
         let landing_call = self
@@ -484,17 +482,12 @@ impl From<u8> for AgreementStatus {
     }
 }
 
-fn check_contract_res(
-    res: Result<
-        PendingTransaction<Http>,
-        ContractError<SignerMiddleware<Provider<Http>, LocalWallet>>,
-    >,
-) -> Result<PendingTransaction<Http>, Error> {
+fn check_contract_res<T, P: Middleware>(res: Result<T, ContractError<P>>) -> Result<T, Error> {
     match res {
         Ok(res) => Ok(res),
         Err(e) => {
             if !e.is_revert() {
-                return Err(e.into());
+                return Err(e.to_string().into());
             }
             if let Some(contract_err) = e.decode_contract_revert::<AgreementContractErrors>() {
                 return Err(match contract_err {
@@ -533,11 +526,14 @@ fn check_contract_res(
                     GroundCycleContractErrors::ErrRejectTooEarly(_) => {
                         "reject is too early, wait more time".to_string()
                     }
+                    GroundCycleContractErrors::ErrTakeoffRequired(_) => {
+                        "it is required to takeoff first before doing landing".to_string()
+                    }
                     GroundCycleContractErrors::RevertString(e) => e,
                 }
                 .into());
             }
-            Err(e.into())
+            Err(e.to_string().into())
         }
     }
 }
@@ -547,7 +543,11 @@ mod tests {
     use std::time::Duration;
 
     use assertables::{assert_in_delta, assert_in_delta_as_result};
-    use ethers::{providers::Middleware, signers::Signer, types::U256};
+    use ethers::{
+        providers::{Middleware, PendingTransaction},
+        signers::Signer,
+        types::U256,
+    };
     use log::debug;
 
     use crate::contracts::{Agreement, AgreementContractEvents, GroundCycleContractEvents};
