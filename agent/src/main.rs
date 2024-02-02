@@ -13,8 +13,8 @@ use ethers::{
     providers::{Http, Middleware, PendingTransaction, Provider},
     signers::LocalWallet,
     signers::Signer,
-    types::Address,
-    utils::{format_ether, parse_ether},
+    types::{Address, Filter, H256},
+    utils::{format_ether, keccak256, parse_ether},
 };
 use log::{info, warn, LevelFilter};
 use tokio::time;
@@ -114,6 +114,7 @@ enum Commands {
     },
 }
 
+#[derive(Default)]
 struct Config {
     rpc_url: String,
     chain_id: u64,
@@ -129,13 +130,8 @@ impl Config {
         agreement_contract_addr: Option<String>,
         ground_cycle_contract_addr: Option<String>,
     ) -> Self {
-        match env.as_str() {
-            "custom" => Self {
-                rpc_url: rpc_url.unwrap(),
-                chain_id: chain_id.unwrap(),
-                agreement_contract_addr: agreement_contract_addr.unwrap(),
-                ground_cycle_contract_addr: ground_cycle_contract_addr.unwrap(),
-            },
+        let mut cfg = match env.as_str() {
+            "custom" => Self::default(),
             "local" => Self {
                 rpc_url: "http://127.0.0.1:8545".to_string(),
                 chain_id: 31337,
@@ -150,8 +146,21 @@ impl Config {
                 ground_cycle_contract_addr: "0x9D78aBf1Da69F46227E136Be06d2F1b4a0aaEc52"
                     .to_string(),
             },
-            _ => todo!(),
+            _ => unimplemented!(),
+        };
+        if let Some(rpc_url) = rpc_url {
+            cfg.rpc_url = rpc_url;
         }
+        if let Some(chain_id) = chain_id {
+            cfg.chain_id = chain_id;
+        }
+        if let Some(agreement_contract_addr) = agreement_contract_addr {
+            cfg.agreement_contract_addr = agreement_contract_addr
+        }
+        if let Some(ground_cycle_contract_addr) = ground_cycle_contract_addr {
+            cfg.ground_cycle_contract_addr = ground_cycle_contract_addr
+        }
+        cfg
     }
 }
 
@@ -314,12 +323,29 @@ impl App {
     async fn events(&self, from_block: u64) -> Result<(), Error> {
         let to_block = self.provider.get_block_number().await?.as_u64();
 
+        info!("getting events from agreement smart contract without generated client");
+        let agreement_created_hash = H256::from(keccak256("Created(address,address)".as_bytes()));
+        let agreement_signed_hash = H256::from(keccak256("Signed(address,address)".as_bytes()));
+        let filter = Filter::new().address(self.contracts_client.agreement_addr).from_block(0);
+        let logs = self.provider.get_logs(&filter).await?;
+        for log in logs {
+            let topic0 = log.topics[0];
+            let token0 = Address::from(log.topics[1]);
+            let token1 = Address::from(log.topics[2]);
+            if topic0 == agreement_created_hash {
+                info!("agreement was created between {:?} and {:?}", token0, token1);
+            } else if topic0 == agreement_signed_hash {
+                info!("agreement was signed between {:?} and {:?}", token0, token1);
+            } else {
+                warn!("unknown topic0 for agreement smart contract log");
+            }
+        }
+
         info!("agreement smart contract events");
-        Self::print_events(self.contracts_client.agreement().events(), from_block, to_block)
-            .await?;
+        Self::read_events(self.contracts_client.agreement().events(), from_block, to_block).await?;
 
         info!("ground cycle smart contract events");
-        Self::print_events(self.contracts_client.ground_cycle().events(), from_block, to_block)
+        Self::read_events(self.contracts_client.ground_cycle().events(), from_block, to_block)
             .await?;
 
         Ok(())
@@ -358,7 +384,7 @@ impl App {
                 if to_block > stop_block {
                     break;
                 }
-                from_block = to_block;
+                from_block = to_block + 1;
             }
             if started.elapsed().unwrap() > Duration::from_secs(self.landing_wait_time) {
                 break;
@@ -374,7 +400,7 @@ impl App {
         Ok(())
     }
 
-    async fn print_events<D: EthLogDecode + Debug>(
+    async fn read_events<D: EthLogDecode + Debug>(
         mut client: Event<Arc<Provider<Http>>, Provider<Http>, D>,
         start_block: u64,
         stop_block: u64,
@@ -390,7 +416,7 @@ impl App {
             if to_block > stop_block {
                 break;
             }
-            from_block = to_block;
+            from_block = to_block + 1;
         }
         Ok(())
     }
