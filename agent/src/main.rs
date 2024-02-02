@@ -16,8 +16,9 @@ use ethers::{
     types::{Address, Filter, H256},
     utils::{format_ether, keccak256, parse_ether},
 };
-use log::{info, warn, LevelFilter};
-use tokio::time;
+use log::{debug, error, info, warn, LevelFilter};
+use serde::Deserialize;
+use tokio::time::{self, sleep};
 
 use crate::contracts::{
     AgreementContract, AgreementContractErrors, GroundCycleContract, GroundCycleContractErrors,
@@ -166,7 +167,10 @@ impl Config {
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    env_logger::builder().filter_level(LevelFilter::Debug).init();
+    env_logger::builder()
+        .filter_level(LevelFilter::Off)
+        .filter_module("agent", LevelFilter::Debug)
+        .init();
     let cli = Cli::parse();
     let cfg = Config::new(
         cli.env,
@@ -534,6 +538,59 @@ fn check_contract_res<T, P: Middleware>(res: Result<T, ContractError<P>>) -> Res
                 .into());
             }
             Err(e.to_string().into())
+        }
+    }
+}
+
+async fn ffmpeg_scan_qr_code() -> Result<String, Error> {
+    let mut cmd = std::process::Command::new("ffmpeg");
+    cmd.args(vec![
+        "-f",
+        "avfoundation",
+        "-pixel_format",
+        "yuyv422",
+        "-probesize",
+        "16M",
+        "-r",
+        "30",
+        "-i",
+        "0:none",
+        "-update",
+        "1",
+        "-vframes",
+        "1",
+        "-f",
+        "apng",
+        "pipe:",
+    ]);
+    #[derive(Deserialize)]
+    struct QrCodeOutput {
+        address: String,
+    }
+    let decoder = bardecoder::default_decoder();
+    loop {
+        let output = cmd.output()?;
+        if !output.status.success() {
+            error!("failed to scan camera output");
+            sleep(Duration::from_secs(1)).await;
+            continue;
+        }
+        let img = image::load_from_memory(&output.stdout)?;
+        let results = decoder.decode(&img);
+        if results.len() != 1 {
+            debug!("no available qr code; continue scanning camera output");
+            sleep(Duration::from_millis(250)).await;
+            continue;
+        }
+        if let Ok(result) = &results[0] {
+            match serde_json::from_str::<QrCodeOutput>(result) {
+                Ok(data) => return Ok(data.address),
+                Err(_) => {
+                    warn!("failed to decode json response from qr code output");
+                    sleep(Duration::from_millis(250)).await;
+                    continue;
+                }
+            }
         }
     }
 }
