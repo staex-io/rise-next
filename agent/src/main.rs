@@ -8,13 +8,13 @@ use std::{
 use clap::{Parser, Subcommand};
 use contracts::Agreement;
 use ethers::{
-    contract::ContractError,
+    contract::{ContractError, EthLogDecode, Event},
     middleware::SignerMiddleware,
     providers::{Http, Middleware, PendingTransaction, Provider},
     signers::LocalWallet,
     signers::Signer,
-    types::Address,
-    utils::{format_ether, parse_ether},
+    types::{Address, Filter, H256},
+    utils::{format_ether, keccak256, parse_ether},
 };
 use log::{info, warn, LevelFilter};
 use tokio::time;
@@ -26,6 +26,10 @@ use crate::contracts::{
 
 mod contracts;
 
+// We use this step when iterating over blocks
+// to get smart contract events from these blocks.
+const BLOCKS_STEP: u64 = 10;
+
 type Error = Box<dyn std::error::Error>;
 
 /// Command line utility to interact with RISE smart contracts.
@@ -35,32 +39,34 @@ type Error = Box<dyn std::error::Error>;
 struct Cli {
     /// RPC url to Ethereum node.
     #[arg(short, long)]
-    #[arg(default_value = "https://ethereum-sepolia.publicnode.com")]
-    rpc_url: String,
+    rpc_url: Option<String>,
     /// Ethereum node chain id.
     #[arg(short, long)]
-    #[arg(default_value = "11155111")]
-    chain_id: u64,
+    chain_id: Option<u64>,
     /// Agreement contract address.
     #[arg(short, long)]
-    #[arg(default_value = "0x61d6C8D1a59d2e191b5204EaA9C736017B963e95")]
-    agreement_contract_addr: String,
+    agreement_contract_addr: Option<String>,
     /// Ground cycle contract address.
     #[arg(short, long)]
-    #[arg(default_value = "0x9D78aBf1Da69F46227E136Be06d2F1b4a0aaEc52")]
-    ground_cycle_contract_addr: String,
+    ground_cycle_contract_addr: Option<String>,
     /// Landing wait time. How much time command should wait until
     /// landing will be approved to avoid landing rejection.
     /// Set it using seconds (ex: "300" as 5m).
     #[arg(short, long)]
     #[arg(default_value = "300")]
     landing_wait_time: u64,
+    /// Choose env with predefined config values.
+    /// Possible values: custom, local, sepolia.
+    #[arg(short, long)]
+    #[arg(default_value = "local")]
+    env: String,
     #[clap(subcommand)]
     command: Commands,
 }
 
 #[derive(Subcommand)]
 enum Commands {
+    /// Create agreement between station and entity.
     CreateAgreement {
         /// Station private key.
         station_private_key: String,
@@ -69,6 +75,7 @@ enum Commands {
         /// Amount in a form like "0.1" in ether.
         amount: String,
     },
+    /// Sign agreement between entity and station.
     SignAgreement {
         /// Drone or landlord private key.
         entity_private_key: String,
@@ -77,12 +84,14 @@ enum Commands {
         /// Amount in a form like "0.1" in ether.
         amount: String,
     },
+    /// Process landing by drone.
     LandingByDrone {
         /// Drone private key.
         drone_private_key: String,
         /// Station address.
         station_address: String,
     },
+    /// Process landing by station.
     LandingByStation {
         /// Station private key.
         station_private_key: String,
@@ -91,13 +100,13 @@ enum Commands {
         /// Landlord address.
         landlord_address: String,
     },
+    /// Process Takeoff by station.
     Takeoff {
         /// Station private key.
         station_private_key: String,
     },
+    /// Show events from smart contracts.
     Events {
-        /// Use any private key.
-        private_key: String,
         /// Choose block to start query from.
         #[arg(short, long)]
         #[arg(default_value = "4807184")]
@@ -105,17 +114,68 @@ enum Commands {
     },
 }
 
+#[derive(Default)]
+struct Config {
+    rpc_url: String,
+    chain_id: u64,
+    agreement_contract_addr: String,
+    ground_cycle_contract_addr: String,
+}
+
+impl Config {
+    fn new(
+        env: String,
+        rpc_url: Option<String>,
+        chain_id: Option<u64>,
+        agreement_contract_addr: Option<String>,
+        ground_cycle_contract_addr: Option<String>,
+    ) -> Self {
+        let mut cfg = match env.as_str() {
+            "custom" => Self::default(),
+            "local" => Self {
+                rpc_url: "http://127.0.0.1:8545".to_string(),
+                chain_id: 31337,
+                agreement_contract_addr: "0x5FbDB2315678afecb367f032d93F642f64180aa3".to_string(),
+                ground_cycle_contract_addr: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+                    .to_string(),
+            },
+            "sepolia" => Self {
+                rpc_url: "https://ethereum-sepolia.publicnode.com".to_string(),
+                chain_id: 11155111,
+                agreement_contract_addr: "0x61d6C8D1a59d2e191b5204EaA9C736017B963e95".to_string(),
+                ground_cycle_contract_addr: "0x9D78aBf1Da69F46227E136Be06d2F1b4a0aaEc52"
+                    .to_string(),
+            },
+            _ => unimplemented!(),
+        };
+        if let Some(rpc_url) = rpc_url {
+            cfg.rpc_url = rpc_url;
+        }
+        if let Some(chain_id) = chain_id {
+            cfg.chain_id = chain_id;
+        }
+        if let Some(agreement_contract_addr) = agreement_contract_addr {
+            cfg.agreement_contract_addr = agreement_contract_addr
+        }
+        if let Some(ground_cycle_contract_addr) = ground_cycle_contract_addr {
+            cfg.ground_cycle_contract_addr = ground_cycle_contract_addr
+        }
+        cfg
+    }
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     env_logger::builder().filter_level(LevelFilter::Debug).init();
     let cli = Cli::parse();
-    let app = App::new(
+    let cfg = Config::new(
+        cli.env,
         cli.rpc_url,
         cli.chain_id,
         cli.agreement_contract_addr,
         cli.ground_cycle_contract_addr,
-        cli.landing_wait_time,
-    )?;
+    );
+    let app = App::new(cfg, cli.landing_wait_time)?;
     match cli.command {
         Commands::CreateAgreement {
             station_private_key,
@@ -139,10 +199,7 @@ async fn main() -> Result<(), Error> {
         Commands::Takeoff {
             station_private_key,
         } => app.takeoff(station_private_key).await?,
-        Commands::Events {
-            private_key,
-            from_block,
-        } => app.events(&private_key, from_block).await?,
+        Commands::Events { from_block } => app.events(from_block).await?,
     }
     Ok(())
 }
@@ -155,21 +212,15 @@ struct App {
 }
 
 impl App {
-    fn new(
-        rpc_url: String,
-        chain_id: u64,
-        agreement_contract_addr: String,
-        ground_cycle_contract_addr: String,
-        landing_wait_time: u64,
-    ) -> Result<Self, Error> {
-        let provider: Provider<Http> = Provider::<Http>::try_from(rpc_url)?;
-        let agreement_contract_addr: Address = agreement_contract_addr.parse()?;
-        let ground_cycle_contract_addr: Address = ground_cycle_contract_addr.parse()?;
+    fn new(cfg: Config, landing_wait_time: u64) -> Result<Self, Error> {
+        let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url)?;
+        let agreement_contract_addr: Address = cfg.agreement_contract_addr.parse()?;
+        let ground_cycle_contract_addr: Address = cfg.ground_cycle_contract_addr.parse()?;
         let contracts_client =
             Client::new(provider.clone(), agreement_contract_addr, ground_cycle_contract_addr);
         Ok(Self {
             provider,
-            chain_id,
+            chain_id: cfg.chain_id,
             contracts_client,
             landing_wait_time,
         })
@@ -184,7 +235,8 @@ impl App {
         let wallet = LocalWallet::from_str(&station_private_key)?.with_chain_id(self.chain_id);
         let entity_address: Address = entity_address.parse()?;
         let amount = parse_ether(amount)?;
-        let create_call = self.contracts_client.agreement(wallet).create(entity_address, amount);
+        let create_call =
+            self.contracts_client.agreement_signer(wallet).create(entity_address, amount);
         let call_res = create_call.send().await;
         check_contract_res(call_res)?.await?;
         Ok(())
@@ -199,7 +251,8 @@ impl App {
         let wallet = LocalWallet::from_str(&entity_private_key)?.with_chain_id(self.chain_id);
         let station_address: Address = station_address.parse()?;
         let amount = parse_ether(amount)?;
-        let sign_call = self.contracts_client.agreement(wallet).sign(station_address, amount);
+        let sign_call =
+            self.contracts_client.agreement_signer(wallet).sign(station_address, amount);
         let call_res = sign_call.send().await;
         check_contract_res(call_res)?.await?;
         Ok(())
@@ -212,17 +265,17 @@ impl App {
     ) -> Result<(), Error> {
         let wallet = LocalWallet::from_str(&drone_private_key)?.with_chain_id(self.chain_id);
         let station_address: Address = station_address.parse()?;
-        let agreement: Agreement = self
-            .contracts_client
-            .agreement(wallet.clone())
-            .get(station_address, wallet.address())
-            .call()
-            .await?;
+        let agreement: Agreement =
+            self.contracts_client.agreement().get(station_address, wallet.address()).call().await?;
         let block_number = self.provider.get_block_number().await?.as_u64();
-        info!("starting landing by drone");
+        info!(
+            "starting landing by drone from block {} with agreement amount {}",
+            block_number,
+            format_ether(agreement.amount)
+        );
         let landing_call = self
             .contracts_client
-            .ground_cycle(wallet)
+            .ground_cycle_signer(wallet)
             .landing_by_drone(station_address)
             .value(agreement.amount);
         let call_res = landing_call.send().await;
@@ -243,7 +296,7 @@ impl App {
         let landlord_address: Address = landlord_address.parse()?;
         let agreement: Agreement = self
             .contracts_client
-            .agreement(wallet.clone())
+            .agreement()
             .get(wallet.address(), landlord_address)
             .call()
             .await?;
@@ -251,7 +304,7 @@ impl App {
         info!("starting landing by station");
         let landing_call = self
             .contracts_client
-            .ground_cycle(wallet.clone())
+            .ground_cycle_signer(wallet.clone())
             .landing_by_station(drone_address, landlord_address)
             .value(agreement.amount);
         let call_res = landing_call.send().await;
@@ -263,54 +316,38 @@ impl App {
 
     async fn takeoff(&self, station_private_key: String) -> Result<(), Error> {
         let wallet = LocalWallet::from_str(&station_private_key)?.with_chain_id(self.chain_id);
-        self.contracts_client.ground_cycle(wallet).takeoff().send().await?.await?;
+        self.contracts_client.ground_cycle_signer(wallet).takeoff().send().await?.await?;
         Ok(())
     }
 
-    async fn events(&self, private_key: &str, from_block: u64) -> Result<(), Error> {
-        let wallet = LocalWallet::from_str(private_key)?.with_chain_id(self.chain_id);
-        const STEP: u64 = 50_000;
-        let stop_block = self.provider.get_block_number().await?.as_u64();
-        {
-            let mut start_from = from_block;
-            loop {
-                let events = self
-                    .contracts_client
-                    .agreement(wallet.clone())
-                    .events()
-                    .from_block(start_from)
-                    .to_block(start_from + STEP)
-                    .query()
-                    .await?;
-                for event in events {
-                    info!("{:?}", event);
-                }
-                if start_from + STEP > stop_block {
-                    break;
-                }
-                start_from += STEP;
+    async fn events(&self, from_block: u64) -> Result<(), Error> {
+        let to_block = self.provider.get_block_number().await?.as_u64();
+
+        info!("getting events from agreement smart contract without generated client");
+        let agreement_created_hash = H256::from(keccak256("Created(address,address)".as_bytes()));
+        let agreement_signed_hash = H256::from(keccak256("Signed(address,address)".as_bytes()));
+        let filter = Filter::new().address(self.contracts_client.agreement_addr).from_block(0);
+        let logs = self.provider.get_logs(&filter).await?;
+        for log in logs {
+            let topic0 = log.topics[0];
+            let token0 = Address::from(log.topics[1]);
+            let token1 = Address::from(log.topics[2]);
+            if topic0 == agreement_created_hash {
+                info!("agreement was created between {:?} and {:?}", token0, token1);
+            } else if topic0 == agreement_signed_hash {
+                info!("agreement was signed between {:?} and {:?}", token0, token1);
+            } else {
+                warn!("unknown topic0 for agreement smart contract log");
             }
         }
-        {
-            let mut start_from = from_block;
-            loop {
-                let events = self
-                    .contracts_client
-                    .ground_cycle(wallet.clone())
-                    .events()
-                    .from_block(start_from)
-                    .to_block(start_from + STEP)
-                    .query()
-                    .await?;
-                for event in events {
-                    info!("{:?}", event);
-                }
-                if start_from + STEP > stop_block {
-                    break;
-                }
-                start_from += STEP;
-            }
-        }
+
+        info!("agreement smart contract events");
+        Self::read_events(self.contracts_client.agreement().events(), from_block, to_block).await?;
+
+        info!("ground cycle smart contract events");
+        Self::read_events(self.contracts_client.ground_cycle().events(), from_block, to_block)
+            .await?;
+
         Ok(())
     }
 
@@ -318,21 +355,22 @@ impl App {
         &self,
         private_key: String,
         station_address: Address,
-        block_number: u64,
+        start_block: u64,
     ) -> Result<(), Error> {
         let started = SystemTime::now();
         let wallet = LocalWallet::from_str(&private_key)?.with_chain_id(self.chain_id);
-        const STEP: u64 = 50_000;
         loop {
-            let mut start_from = block_number;
+            // Get latest block in a chain.
             let stop_block = self.provider.get_block_number().await?.as_u64();
+            let mut from_block = start_block;
             loop {
+                let to_block = from_block + BLOCKS_STEP;
                 let events = self
                     .contracts_client
-                    .ground_cycle(wallet.clone())
+                    .ground_cycle()
                     .events()
-                    .from_block(start_from)
-                    .to_block(start_from + STEP)
+                    .from_block(from_block)
+                    .to_block(to_block)
                     .query()
                     .await?;
                 for event in events {
@@ -343,10 +381,10 @@ impl App {
                         }
                     }
                 }
-                if start_from + STEP > stop_block {
+                if to_block > stop_block {
                     break;
                 }
-                start_from += STEP;
+                from_block = to_block + 1;
             }
             if started.elapsed().unwrap() > Duration::from_secs(self.landing_wait_time) {
                 break;
@@ -355,10 +393,31 @@ impl App {
             time::sleep(Duration::from_secs(1)).await;
         }
         warn!("no approved landing for {}s, starting for landing reject", self.landing_wait_time);
-        let reject_call = self.contracts_client.ground_cycle(wallet).reject(station_address);
+        let reject_call = self.contracts_client.ground_cycle_signer(wallet).reject(station_address);
         let call_res = reject_call.send().await;
         check_contract_res(call_res)?.await?;
         warn!("successfully rejected landing");
+        Ok(())
+    }
+
+    async fn read_events<D: EthLogDecode + Debug>(
+        mut client: Event<Arc<Provider<Http>>, Provider<Http>, D>,
+        start_block: u64,
+        stop_block: u64,
+    ) -> Result<(), Error> {
+        let mut from_block = start_block;
+        loop {
+            let to_block = from_block + BLOCKS_STEP;
+            client = client.from_block(from_block).to_block(to_block);
+            let events = client.query().await?;
+            for event in events {
+                info!("{:?}", event);
+            }
+            if to_block > stop_block {
+                break;
+            }
+            from_block = to_block + 1;
+        }
         Ok(())
     }
 }
@@ -379,7 +438,11 @@ impl Client {
         }
     }
 
-    fn agreement(
+    fn agreement(&self) -> AgreementContract<Provider<Http>> {
+        AgreementContract::new(self.agreement_addr, Arc::new(self.provider.clone()))
+    }
+
+    fn agreement_signer(
         &self,
         wallet: LocalWallet,
     ) -> AgreementContract<SignerMiddleware<Provider<Http>, LocalWallet>> {
@@ -387,7 +450,11 @@ impl Client {
         AgreementContract::new(self.agreement_addr, client)
     }
 
-    fn ground_cycle(
+    fn ground_cycle(&self) -> GroundCycleContract<Provider<Http>> {
+        GroundCycleContract::new(self.ground_cycle_addr, Arc::new(self.provider.clone()))
+    }
+
+    fn ground_cycle_signer(
         &self,
         wallet: LocalWallet,
     ) -> GroundCycleContract<SignerMiddleware<Provider<Http>, LocalWallet>> {
@@ -487,12 +554,16 @@ mod tests {
 
     use super::*;
 
+    // Default Anvil local RPC address.
     const RPC_URL: &str = "http://127.0.0.1:8545";
+    // Default Anvil local chain id.
     const CHAIN_ID: u64 = 31337;
 
+    // Default contracts addresses after deploy to local Anvil node.
     const AGREEMENT_CONTRACT_ADDR: &str = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
     const GROUND_CYCLE_CONTRACT_ADDR: &str = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 
+    // Default private keys from Anvil node.
     const DRONE_PRIVATE_KEY: &str =
         "0x4bbbf85ce3377467afe5d46f804f221813b2bb87f24d81f60f1fcdbf7cbf4356";
     const STATION_PRIVATE_KEY: &str =
@@ -502,6 +573,7 @@ mod tests {
 
     #[tokio::test]
     async fn all() {
+        eprintln!(); // insert first \n before testing logs
         env_logger::builder().filter_level(LevelFilter::Trace).is_test(true).init();
 
         // Client to Ethereum node.
@@ -545,7 +617,7 @@ mod tests {
         // Create drone - station agreement.
         debug!("creating drone - station agreement");
         let create_agreement_call = contracts_client
-            .agreement(station_wallet.clone())
+            .agreement_signer(station_wallet.clone())
             .create(drone_wallet.address(), drone_station_amount);
         let pending_tx: PendingTransaction<Http> = create_agreement_call.send().await.unwrap();
         let tx = pending_tx
@@ -566,7 +638,7 @@ mod tests {
         // Create station - landlord agreement.
         debug!("creating station - landlord agreement");
         let create_agreement_call = contracts_client
-            .agreement(station_wallet.clone())
+            .agreement_signer(station_wallet.clone())
             .create(landlord_wallet.address(), station_landlord_amount);
         let pending_tx: PendingTransaction<Http> = create_agreement_call.send().await.unwrap();
         let tx = pending_tx
@@ -590,7 +662,7 @@ mod tests {
 
         debug!("signing drone - station agreement");
         contracts_client
-            .agreement(drone_wallet.clone())
+            .agreement_signer(drone_wallet.clone())
             .sign(station_wallet.address(), drone_station_amount)
             .send()
             .await
@@ -600,7 +672,7 @@ mod tests {
 
         debug!("signing station - landlord agreement");
         contracts_client
-            .agreement(landlord_wallet.clone())
+            .agreement_signer(landlord_wallet.clone())
             .sign(station_wallet.address(), station_landlord_amount)
             .send()
             .await
@@ -614,7 +686,7 @@ mod tests {
 
         // Get drone - station agreement.
         let drone_station_agreement: Agreement = contracts_client
-            .agreement(station_wallet.clone())
+            .agreement()
             .get(station_wallet.address(), drone_wallet.address())
             .call()
             .await
@@ -625,7 +697,7 @@ mod tests {
 
         // Get station - landlord agreement.
         let station_landlord_agreement: Agreement = contracts_client
-            .agreement(station_wallet.clone())
+            .agreement()
             .get(station_wallet.address(), landlord_wallet.address())
             .call()
             .await
@@ -640,7 +712,7 @@ mod tests {
 
         debug!("starting drone landing");
         let landing_by_drone_call = contracts_client
-            .ground_cycle(drone_wallet.clone())
+            .ground_cycle_signer(drone_wallet.clone())
             .landing_by_drone(station_wallet.address())
             .value(drone_station_amount);
         let call_res = landing_by_drone_call.send().await;
@@ -653,7 +725,7 @@ mod tests {
 
         debug!("starting station landing");
         let landing_by_station_call = contracts_client
-            .ground_cycle(station_wallet.clone())
+            .ground_cycle_signer(station_wallet.clone())
             .landing_by_station(station_wallet.address(), landlord_wallet.address())
             .value(station_landlord_amount);
         let call_res = landing_by_station_call.send().await;
@@ -666,7 +738,7 @@ mod tests {
 
         debug!("starting takeoff");
         contracts_client
-            .ground_cycle(station_wallet.clone())
+            .ground_cycle_signer(station_wallet.clone())
             .takeoff()
             .send()
             .await
@@ -712,13 +784,8 @@ mod tests {
             Check events.
         */
 
-        let agreement_contract_events = contracts_client
-            .agreement(station_wallet.clone())
-            .events()
-            .from_block(0)
-            .query()
-            .await
-            .unwrap();
+        let agreement_contract_events =
+            contracts_client.agreement().events().from_block(0).query().await.unwrap();
         assert_eq!(4, agreement_contract_events.len());
         for (i, event) in agreement_contract_events.iter().enumerate() {
             match event {
@@ -747,13 +814,8 @@ mod tests {
             }
         }
 
-        let ground_cycle_contract_events = contracts_client
-            .ground_cycle(station_wallet.clone())
-            .events()
-            .from_block(0)
-            .query()
-            .await
-            .unwrap();
+        let ground_cycle_contract_events =
+            contracts_client.ground_cycle().events().from_block(0).query().await.unwrap();
         assert_eq!(2, ground_cycle_contract_events.len());
         for event in ground_cycle_contract_events {
             match event {
