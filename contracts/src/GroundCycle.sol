@@ -9,6 +9,7 @@ error ErrNoApprovedLanding();
 error ErrAgreementNotSigned();
 error ErrRejectTooEarly();
 error ErrRejectApprovedLanding();
+error ErrTakeoffRequired();
 
 struct Info {
     // If id is not zero it means landing was approved and has an id.
@@ -44,6 +45,10 @@ contract GroundCycleContract {
     function landingByDrone(address payable station) external payable {
         checkAgreement(station, msg.sender);
         Info storage landing = landings[station];
+        // If landing id is not zero it means landing was approved.
+        if (landing.id != 0) {
+            revert ErrTakeoffRequired();
+        }
         // It means drone executed smart contract before station did it.
         if (landing.drone == address(0)) {
             // So we just save drone action and return to wait station exection.
@@ -63,6 +68,10 @@ contract GroundCycleContract {
     function landingByStation(address payable drone, address payable landlord) external payable {
         checkAgreement(msg.sender, landlord);
         Info storage landing = landings[msg.sender];
+        // If landing id is not zero it means landing was approved.
+        if (landing.id != 0) {
+            revert ErrTakeoffRequired();
+        }
         if (landing.drone == address(0)) {
             // It means there are landing from drone.
             landings[msg.sender] = Info(0, drone, payable(msg.sender), landlord, block.timestamp);

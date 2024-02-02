@@ -67,6 +67,7 @@ As now we use Sepolia testnet you can use this faucet for test tokens: https://s
 {
   "solidity.packageDefaultDependenciesContractsDirectory": "contracts/src",
   "solidity.packageDefaultDependenciesDirectory": "contracts/lib",
-  "solidity.formatter": "forge"
+  "solidity.formatter": "forge",
+  "solidity.compileUsingRemoteVersion": "v0.8.22",
 }
 ```

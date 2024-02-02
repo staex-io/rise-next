@@ -10,6 +10,7 @@ import {
     ErrAgreementNotSigned,
     ErrNoLanding,
     ErrRejectApprovedLanding,
+    ErrTakeoffRequired,
     ErrRejectTooEarly
 } from "../src/GroundCycle.sol";
 import {AgreementContract, ErrNoAgreement} from "../src/Agreement.sol";
@@ -162,6 +163,11 @@ contract GroundCycleTest is Test {
         vm.expectRevert(ErrRejectApprovedLanding.selector);
         groundCycleContract.reject(station.addr);
 
+        // Check that we can't execute landing twice without a takeoff.
+        vm.prank(drone.addr);
+        vm.expectRevert(ErrTakeoffRequired.selector);
+        groundCycleContract.landingByDrone{value: DRONE_STATION_AMOUNT}(payable(station.addr));
+
         /*
          Test takeoff
         */
@@ -250,6 +256,13 @@ contract GroundCycleTest is Test {
         assertEq(drone.addr, afterDroneLanding_2.drone);
         assertEq(station.addr, afterDroneLanding_2.station);
         assertEq(landlord.addr, afterDroneLanding_2.landlord);
+
+        // Check that we can't execute landing twice without a takeoff.
+        vm.prank(station.addr);
+        vm.expectRevert(ErrTakeoffRequired.selector);
+        groundCycleContract.landingByStation{value: STATION_LANDLORD_AMOUNT}(
+            payable(drone.addr), payable(landlord.addr)
+        );
 
         // Make takeoff for future tests.
         vm.prank(station.addr);
