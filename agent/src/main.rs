@@ -8,7 +8,7 @@ use std::{
 use clap::{Parser, Subcommand};
 use contracts::Agreement;
 use ethers::{
-    contract::ContractError,
+    contract::{ContractError, EthLogDecode, Event},
     middleware::SignerMiddleware,
     providers::{Http, Middleware, PendingTransaction, Provider},
     signers::LocalWallet,
@@ -25,6 +25,10 @@ use crate::contracts::{
 };
 
 mod contracts;
+
+// We use this step when iterating over blocks
+// to get smart contract events from these blocks.
+const BLOCKS_STEP: u64 = 10;
 
 type Error = Box<dyn std::error::Error>;
 
@@ -308,50 +312,16 @@ impl App {
     }
 
     async fn events(&self, from_block: u64) -> Result<(), Error> {
-        const STEP: u64 = 50_000;
-        let stop_block = self.provider.get_block_number().await?.as_u64();
-        {
-            info!("agreement smart contract events");
-            let mut start_from = from_block;
-            loop {
-                let events = self
-                    .contracts_client
-                    .agreement()
-                    .events()
-                    .from_block(start_from)
-                    .to_block(start_from + STEP)
-                    .query()
-                    .await?;
-                for event in events {
-                    info!("{:?}", event);
-                }
-                if start_from + STEP > stop_block {
-                    break;
-                }
-                start_from += STEP;
-            }
-        }
-        {
-            info!("ground cycle smart contract events");
-            let mut start_from = from_block;
-            loop {
-                let events = self
-                    .contracts_client
-                    .ground_cycle()
-                    .events()
-                    .from_block(start_from)
-                    .to_block(start_from + STEP)
-                    .query()
-                    .await?;
-                for event in events {
-                    info!("{:?}", event);
-                }
-                if start_from + STEP > stop_block {
-                    break;
-                }
-                start_from += STEP;
-            }
-        }
+        let to_block = self.provider.get_block_number().await?.as_u64();
+
+        info!("agreement smart contract events");
+        Self::print_events(self.contracts_client.agreement().events(), from_block, to_block)
+            .await?;
+
+        info!("ground cycle smart contract events");
+        Self::print_events(self.contracts_client.ground_cycle().events(), from_block, to_block)
+            .await?;
+
         Ok(())
     }
 
@@ -359,21 +329,22 @@ impl App {
         &self,
         private_key: String,
         station_address: Address,
-        block_number: u64,
+        start_block: u64,
     ) -> Result<(), Error> {
         let started = SystemTime::now();
         let wallet = LocalWallet::from_str(&private_key)?.with_chain_id(self.chain_id);
-        const STEP: u64 = 50_000;
         loop {
-            let mut start_from = block_number;
+            // Get latest block in a chain.
             let stop_block = self.provider.get_block_number().await?.as_u64();
+            let mut from_block = start_block;
             loop {
+                let to_block = from_block + BLOCKS_STEP;
                 let events = self
                     .contracts_client
                     .ground_cycle()
                     .events()
-                    .from_block(start_from)
-                    .to_block(start_from + STEP)
+                    .from_block(from_block)
+                    .to_block(to_block)
                     .query()
                     .await?;
                 for event in events {
@@ -384,10 +355,10 @@ impl App {
                         }
                     }
                 }
-                if start_from + STEP > stop_block {
+                if to_block > stop_block {
                     break;
                 }
-                start_from += STEP;
+                from_block = to_block;
             }
             if started.elapsed().unwrap() > Duration::from_secs(self.landing_wait_time) {
                 break;
@@ -400,6 +371,27 @@ impl App {
         let call_res = reject_call.send().await;
         check_contract_res(call_res)?.await?;
         warn!("successfully rejected landing");
+        Ok(())
+    }
+
+    async fn print_events<D: EthLogDecode + Debug>(
+        mut client: Event<Arc<Provider<Http>>, Provider<Http>, D>,
+        start_block: u64,
+        stop_block: u64,
+    ) -> Result<(), Error> {
+        let mut from_block = start_block;
+        loop {
+            let to_block = from_block + BLOCKS_STEP;
+            client = client.from_block(from_block).to_block(to_block);
+            let events = client.query().await?;
+            for event in events {
+                info!("{:?}", event);
+            }
+            if to_block > stop_block {
+                break;
+            }
+            from_block = to_block;
+        }
         Ok(())
     }
 }
