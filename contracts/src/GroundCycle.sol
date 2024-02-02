@@ -45,6 +45,7 @@ contract GroundCycleContract {
     function landingByDrone(address payable station) external payable {
         checkAgreement(station, msg.sender);
         Info storage landing = landings[station];
+        // If landing id is not zero it means landing was approved.
         if (landing.id != 0) {
             revert ErrTakeoffRequired();
         }
@@ -67,6 +68,7 @@ contract GroundCycleContract {
     function landingByStation(address payable drone, address payable landlord) external payable {
         checkAgreement(msg.sender, landlord);
         Info storage landing = landings[msg.sender];
+        // If landing id is not zero it means landing was approved.
         if (landing.id != 0) {
             revert ErrTakeoffRequired();
         }
