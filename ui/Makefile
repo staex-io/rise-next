@@ -1,6 +1,9 @@
 install:
 	./run.sh bun install
 
+new-dep:
+	./run.sh bun install $(name)
+
 fmt:
 	./run.sh bun format
 
