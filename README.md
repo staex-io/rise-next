@@ -71,3 +71,17 @@ As now we use Sepolia testnet you can use this faucet for test tokens: https://s
   "solidity.compileUsingRemoteVersion": "v0.8.22",
 }
 ```
+
+### Remote Linux setup without camera access
+
+#### Fedora
+
+```shell
+# Install video loopback and enable it.
+sudo dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+sudo dnf install v4l2loopback
+sudo modprobe v4l2loopback
+
+# Write some video to device.
+sudo ffmpeg -i video.mov -f v4l2 /dev/video0
+```

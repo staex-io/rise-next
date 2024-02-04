@@ -1,6 +1,6 @@
 use std::{
     fmt::Debug,
-    str::FromStr,
+    str::{from_utf8, FromStr},
     sync::Arc,
     time::{Duration, SystemTime},
 };
@@ -542,36 +542,18 @@ fn check_contract_res<T, P: Middleware>(res: Result<T, ContractError<P>>) -> Res
     }
 }
 
-async fn ffmpeg_scan_qr_code() -> Result<String, Error> {
-    let mut cmd = std::process::Command::new("ffmpeg");
-    cmd.args(vec![
-        "-f",
-        "avfoundation",
-        "-pixel_format",
-        "yuyv422",
-        "-probesize",
-        "16M",
-        "-r",
-        "30",
-        "-i",
-        "0:none",
-        "-update",
-        "1",
-        "-vframes",
-        "1",
-        "-f",
-        "apng",
-        "pipe:",
-    ]);
-    #[derive(Deserialize)]
-    struct QrCodeOutput {
-        address: String,
-    }
+#[derive(Deserialize)]
+struct QrCodeOutput {
+    address: String,
+}
+
+async fn scan_address() -> Result<String, Error> {
+    let mut cmd = ffmpeg_read_camera_cmd();
     let decoder = bardecoder::default_decoder();
     loop {
         let output = cmd.output()?;
         if !output.status.success() {
-            error!("failed to scan camera output");
+            error!("failed to scan camera output: {}", from_utf8(&output.stderr)?);
             sleep(Duration::from_secs(1)).await;
             continue;
         }
@@ -593,6 +575,42 @@ async fn ffmpeg_scan_qr_code() -> Result<String, Error> {
             }
         }
     }
+}
+
+#[cfg(target_os = "linux")]
+fn ffmpeg_read_camera_cmd() -> std::process::Command {
+    let mut cmd = std::process::Command::new("ffmpeg");
+    cmd.args(
+        "-f v4l2 -i /dev/video0 -vframes 1 -f image2pipe -c:v mjpeg -"
+            .split(' ')
+            .collect::<Vec<&str>>(),
+    );
+    cmd
+}
+
+#[cfg(target_os = "macos")]
+fn ffmpeg_read_camera_cmd() -> std::process::Command {
+    let mut cmd = std::process::Command::new("ffmpeg");
+    cmd.args(vec![
+        "-f",
+        "avfoundation",
+        "-pixel_format",
+        "yuyv422",
+        "-probesize",
+        "16M",
+        "-r",
+        "30",
+        "-i",
+        "0:none",
+        "-update",
+        "1",
+        "-vframes",
+        "1",
+        "-f",
+        "apng",
+        "pipe:",
+    ]);
+    cmd
 }
 
 #[cfg(test)]

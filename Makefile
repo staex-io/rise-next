@@ -2,7 +2,7 @@
 include .env
 
 build:
-	cd contracts && forge build
+	cd contracts && forge build --use 0.8.22
 	cd contracts && forge bind --overwrite --skip-build --single-file --module -b ../agent/src/contracts
 	{ echo '#![allow(warnings)]'; cat agent/src/contracts/mod.rs; } > agent/src/contracts/mod.rs_
 	rm -rf agent/src/contracts/mod.rs
