@@ -1,5 +1,5 @@
 fmt:
-	# We need nightly version to ignore contracts generated code.
+	@# We need nightly version to ignore contracts generated code.
 	cargo +nightly fmt
 
 lint: fmt

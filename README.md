@@ -2,6 +2,8 @@
 
 RISE (dRone InfraStructure paymEnts)
 
+[Docs](./docs/)
+
 ## Usage
 
 Setup .env file in project root folder to make Makefile target easier to user.
