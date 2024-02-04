@@ -91,17 +91,19 @@ enum Commands {
     LandingByDrone {
         /// Drone private key.
         drone_private_key: String,
-        /// Station address.
-        station_address: String,
+        /// Station address. Can be empty.
+        /// If empty agent tries to scan station address from camera.
+        station_address: Option<String>,
     },
     /// Process landing by station.
     LandingByStation {
         /// Station private key.
         station_private_key: String,
-        /// Drone address.
-        drone_address: String,
         /// Landlord address.
         landlord_address: String,
+        /// Drone address. Can be empty.
+        /// If empty agent tries to scan drone address from camera.
+        drone_address: Option<String>,
     },
     /// Process Takeoff by station.
     Takeoff {
@@ -267,10 +269,26 @@ impl App {
     async fn landing_by_drone(
         &self,
         drone_private_key: String,
-        station_address: String,
+        station_address: Option<String>,
     ) -> Result<(), Error> {
         let wallet = LocalWallet::from_str(&drone_private_key)?.with_chain_id(self.chain_id);
-        let station_address: Address = station_address.parse()?;
+        if let Some(station_address) = station_address {
+            // If station address is not None we need to execute landing method and exit.
+            let station_address: Address = station_address.parse()?;
+            self.landing_by_drone_(wallet, station_address).await
+        } else {
+            // If station address is None we are starting infinity node with camera support.
+            // todo: wait in a loop next landing and send signal on ctrl+c
+            let station_address = scan_address().await?;
+            self.landing_by_drone_(wallet, station_address).await
+        }
+    }
+
+    async fn landing_by_drone_(
+        &self,
+        wallet: LocalWallet,
+        station_address: Address,
+    ) -> Result<(), Error> {
         let agreement = check_contract_res(
             self.contracts_client.agreement().get(station_address, wallet.address()).call().await,
         )?;
@@ -282,30 +300,48 @@ impl App {
         );
         let landing_call = self
             .contracts_client
-            .ground_cycle_signer(wallet)
+            .ground_cycle_signer(wallet.clone())
             .landing_by_drone(station_address)
             .value(agreement.amount);
         let call_res = landing_call.send().await;
         check_contract_res(call_res)?.await?;
         info!("drone landed successfully, waiting for confirmation by station");
-        self.wait_for_reject(drone_private_key, station_address, block_number).await?;
-        Ok(())
+        self.wait_for_reject(wallet, station_address, block_number).await
     }
 
     async fn landing_by_station(
         &self,
         station_private_key: String,
-        drone_address: String,
+        drone_address: Option<String>,
         landlord_address: String,
     ) -> Result<(), Error> {
         let wallet = LocalWallet::from_str(&station_private_key)?.with_chain_id(self.chain_id);
-        let drone_address: Address = drone_address.parse()?;
         let landlord_address: Address = landlord_address.parse()?;
         let agreement: Agreement = check_contract_res(
             self.contracts_client.agreement().get(wallet.address(), landlord_address).call().await,
         )?;
-        let block_number = self.provider.get_block_number().await?.as_u64();
+        if let Some(drone_address) = drone_address {
+            // If drone address is not None we need to execute landing method and exit.
+            let drone_address: Address = drone_address.parse()?;
+            info!("execute landing by station and exit branch");
+            self.landing_by_station_(wallet, agreement, drone_address, landlord_address).await
+        } else {
+            // If drone address is None we are starting infinity node with camera support.
+            // todo: wait in a loop next landing and send signal on ctrl+c
+            let drone_address = scan_address().await?;
+            self.landing_by_station_(wallet, agreement, drone_address, landlord_address).await
+        }
+    }
+
+    async fn landing_by_station_(
+        &self,
+        wallet: LocalWallet,
+        agreement: Agreement,
+        drone_address: Address,
+        landlord_address: Address,
+    ) -> Result<(), Error> {
         info!("starting landing by station");
+        let block_number = self.provider.get_block_number().await?.as_u64();
         let landing_call = self
             .contracts_client
             .ground_cycle_signer(wallet.clone())
@@ -314,8 +350,7 @@ impl App {
         let call_res = landing_call.send().await;
         check_contract_res(call_res)?.await?;
         info!("station landed successfully, waiting for confirmation by drone");
-        self.wait_for_reject(station_private_key, wallet.address(), block_number).await?;
-        Ok(())
+        self.wait_for_reject(wallet.clone(), wallet.address(), block_number).await
     }
 
     async fn takeoff(&self, station_private_key: String) -> Result<(), Error> {
@@ -357,12 +392,11 @@ impl App {
 
     async fn wait_for_reject(
         &self,
-        private_key: String,
+        wallet: LocalWallet,
         station_address: Address,
         start_block: u64,
     ) -> Result<(), Error> {
         let started = SystemTime::now();
-        let wallet = LocalWallet::from_str(&private_key)?.with_chain_id(self.chain_id);
         loop {
             // Get latest block in a chain.
             let stop_block = self.provider.get_block_number().await?.as_u64();
@@ -549,7 +583,7 @@ struct QrCodeOutput {
     address: String,
 }
 
-async fn scan_address() -> Result<String, Error> {
+async fn scan_address() -> Result<Address, Error> {
     let mut cmd = ffmpeg_read_camera_cmd();
     let decoder = bardecoder::default_decoder();
     loop {
@@ -568,7 +602,13 @@ async fn scan_address() -> Result<String, Error> {
         }
         if let Ok(result) = &results[0] {
             match serde_json::from_str::<QrCodeOutput>(result) {
-                Ok(data) => return Ok(data.address),
+                Ok(data) => {
+                    if let Ok(address) = data.address.parse() {
+                        return Ok(address);
+                    } else {
+                        error!("address from qr code is invalid")
+                    }
+                }
                 Err(_) => {
                     warn!("failed to decode json response from qr code output");
                     sleep(Duration::from_millis(250)).await;
