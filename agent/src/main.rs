@@ -1,6 +1,8 @@
+#[cfg(target_os = "linux")]
+use std::str::from_utf8;
 use std::{
     fmt::Debug,
-    str::{from_utf8, FromStr},
+    str::FromStr,
     sync::Arc,
     time::{Duration, SystemTime},
 };
@@ -553,7 +555,7 @@ async fn scan_address() -> Result<String, Error> {
     loop {
         let output = cmd.output()?;
         if !output.status.success() {
-            error!("failed to scan camera output: {}", from_utf8(&output.stderr)?);
+            error!("failed to scan camera output");
             sleep(Duration::from_secs(1)).await;
             continue;
         }
@@ -591,25 +593,11 @@ fn ffmpeg_read_camera_cmd() -> std::process::Command {
 #[cfg(target_os = "macos")]
 fn ffmpeg_read_camera_cmd() -> std::process::Command {
     let mut cmd = std::process::Command::new("ffmpeg");
-    cmd.args(vec![
-        "-f",
-        "avfoundation",
-        "-pixel_format",
-        "yuyv422",
-        "-probesize",
-        "16M",
-        "-r",
-        "30",
-        "-i",
-        "0:none",
-        "-update",
-        "1",
-        "-vframes",
-        "1",
-        "-f",
-        "apng",
-        "pipe:",
-    ]);
+    cmd.args(
+        "-f avfoundation -pixel_format yuyv422 -probesize 16M -r 30 -i 0:none -update 1 -vframes 1 -f apng pipe:"
+        .split(' ')
+        .collect::<Vec<&str>>(),
+    );
     cmd
 }
 
