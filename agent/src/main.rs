@@ -213,7 +213,7 @@ async fn main() -> Result<(), Error> {
 struct App {
     provider: Provider<Http>,
     chain_id: u64,
-    contracts_client: Client,
+    contracts_client: Client<Provider<Http>>,
     landing_wait_time: u64,
 }
 
@@ -427,14 +427,17 @@ impl App {
 }
 
 // Client to interact with smart contract on behalf of face of some wallet.
-struct Client {
-    provider: Provider<Http>,
+struct Client<M> {
+    provider: M,
     agreement_addr: Address,
     ground_cycle_addr: Address,
 }
 
-impl Client {
-    fn new(provider: Provider<Http>, agreement_addr: Address, ground_cycle_addr: Address) -> Self {
+impl<M> Client<M>
+where
+    M: Middleware + Clone,
+{
+    fn new(provider: M, agreement_addr: Address, ground_cycle_addr: Address) -> Self {
         Self {
             provider,
             agreement_addr,
@@ -442,26 +445,23 @@ impl Client {
         }
     }
 
-    fn agreement(&self) -> AgreementContract<Provider<Http>> {
+    fn agreement(&self) -> AgreementContract<M> {
         AgreementContract::new(self.agreement_addr, Arc::new(self.provider.clone()))
     }
 
-    fn agreement_signer(
-        &self,
-        wallet: LocalWallet,
-    ) -> AgreementContract<SignerMiddleware<Provider<Http>, LocalWallet>> {
+    fn agreement_signer<S: Signer>(&self, wallet: S) -> AgreementContract<SignerMiddleware<M, S>> {
         let client = Arc::new(SignerMiddleware::new(self.provider.clone(), wallet));
         AgreementContract::new(self.agreement_addr, client)
     }
 
-    fn ground_cycle(&self) -> GroundCycleContract<Provider<Http>> {
+    fn ground_cycle(&self) -> GroundCycleContract<M> {
         GroundCycleContract::new(self.ground_cycle_addr, Arc::new(self.provider.clone()))
     }
 
-    fn ground_cycle_signer(
+    fn ground_cycle_signer<S: Signer>(
         &self,
-        wallet: LocalWallet,
-    ) -> GroundCycleContract<SignerMiddleware<Provider<Http>, LocalWallet>> {
+        wallet: S,
+    ) -> GroundCycleContract<SignerMiddleware<M, S>> {
         let client = Arc::new(SignerMiddleware::new(self.provider.clone(), wallet));
         GroundCycleContract::new(self.ground_cycle_addr, client)
     }
@@ -670,7 +670,7 @@ mod tests {
         let landlord_balance_before =
             provider.get_balance(landlord_wallet.address(), None).await.unwrap();
 
-        let contracts_client =
+        let contracts_client: Client<Provider<Http>> =
             Client::new(provider.clone(), agreement_contract_addr, ground_cycle_contract_addr);
 
         /*
