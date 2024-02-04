@@ -1,5 +1,3 @@
-#[cfg(target_os = "linux")]
-use std::str::from_utf8;
 use std::{
     fmt::Debug,
     str::FromStr,
@@ -58,6 +56,9 @@ struct Cli {
     #[arg(short, long)]
     #[arg(default_value = "300")]
     landing_wait_time: u64,
+    /// Specify video device index.
+    #[cfg(target_os = "linux")]
+    device_index: Option<u8>,
     /// Choose env with predefined config values.
     /// Possible values: custom, local, sepolia.
     #[arg(short, long)]
@@ -183,6 +184,9 @@ async fn main() -> Result<(), Error> {
         cli.agreement_contract_addr,
         cli.ground_cycle_contract_addr,
     );
+    #[cfg(target_os = "linux")]
+    let app = App::new(cfg, cli.landing_wait_time, cli.device_index)?;
+    #[cfg(target_os = "macos")]
     let app = App::new(cfg, cli.landing_wait_time)?;
     match cli.command {
         Commands::CreateAgreement {
@@ -217,9 +221,28 @@ struct App {
     chain_id: u64,
     contracts_client: Client<Provider<Http>>,
     landing_wait_time: u64,
+    #[cfg(target_os = "linux")]
+    device_index: u8,
 }
 
 impl App {
+    #[cfg(target_os = "linux")]
+    fn new(cfg: Config, landing_wait_time: u64, device_index: Option<u8>) -> Result<Self, Error> {
+        let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url)?;
+        let agreement_contract_addr: Address = cfg.agreement_contract_addr.parse()?;
+        let ground_cycle_contract_addr: Address = cfg.ground_cycle_contract_addr.parse()?;
+        let contracts_client =
+            Client::new(provider.clone(), agreement_contract_addr, ground_cycle_contract_addr);
+        Ok(Self {
+            provider,
+            chain_id: cfg.chain_id,
+            contracts_client,
+            landing_wait_time,
+            device_index: device_index.unwrap_or_default(),
+        })
+    }
+
+    #[cfg(target_os = "macos")]
     fn new(cfg: Config, landing_wait_time: u64) -> Result<Self, Error> {
         let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url)?;
         let agreement_contract_addr: Address = cfg.agreement_contract_addr.parse()?;
@@ -278,7 +301,9 @@ impl App {
             self.landing_by_drone_(wallet, station_address).await
         } else {
             // If station address is None we are starting infinity node with camera support.
-            // todo: wait in a loop next landing and send signal on ctrl+c
+            #[cfg(target_os = "linux")]
+            let station_address = scan_address(self.device_index).await?;
+            #[cfg(target_os = "macos")]
             let station_address = scan_address().await?;
             self.landing_by_drone_(wallet, station_address).await
         }
@@ -327,7 +352,9 @@ impl App {
             self.landing_by_station_(wallet, agreement, drone_address, landlord_address).await
         } else {
             // If drone address is None we are starting infinity node with camera support.
-            // todo: wait in a loop next landing and send signal on ctrl+c
+            #[cfg(target_os = "linux")]
+            let drone_address = scan_address(self.device_index).await?;
+            #[cfg(target_os = "macos")]
             let drone_address = scan_address().await?;
             self.landing_by_station_(wallet, agreement, drone_address, landlord_address).await
         }
@@ -583,8 +610,13 @@ struct QrCodeOutput {
     address: String,
 }
 
-async fn scan_address() -> Result<Address, Error> {
-    let mut cmd = ffmpeg_read_camera_cmd();
+#[cfg(target_os = "linux")]
+async fn scan_address(device_index: u8) -> Result<Address, Error> {
+    let cmd = ffmpeg_read_camera_cmd(device_index);
+    scan_address_(cmd).await
+}
+
+async fn scan_address_(mut cmd: std::process::Command) -> Result<Address, Error> {
     let decoder = bardecoder::default_decoder();
     loop {
         let output = cmd.output()?;
@@ -620,10 +652,10 @@ async fn scan_address() -> Result<Address, Error> {
 }
 
 #[cfg(target_os = "linux")]
-fn ffmpeg_read_camera_cmd() -> std::process::Command {
+fn ffmpeg_read_camera_cmd(device_index: u8) -> std::process::Command {
     let mut cmd = std::process::Command::new("ffmpeg");
     cmd.args(
-        "-f v4l2 -i /dev/video0 -vframes 1 -f image2pipe -c:v mjpeg -"
+        format!("-f v4l2 -i /dev/video{} -vframes 1 -f image2pipe -c:v mjpeg -", device_index)
             .split(' ')
             .collect::<Vec<&str>>(),
     );
