@@ -1,9 +1,9 @@
 fmt:
-	# We need nightly version to ignore contracts generated code.
+	@# We need nightly version to ignore contracts generated code.
 	cargo +nightly fmt
 
 lint: fmt
-	cargo clippy --tests --workspace -- -D warnings
+	cargo clippy --tests --workspace --all-targets --all-features -- -D warnings
 
 run:
 	cargo run
