@@ -57,6 +57,8 @@ struct Cli {
     #[arg(default_value = "300")]
     landing_wait_time: u64,
     /// Specify video device index.
+    #[arg(short, long)]
+    #[arg(default_value = "0")]
     #[cfg(target_os = "linux")]
     device_index: Option<u8>,
     /// Choose env with predefined config values.
@@ -613,6 +615,12 @@ struct QrCodeOutput {
 #[cfg(target_os = "linux")]
 async fn scan_address(device_index: u8) -> Result<Address, Error> {
     let cmd = ffmpeg_read_camera_cmd(device_index);
+    scan_address_(cmd).await
+}
+
+#[cfg(target_os = "macos")]
+async fn scan_address() -> Result<Address, Error> {
+    let cmd = ffmpeg_read_camera_cmd();
     scan_address_(cmd).await
 }
 
