@@ -4,11 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-ethers = { version = "2.0.13", features = ["rustls"], default-features = false }
+contracts-rs = { path = "../contracts-rs" }
+ethers = { workspace = true }
+serde = { workspace = true }
 tokio = { version = "1.36.0", features = ["macros", "rt-multi-thread"], default-features = false }
 log = { version = "0.4.20", features = [], default-features = false }
 env_logger = { version = "0.11.1", features = ["auto-color", "humantime"], default-features = false }
-serde = { version = "1.0.196", features = ["std", "derive"], default-features = false }
 serde_json = { version = "1.0.113", features = ["std"], default-features = false }
 clap = { version = "4.4.18", features = ["std", "derive", "help"], default-features = false }
 bardecoder = { version = "0.5.0", features = [], default-features = false }

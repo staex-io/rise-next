@@ -6,7 +6,10 @@ use std::{
 };
 
 use clap::{Parser, Subcommand};
-use contracts::Agreement;
+use contracts_rs::{
+    Agreement, AgreementContract, AgreementContractErrors, GroundCycleContract,
+    GroundCycleContractErrors, GroundCycleContractEvents,
+};
 use ethers::{
     contract::{ContractError, EthLogDecode, Event},
     middleware::SignerMiddleware,
@@ -19,13 +22,6 @@ use ethers::{
 use log::{debug, error, info, warn, LevelFilter};
 use serde::Deserialize;
 use tokio::time::{self, sleep};
-
-use crate::contracts::{
-    AgreementContract, AgreementContractErrors, GroundCycleContract, GroundCycleContractErrors,
-    GroundCycleContractEvents,
-};
-
-mod contracts;
 
 // We use this step when iterating over blocks
 // to get smart contract events from these blocks.
@@ -686,14 +682,13 @@ mod tests {
     use std::time::Duration;
 
     use assertables::{assert_in_delta, assert_in_delta_as_result};
+    use contracts_rs::{Agreement, AgreementContractEvents, GroundCycleContractEvents};
     use ethers::{
         providers::{Middleware, PendingTransaction},
         signers::Signer,
         types::U256,
     };
     use log::debug;
-
-    use crate::contracts::{Agreement, AgreementContractEvents, GroundCycleContractEvents};
 
     use super::*;
 
