@@ -16,8 +16,9 @@ use ethers::{
     types::{Address, Filter, H256},
     utils::{format_ether, keccak256, parse_ether},
 };
-use log::{info, warn, LevelFilter};
-use tokio::time;
+use log::{debug, error, info, warn, LevelFilter};
+use serde::Deserialize;
+use tokio::time::{self, sleep};
 
 use crate::contracts::{
     AgreementContract, AgreementContractErrors, GroundCycleContract, GroundCycleContractErrors,
@@ -55,6 +56,11 @@ struct Cli {
     #[arg(short, long)]
     #[arg(default_value = "300")]
     landing_wait_time: u64,
+    /// Specify video device index.
+    #[arg(short, long)]
+    #[arg(default_value = "0")]
+    #[cfg(target_os = "linux")]
+    device_index: Option<u8>,
     /// Choose env with predefined config values.
     /// Possible values: custom, local, sepolia.
     #[arg(short, long)]
@@ -88,17 +94,19 @@ enum Commands {
     LandingByDrone {
         /// Drone private key.
         drone_private_key: String,
-        /// Station address.
-        station_address: String,
+        /// Station address. Can be empty.
+        /// If empty agent tries to scan station address from camera.
+        station_address: Option<String>,
     },
     /// Process landing by station.
     LandingByStation {
         /// Station private key.
         station_private_key: String,
-        /// Drone address.
-        drone_address: String,
         /// Landlord address.
         landlord_address: String,
+        /// Drone address. Can be empty.
+        /// If empty agent tries to scan drone address from camera.
+        drone_address: Option<String>,
     },
     /// Process Takeoff by station.
     Takeoff {
@@ -166,7 +174,10 @@ impl Config {
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    env_logger::builder().filter_level(LevelFilter::Debug).init();
+    env_logger::builder()
+        .filter_level(LevelFilter::Off)
+        .filter_module("agent", LevelFilter::Debug)
+        .init();
     let cli = Cli::parse();
     let cfg = Config::new(
         cli.env,
@@ -175,6 +186,9 @@ async fn main() -> Result<(), Error> {
         cli.agreement_contract_addr,
         cli.ground_cycle_contract_addr,
     );
+    #[cfg(target_os = "linux")]
+    let app = App::new(cfg, cli.landing_wait_time, cli.device_index)?;
+    #[cfg(target_os = "macos")]
     let app = App::new(cfg, cli.landing_wait_time)?;
     match cli.command {
         Commands::CreateAgreement {
@@ -207,11 +221,30 @@ async fn main() -> Result<(), Error> {
 struct App {
     provider: Provider<Http>,
     chain_id: u64,
-    contracts_client: Client,
+    contracts_client: Client<Provider<Http>>,
     landing_wait_time: u64,
+    #[cfg(target_os = "linux")]
+    device_index: u8,
 }
 
 impl App {
+    #[cfg(target_os = "linux")]
+    fn new(cfg: Config, landing_wait_time: u64, device_index: Option<u8>) -> Result<Self, Error> {
+        let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url)?;
+        let agreement_contract_addr: Address = cfg.agreement_contract_addr.parse()?;
+        let ground_cycle_contract_addr: Address = cfg.ground_cycle_contract_addr.parse()?;
+        let contracts_client =
+            Client::new(provider.clone(), agreement_contract_addr, ground_cycle_contract_addr);
+        Ok(Self {
+            provider,
+            chain_id: cfg.chain_id,
+            contracts_client,
+            landing_wait_time,
+            device_index: device_index.unwrap_or_default(),
+        })
+    }
+
+    #[cfg(target_os = "macos")]
     fn new(cfg: Config, landing_wait_time: u64) -> Result<Self, Error> {
         let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url)?;
         let agreement_contract_addr: Address = cfg.agreement_contract_addr.parse()?;
@@ -261,10 +294,28 @@ impl App {
     async fn landing_by_drone(
         &self,
         drone_private_key: String,
-        station_address: String,
+        station_address: Option<String>,
     ) -> Result<(), Error> {
         let wallet = LocalWallet::from_str(&drone_private_key)?.with_chain_id(self.chain_id);
-        let station_address: Address = station_address.parse()?;
+        if let Some(station_address) = station_address {
+            // If station address is not None we need to execute landing method and exit.
+            let station_address: Address = station_address.parse()?;
+            self.landing_by_drone_(wallet, station_address).await
+        } else {
+            // If station address is None we are starting infinity node with camera support.
+            #[cfg(target_os = "linux")]
+            let station_address = scan_address(self.device_index).await?;
+            #[cfg(target_os = "macos")]
+            let station_address = scan_address().await?;
+            self.landing_by_drone_(wallet, station_address).await
+        }
+    }
+
+    async fn landing_by_drone_(
+        &self,
+        wallet: LocalWallet,
+        station_address: Address,
+    ) -> Result<(), Error> {
         let agreement = check_contract_res(
             self.contracts_client.agreement().get(station_address, wallet.address()).call().await,
         )?;
@@ -276,30 +327,50 @@ impl App {
         );
         let landing_call = self
             .contracts_client
-            .ground_cycle_signer(wallet)
+            .ground_cycle_signer(wallet.clone())
             .landing_by_drone(station_address)
             .value(agreement.amount);
         let call_res = landing_call.send().await;
         check_contract_res(call_res)?.await?;
         info!("drone landed successfully, waiting for confirmation by station");
-        self.wait_for_reject(drone_private_key, station_address, block_number).await?;
-        Ok(())
+        self.wait_for_reject(wallet, station_address, block_number).await
     }
 
     async fn landing_by_station(
         &self,
         station_private_key: String,
-        drone_address: String,
+        drone_address: Option<String>,
         landlord_address: String,
     ) -> Result<(), Error> {
         let wallet = LocalWallet::from_str(&station_private_key)?.with_chain_id(self.chain_id);
-        let drone_address: Address = drone_address.parse()?;
         let landlord_address: Address = landlord_address.parse()?;
         let agreement: Agreement = check_contract_res(
             self.contracts_client.agreement().get(wallet.address(), landlord_address).call().await,
         )?;
-        let block_number = self.provider.get_block_number().await?.as_u64();
+        if let Some(drone_address) = drone_address {
+            // If drone address is not None we need to execute landing method and exit.
+            let drone_address: Address = drone_address.parse()?;
+            info!("execute landing by station and exit branch");
+            self.landing_by_station_(wallet, agreement, drone_address, landlord_address).await
+        } else {
+            // If drone address is None we are starting infinity node with camera support.
+            #[cfg(target_os = "linux")]
+            let drone_address = scan_address(self.device_index).await?;
+            #[cfg(target_os = "macos")]
+            let drone_address = scan_address().await?;
+            self.landing_by_station_(wallet, agreement, drone_address, landlord_address).await
+        }
+    }
+
+    async fn landing_by_station_(
+        &self,
+        wallet: LocalWallet,
+        agreement: Agreement,
+        drone_address: Address,
+        landlord_address: Address,
+    ) -> Result<(), Error> {
         info!("starting landing by station");
+        let block_number = self.provider.get_block_number().await?.as_u64();
         let landing_call = self
             .contracts_client
             .ground_cycle_signer(wallet.clone())
@@ -308,8 +379,7 @@ impl App {
         let call_res = landing_call.send().await;
         check_contract_res(call_res)?.await?;
         info!("station landed successfully, waiting for confirmation by drone");
-        self.wait_for_reject(station_private_key, wallet.address(), block_number).await?;
-        Ok(())
+        self.wait_for_reject(wallet.clone(), wallet.address(), block_number).await
     }
 
     async fn takeoff(&self, station_private_key: String) -> Result<(), Error> {
@@ -351,12 +421,11 @@ impl App {
 
     async fn wait_for_reject(
         &self,
-        private_key: String,
+        wallet: LocalWallet,
         station_address: Address,
         start_block: u64,
     ) -> Result<(), Error> {
         let started = SystemTime::now();
-        let wallet = LocalWallet::from_str(&private_key)?.with_chain_id(self.chain_id);
         loop {
             // Get latest block in a chain.
             let stop_block = self.provider.get_block_number().await?.as_u64();
@@ -421,14 +490,17 @@ impl App {
 }
 
 // Client to interact with smart contract on behalf of face of some wallet.
-struct Client {
-    provider: Provider<Http>,
+struct Client<M> {
+    provider: M,
     agreement_addr: Address,
     ground_cycle_addr: Address,
 }
 
-impl Client {
-    fn new(provider: Provider<Http>, agreement_addr: Address, ground_cycle_addr: Address) -> Self {
+impl<M> Client<M>
+where
+    M: Middleware + Clone,
+{
+    fn new(provider: M, agreement_addr: Address, ground_cycle_addr: Address) -> Self {
         Self {
             provider,
             agreement_addr,
@@ -436,26 +508,23 @@ impl Client {
         }
     }
 
-    fn agreement(&self) -> AgreementContract<Provider<Http>> {
+    fn agreement(&self) -> AgreementContract<M> {
         AgreementContract::new(self.agreement_addr, Arc::new(self.provider.clone()))
     }
 
-    fn agreement_signer(
-        &self,
-        wallet: LocalWallet,
-    ) -> AgreementContract<SignerMiddleware<Provider<Http>, LocalWallet>> {
+    fn agreement_signer<S: Signer>(&self, wallet: S) -> AgreementContract<SignerMiddleware<M, S>> {
         let client = Arc::new(SignerMiddleware::new(self.provider.clone(), wallet));
         AgreementContract::new(self.agreement_addr, client)
     }
 
-    fn ground_cycle(&self) -> GroundCycleContract<Provider<Http>> {
+    fn ground_cycle(&self) -> GroundCycleContract<M> {
         GroundCycleContract::new(self.ground_cycle_addr, Arc::new(self.provider.clone()))
     }
 
-    fn ground_cycle_signer(
+    fn ground_cycle_signer<S: Signer>(
         &self,
-        wallet: LocalWallet,
-    ) -> GroundCycleContract<SignerMiddleware<Provider<Http>, LocalWallet>> {
+        wallet: S,
+    ) -> GroundCycleContract<SignerMiddleware<M, S>> {
         let client = Arc::new(SignerMiddleware::new(self.provider.clone(), wallet));
         GroundCycleContract::new(self.ground_cycle_addr, client)
     }
@@ -538,6 +607,80 @@ fn check_contract_res<T, P: Middleware>(res: Result<T, ContractError<P>>) -> Res
     }
 }
 
+#[derive(Deserialize)]
+struct QrCodeOutput {
+    address: String,
+}
+
+#[cfg(target_os = "linux")]
+async fn scan_address(device_index: u8) -> Result<Address, Error> {
+    let cmd = ffmpeg_read_camera_cmd(device_index);
+    scan_address_(cmd).await
+}
+
+#[cfg(target_os = "macos")]
+async fn scan_address() -> Result<Address, Error> {
+    let cmd = ffmpeg_read_camera_cmd();
+    scan_address_(cmd).await
+}
+
+async fn scan_address_(mut cmd: std::process::Command) -> Result<Address, Error> {
+    let decoder = bardecoder::default_decoder();
+    loop {
+        let output = cmd.output()?;
+        if !output.status.success() {
+            error!("failed to scan camera output");
+            sleep(Duration::from_secs(1)).await;
+            continue;
+        }
+        let img = image::load_from_memory(&output.stdout)?;
+        let results = decoder.decode(&img);
+        if results.len() != 1 {
+            debug!("no available qr code; continue scanning camera output");
+            sleep(Duration::from_millis(250)).await;
+            continue;
+        }
+        if let Ok(result) = &results[0] {
+            match serde_json::from_str::<QrCodeOutput>(result) {
+                Ok(data) => {
+                    if let Ok(address) = data.address.parse() {
+                        return Ok(address);
+                    } else {
+                        error!("address from qr code is invalid")
+                    }
+                }
+                Err(_) => {
+                    warn!("failed to decode json response from qr code output");
+                    sleep(Duration::from_millis(250)).await;
+                    continue;
+                }
+            }
+        }
+    }
+}
+
+#[cfg(target_os = "linux")]
+fn ffmpeg_read_camera_cmd(device_index: u8) -> std::process::Command {
+    let mut cmd = std::process::Command::new("ffmpeg");
+    cmd.args(
+        format!("-f v4l2 -i /dev/video{} -vframes 1 -f image2pipe -c:v mjpeg -", device_index)
+            .split(' ')
+            .collect::<Vec<&str>>(),
+    );
+    cmd
+}
+
+#[cfg(target_os = "macos")]
+fn ffmpeg_read_camera_cmd() -> std::process::Command {
+    let mut cmd = std::process::Command::new("ffmpeg");
+    cmd.args(
+        "-f avfoundation -pixel_format yuyv422 -probesize 16M -r 30 -i 0:none -update 1 -vframes 1 -f apng pipe:"
+        .split(' ')
+        .collect::<Vec<&str>>(),
+    );
+    cmd
+}
+
 #[cfg(test)]
 mod tests {
     use std::time::Duration;
@@ -607,7 +750,7 @@ mod tests {
         let landlord_balance_before =
             provider.get_balance(landlord_wallet.address(), None).await.unwrap();
 
-        let contracts_client =
+        let contracts_client: Client<Provider<Http>> =
             Client::new(provider.clone(), agreement_contract_addr, ground_cycle_contract_addr);
 
         /*
