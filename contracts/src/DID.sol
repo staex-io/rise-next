@@ -10,7 +10,7 @@ contract DIDContract {
     mapping(address => DID) dids;
 
     event Updated(address indexed, DID);
-    event Deleted(address indexed);
+    event Removed(address indexed);
 
     function update(string calldata location, uint256 price) external {
         DID storage did = dids[msg.sender];
@@ -24,10 +24,10 @@ contract DIDContract {
         emit Updated(msg.sender, did);
     }
 
-    // Delete did from smart contract storage and spawn a Deleted event.
-    function del() external {
+    // Remove did from smart contract storage and spawn a Removed event.
+    function remove() external {
         delete dids[msg.sender];
-        emit Deleted(msg.sender);
+        emit Removed(msg.sender);
     }
 
     function get(address entity) external view returns (DID memory) {

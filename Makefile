@@ -10,10 +10,10 @@ build:
 	cd contracts && cp out/Agreement.sol/AgreementContract.json ../ui/src/assets/AgreementContract.json
 
 test: lint
-	cd contracts && forge test --gas-report --summary --detailed -vv
+	cd contracts && forge test --use 0.8.22 --gas-report --summary --detailed -vv
 
 coverage: test
-	cd contracts && forge coverage --report summary
+	cd contracts && forge coverage --use 0.8.22 --report summary
 
 lint:
 	cd contracts && forge fmt
