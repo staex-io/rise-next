@@ -30,6 +30,9 @@ export default {
           <RouterLink to="/wallet">Wallet</RouterLink>
         </li>
         <li>
+          <RouterLink to="/did">DID</RouterLink>
+        </li>
+        <li>
           <RouterLink to="/qrcode">QRCode</RouterLink>
         </li>
       </ul>
