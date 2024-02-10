@@ -44,6 +44,9 @@ export default {
           <RouterLink to="/did">DID</RouterLink>
         </li>
         <li>
+          <RouterLink to="/stations">Stations</RouterLink>
+        </li>
+        <li>
           <RouterLink to="/stats">Stats</RouterLink>
         </li>
         <li>

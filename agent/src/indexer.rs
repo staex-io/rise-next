@@ -215,6 +215,7 @@ impl DatabaseSaver for GroundCycleContractEvents {
 struct DatabaseStation {
     address: String,
     location: String,
+    price: u32,
 }
 
 #[derive(sqlx::FromRow, Debug)]
@@ -527,6 +528,7 @@ fn default_offset() -> u32 {
 struct StationResponse {
     address: String,
     location: String,
+    price: u32,
 }
 
 #[derive(Serialize)]
@@ -575,6 +577,7 @@ async fn get_stations(
         external.push(StationResponse {
             address: val.address.clone(),
             location: val.location.clone(),
+            price: val.price,
         })
     }
     Ok((StatusCode::OK, Json(external)))
