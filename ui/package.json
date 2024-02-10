@@ -16,7 +16,7 @@
     "@fontsource/roboto": "^5.0.8",
     "normalize.css": "^8.0.1",
     "vue-router": "^4.2.5",
-    "ethers": "^6.10.0",
+    "ethers": "^6.11.0",
     "qrcode": "^1.5.3"
   },
   "devDependencies": {
