@@ -17,6 +17,9 @@ export default {
         <img class="logo" alt="Staex logo" src="@/assets/logo-light.svg" />
       </a>
       <ul>
+        <li>
+          <RouterLink to="/landings">Landings</RouterLink>
+        </li>
         <li class="menu-item">
           <RouterLink to="/">Agreements</RouterLink>
           <ul class="submenu">
