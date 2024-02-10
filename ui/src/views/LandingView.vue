@@ -60,6 +60,10 @@ export default {
         <span class="card-field-label">Rejected</span>
         <span class="card-field-value">{{ landing.is_rejected }}</span>
       </div>
+      <div class="card-field">
+        <span class="card-field-label">Date</span>
+        <span class="card-field-value">{{ new Date(landing.date * 1000) }}</span>
+      </div>
       <hr />
       <div class="card-field">
         <span class="card-field-label">Agreement Station & Drone</span>

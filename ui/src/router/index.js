@@ -8,6 +8,8 @@ import QRCode from '@/views/QRCode.vue'
 import AgreementsView from '@/views/AgreementsView.vue'
 import LandingsView from '@/views/LandingsView.vue'
 import LandingView from '@/views/LandingView.vue'
+import StatsView from '@/views/StatsView.vue'
+import StationsView from '@/views/StationsView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -48,6 +50,11 @@ const router = createRouter({
       component: DIDManagement,
     },
     {
+      path: '/stations',
+      name: 'stations',
+      component: StationsView,
+    },
+    {
       path: '/landing/:id',
       name: 'landing',
       component: LandingView,
@@ -56,6 +63,11 @@ const router = createRouter({
       path: '/landings',
       name: 'landings',
       component: LandingsView,
+    },
+    {
+      path: '/stats',
+      name: 'stats',
+      component: StatsView,
     },
     {
       path: '/qrcode',
