@@ -235,6 +235,12 @@ struct DatabaseLanding {
     is_rejected: bool,
 }
 
+#[derive(sqlx::FromRow)]
+struct DatabaseStats {
+    landings: u32,
+    amount: i64,
+}
+
 #[derive(Clone)]
 struct Database {
     conn: Arc<Mutex<SqliteConnection>>,
@@ -322,14 +328,14 @@ impl Database {
         entity: &String,
     ) -> Result<DatabaseAgreement, Error> {
         let mut conn = self.conn.lock().await;
-        let station: DatabaseAgreement = sqlx::query_as::<_, DatabaseAgreement>(
+        let agreement: DatabaseAgreement = sqlx::query_as::<_, DatabaseAgreement>(
             "select * from agreements where station = ?1 and entity = ?2",
         )
         .bind(station)
         .bind(entity)
         .fetch_one(&mut *conn)
         .await?;
-        Ok(station)
+        Ok(agreement)
     }
 
     async fn query_agreements(
@@ -446,6 +452,16 @@ impl Database {
         query.push(" limit ").push_bind(limit).push(" offset ").push_bind(offset);
         Ok(query)
     }
+
+    async fn get_stats(&self, address: &str) -> Result<DatabaseStats, Error> {
+        let mut conn = self.conn.lock().await;
+        let stats: DatabaseStats =
+            sqlx::query_as::<_, DatabaseStats>("select * from stats where address = ?1")
+                .bind(address.to_lowercase())
+                .fetch_one(&mut *conn)
+                .await?;
+        Ok(stats)
+    }
 }
 
 struct ErrorResponse {
@@ -480,6 +496,7 @@ async fn run_api(port: u16, database: Database) -> Result<(), Error> {
         .route("/stations", get(get_stations))
         .route("/agreements", get(get_agreements))
         .route("/landings", get(get_landings))
+        .route("/stats", get(get_stats))
         .layer(Extension(database))
         .fallback(fallback);
     let addr = format!("127.0.0.1:{}", port);
@@ -529,6 +546,12 @@ impl From<DatabaseAgreement> for AgreementResponse {
             is_signed: value.is_signed,
         }
     }
+}
+
+#[derive(Serialize)]
+struct StatsResponse {
+    landings: u32,
+    amount: i64,
 }
 
 #[derive(Serialize)]
@@ -596,6 +619,24 @@ async fn get_landings(
         external[0].agreements = Some(vec![agreement_drone.into(), agreement_landlord.into()])
     }
     Ok((StatusCode::OK, Json(external)))
+}
+
+async fn get_stats(
+    Query(params): Query<QueryParams>,
+    Extension(database): Extension<Database>,
+) -> Result<impl IntoResponse, ErrorResponse> {
+    if params.address.is_none() {
+        return Err("address is empty".into());
+    }
+    let address = params.address.unwrap();
+    let internal = database.get_stats(&address).await?;
+    Ok((
+        StatusCode::OK,
+        Json(StatsResponse {
+            landings: internal.landings,
+            amount: internal.amount,
+        }),
+    ))
 }
 
 async fn fallback() -> impl IntoResponse {
