@@ -27,7 +27,7 @@ mod indexer;
 
 // We use this step when iterating over blocks
 // to get smart contract events from these blocks.
-pub(crate) const BLOCK_STEP: u64 = 10;
+pub(crate) const BLOCK_STEP: u64 = 1;
 
 type Error = Box<dyn std::error::Error>;
 
