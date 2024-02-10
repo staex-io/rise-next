@@ -1,22 +1,23 @@
 {
   "name": "ui",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev-docker": "env VITE_INDEXER_ENDPOINT=http://host.docker.internal:4698 vite",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/ --write vite.config.js"
   },
   "dependencies": {
+    "vue": "^3.4.17",
     "@fontsource/roboto": "^5.0.8",
-    "ethers": "^6.10.0",
     "normalize.css": "^8.0.1",
-    "qrcode": "^1.5.3",
-    "vue": "^3.4.15",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "ethers": "^6.11.0",
+    "qrcode": "^1.5.3"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.7.2",
@@ -24,7 +25,7 @@
     "@vue/eslint-config-prettier": "^9.0.0",
     "eslint": "^8.56.0",
     "eslint-plugin-vue": "^9.21.1",
-    "prettier": "^3.2.4",
-    "vite": "^5.0.12"
+    "prettier": "^3.2.5",
+    "vite": "^5.1.0"
   }
 }
