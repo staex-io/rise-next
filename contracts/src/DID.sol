@@ -9,7 +9,7 @@ struct DID {
 contract DIDContract {
     mapping(address => DID) dids;
 
-    event Updated(address indexed, DID);
+    event Updated(address indexed, string location, uint256 price);
     event Removed(address indexed);
 
     function update(string calldata location, uint256 price) external {
@@ -21,7 +21,7 @@ contract DIDContract {
             did.price = price;
         }
         dids[msg.sender] = did;
-        emit Updated(msg.sender, did);
+        emit Updated(msg.sender, location, price);
     }
 
     // Remove did from smart contract storage and spawn a Removed event.

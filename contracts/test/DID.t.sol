@@ -13,7 +13,7 @@ contract GroundCycleTest is Test {
     DIDContract public didContract;
 
     // We need to copy that events from contract to avoid visibility errors.
-    event Updated(address indexed, DID);
+    event Updated(address indexed, string location, uint256 price);
     event Removed(address indexed);
 
     function setUp() public {
@@ -31,7 +31,7 @@ contract GroundCycleTest is Test {
         assertEq(0, did_before_update.price);
 
         vm.expectEmit(true, true, true, true);
-        emit Updated(station.addr, DID(LOCATION, PRICE));
+        emit Updated(station.addr, LOCATION, PRICE);
         didContract.update(LOCATION, PRICE);
 
         DID memory did_after_update = didContract.get(station.addr);

@@ -25,7 +25,7 @@ contract AgreementContract {
     // should have agreements with drones and landlords.
     mapping(address => mapping(address => Agreement)) agreements;
 
-    event Created(address indexed, address indexed);
+    event Created(address indexed, address indexed, uint256);
     event Signed(address indexed, address indexed);
 
     function create(address entity, uint256 amount) external {
@@ -35,7 +35,7 @@ contract AgreementContract {
             revert ErrAlreadySigned();
         }
         agreements[msg.sender][entity] = Agreement(amount, Status.Created);
-        emit Created(msg.sender, entity);
+        emit Created(msg.sender, entity, amount);
     }
 
     function sign(address station, uint256 amount) external {

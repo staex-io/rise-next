@@ -6,13 +6,12 @@ use std::{
 };
 
 use clap::{Parser, Subcommand};
+use client::Client;
 use contracts_rs::{
-    Agreement, AgreementContract, AgreementContractErrors, GroundCycleContract,
-    GroundCycleContractErrors, GroundCycleContractEvents,
+    Agreement, AgreementContractErrors, GroundCycleContractErrors, GroundCycleContractEvents,
 };
 use ethers::{
     contract::{ContractError, EthLogDecode, Event},
-    middleware::SignerMiddleware,
     providers::{Http, Middleware, Provider},
     signers::LocalWallet,
     signers::Signer,
@@ -23,9 +22,12 @@ use log::{debug, error, info, warn, LevelFilter};
 use serde::Deserialize;
 use tokio::time::{self, sleep};
 
+mod client;
+mod indexer;
+
 // We use this step when iterating over blocks
 // to get smart contract events from these blocks.
-const BLOCKS_STEP: u64 = 10;
+pub(crate) const BLOCK_STEP: u64 = 1;
 
 type Error = Box<dyn std::error::Error>;
 
@@ -40,10 +42,13 @@ struct Cli {
     /// Ethereum node chain id.
     #[arg(short, long)]
     chain_id: Option<u64>,
-    /// Agreement contract address.
+    /// DID smart contract address.
+    #[arg(short, long)]
+    did_contract_addr: Option<String>,
+    /// Agreement smart contract address.
     #[arg(short, long)]
     agreement_contract_addr: Option<String>,
-    /// Ground cycle contract address.
+    /// Ground cycle smart contract address.
     #[arg(short, long)]
     ground_cycle_contract_addr: Option<String>,
     /// Landing wait time. How much time command should wait until
@@ -53,9 +58,9 @@ struct Cli {
     #[arg(default_value = "300")]
     landing_wait_time: u64,
     /// Specify video device index.
-    #[arg(short, long)]
+    /// It works only on Linux.
+    #[arg(long)]
     #[arg(default_value = "0")]
-    #[cfg(target_os = "linux")]
     device_index: Option<u8>,
     /// Choose env with predefined config values.
     /// Possible values: custom, local, sepolia.
@@ -116,12 +121,21 @@ enum Commands {
         #[arg(default_value = "4807184")]
         from_block: u64,
     },
+    /// Run indexer.
+    Indexer {
+        /// Database data source name.
+        /// Use it for database connection.
+        dsn: String,
+        /// HTTP API port number.
+        port: u16,
+    },
 }
 
 #[derive(Default)]
 struct Config {
     rpc_url: String,
     chain_id: u64,
+    did_contract_addr: String,
     agreement_contract_addr: String,
     ground_cycle_contract_addr: String,
 }
@@ -131,6 +145,7 @@ impl Config {
         env: String,
         rpc_url: Option<String>,
         chain_id: Option<u64>,
+        did_contract_addr: Option<String>,
         agreement_contract_addr: Option<String>,
         ground_cycle_contract_addr: Option<String>,
     ) -> Self {
@@ -139,16 +154,18 @@ impl Config {
             "local" => Self {
                 rpc_url: "http://127.0.0.1:8545".to_string(),
                 chain_id: 31337,
-                agreement_contract_addr: "0x5FbDB2315678afecb367f032d93F642f64180aa3".to_string(),
-                ground_cycle_contract_addr: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+                did_contract_addr: "0x5FbDB2315678afecb367f032d93F642f64180aa3".to_string(),
+                agreement_contract_addr: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512".to_string(),
+                ground_cycle_contract_addr: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
                     .to_string(),
             },
             "sepolia" => Self {
                 rpc_url: "https://ethereum-sepolia.publicnode.com".to_string(),
                 chain_id: 11155111,
-                agreement_contract_addr: "0x61d6C8D1a59d2e191b5204EaA9C736017B963e95".to_string(),
-                ground_cycle_contract_addr: "0x9D78aBf1Da69F46227E136Be06d2F1b4a0aaEc52"
-                    .to_string(),
+                // Currently smart contacts are not deployed to Sepolia.
+                did_contract_addr: "".to_string(),
+                agreement_contract_addr: "".to_string(),
+                ground_cycle_contract_addr: "".to_string(),
             },
             _ => unimplemented!(),
         };
@@ -157,6 +174,9 @@ impl Config {
         }
         if let Some(chain_id) = chain_id {
             cfg.chain_id = chain_id;
+        }
+        if let Some(did_contract_addr) = did_contract_addr {
+            cfg.did_contract_addr = did_contract_addr
         }
         if let Some(agreement_contract_addr) = agreement_contract_addr {
             cfg.agreement_contract_addr = agreement_contract_addr
@@ -179,13 +199,14 @@ async fn main() -> Result<(), Error> {
         cli.env,
         cli.rpc_url,
         cli.chain_id,
+        cli.did_contract_addr,
         cli.agreement_contract_addr,
         cli.ground_cycle_contract_addr,
     );
     #[cfg(target_os = "linux")]
     let app = App::new(cfg, cli.landing_wait_time, cli.device_index)?;
     #[cfg(target_os = "macos")]
-    let app = App::new(cfg, cli.landing_wait_time)?;
+    let app = App::new(&cfg, cli.landing_wait_time)?;
     match cli.command {
         Commands::CreateAgreement {
             station_private_key,
@@ -210,6 +231,10 @@ async fn main() -> Result<(), Error> {
             station_private_key,
         } => app.takeoff(station_private_key).await?,
         Commands::Events { from_block } => app.events(from_block).await?,
+        Commands::Indexer { dsn, port } => {
+            indexer::run(cfg, dsn, port).await?;
+            tokio::signal::ctrl_c().await?;
+        }
     }
     Ok(())
 }
@@ -241,8 +266,8 @@ impl App {
     }
 
     #[cfg(target_os = "macos")]
-    fn new(cfg: Config, landing_wait_time: u64) -> Result<Self, Error> {
-        let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url)?;
+    fn new(cfg: &Config, landing_wait_time: u64) -> Result<Self, Error> {
+        let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url.clone())?;
         let agreement_contract_addr: Address = cfg.agreement_contract_addr.parse()?;
         let ground_cycle_contract_addr: Address = cfg.ground_cycle_contract_addr.parse()?;
         let contracts_client =
@@ -427,7 +452,7 @@ impl App {
             let stop_block = self.provider.get_block_number().await?.as_u64();
             let mut from_block = start_block;
             loop {
-                let to_block = from_block + BLOCKS_STEP;
+                let to_block = from_block + BLOCK_STEP;
                 let events = self
                     .contracts_client
                     .ground_cycle()
@@ -470,7 +495,7 @@ impl App {
     ) -> Result<(), Error> {
         let mut from_block = start_block;
         loop {
-            let to_block = from_block + BLOCKS_STEP;
+            let to_block = from_block + BLOCK_STEP;
             client = client.from_block(from_block).to_block(to_block);
             let events = client.query().await?;
             for event in events {
@@ -482,47 +507,6 @@ impl App {
             from_block = to_block + 1;
         }
         Ok(())
-    }
-}
-
-// Client to interact with smart contract on behalf of face of some wallet.
-struct Client<M> {
-    provider: M,
-    agreement_addr: Address,
-    ground_cycle_addr: Address,
-}
-
-impl<M> Client<M>
-where
-    M: Middleware + Clone,
-{
-    fn new(provider: M, agreement_addr: Address, ground_cycle_addr: Address) -> Self {
-        Self {
-            provider,
-            agreement_addr,
-            ground_cycle_addr,
-        }
-    }
-
-    fn agreement(&self) -> AgreementContract<M> {
-        AgreementContract::new(self.agreement_addr, Arc::new(self.provider.clone()))
-    }
-
-    fn agreement_signer<S: Signer>(&self, wallet: S) -> AgreementContract<SignerMiddleware<M, S>> {
-        let client = Arc::new(SignerMiddleware::new(self.provider.clone(), wallet));
-        AgreementContract::new(self.agreement_addr, client)
-    }
-
-    fn ground_cycle(&self) -> GroundCycleContract<M> {
-        GroundCycleContract::new(self.ground_cycle_addr, Arc::new(self.provider.clone()))
-    }
-
-    fn ground_cycle_signer<S: Signer>(
-        &self,
-        wallet: S,
-    ) -> GroundCycleContract<SignerMiddleware<M, S>> {
-        let client = Arc::new(SignerMiddleware::new(self.provider.clone(), wallet));
-        GroundCycleContract::new(self.ground_cycle_addr, client)
     }
 }
 
