@@ -23,6 +23,8 @@ use log::{debug, error, info, warn, LevelFilter};
 use serde::Deserialize;
 use tokio::time::{self, sleep};
 
+mod indexer;
+
 // We use this step when iterating over blocks
 // to get smart contract events from these blocks.
 const BLOCKS_STEP: u64 = 10;
@@ -55,7 +57,7 @@ struct Cli {
     /// Specify video device index.
     #[arg(short, long)]
     #[arg(default_value = "0")]
-    #[cfg(target_os = "linux")]
+    // #[cfg(target_os = "linux")]
     device_index: Option<u8>,
     /// Choose env with predefined config values.
     /// Possible values: custom, local, sepolia.
@@ -115,6 +117,14 @@ enum Commands {
         #[arg(short, long)]
         #[arg(default_value = "4807184")]
         from_block: u64,
+    },
+    /// Run indexer.
+    Indexer {
+        /// Database data source name.
+        /// Use it for database connection.
+        dsn: String,
+        /// HTTP API port number.
+        port: u16,
     },
 }
 
@@ -210,6 +220,10 @@ async fn main() -> Result<(), Error> {
             station_private_key,
         } => app.takeoff(station_private_key).await?,
         Commands::Events { from_block } => app.events(from_block).await?,
+        Commands::Indexer { dsn, port } => {
+            indexer::run(dsn, port).await?;
+            tokio::signal::ctrl_c().await?;
+        }
     }
     Ok(())
 }
