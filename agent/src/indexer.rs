@@ -12,7 +12,7 @@ use ethers::{
     abi::RawLog,
     contract::EthLogDecode,
     providers::{Http, Middleware, Provider},
-    types::{Address, Filter, Log, H256},
+    types::{Address, Block, Filter, Log, H256},
     utils::keccak256,
 };
 use log::{debug, error, info, trace};
@@ -55,6 +55,7 @@ impl Indexer {
     async fn new(database: Database) -> Result<Self, Error> {
         Ok(Self {
             database,
+
             did_updated_hash: H256::from(keccak256("Updated(address,string,uint256)".as_bytes())),
             agreement_created_hash: H256::from(keccak256(
                 "Created(address,address,uint256)".as_bytes(),
@@ -84,45 +85,47 @@ impl Indexer {
         let mut from_block: u64 = 0;
         loop {
             let to_block: u64 = from_block + BLOCK_STEP;
-            if provider.get_block(to_block).await?.is_none() {
+            let block = provider.get_block(to_block).await?;
+            if block.is_none() {
                 trace!("{} (to_block) is not exists yet, waiting", to_block);
                 sleep(Duration::from_secs(1)).await;
                 continue;
             }
+            let block = block.unwrap();
             for contract in &contracts {
                 let logs = provider
                     .get_logs(
                         &Filter::new().address(*contract).from_block(from_block).to_block(to_block),
                     )
                     .await?;
-                self.process_logs(logs).await?;
+                self.process_logs(&block, logs).await?;
             }
             from_block += BLOCK_STEP;
         }
     }
 
-    async fn process_logs(&self, logs: Vec<Log>) -> Result<(), Error> {
+    async fn process_logs(&self, block: &Block<H256>, logs: Vec<Log>) -> Result<(), Error> {
         for log in logs {
             let topic0 = log.topics[0];
             match topic0 {
                 _ if (topic0 == self.did_updated_hash) => {
                     debug!("received did event");
                     let event = DIDContractEvents::decode_log(&RawLog::from(log))?;
-                    event.save(&self.database).await?;
+                    event.save(&self.database, block.timestamp.as_u32()).await?;
                 }
                 _ if (topic0 == self.agreement_created_hash
                     || topic0 == self.agreement_signed_hash) =>
                 {
                     debug!("received agreement event");
                     let event = AgreementContractEvents::decode_log(&RawLog::from(log))?;
-                    event.save(&self.database).await?;
+                    event.save(&self.database, block.timestamp.as_u32()).await?;
                 }
                 _ if (topic0 == self.ground_cycle_landing_hash
                     || topic0 == self.ground_cycle_takeoff_hash) =>
                 {
                     debug!("received ground cycle event");
                     let event = GroundCycleContractEvents::decode_log(&RawLog::from(log))?;
-                    event.save(&self.database).await?;
+                    event.save(&self.database, block.timestamp.as_u32()).await?;
                 }
                 _ => continue,
             }
@@ -132,11 +135,15 @@ impl Indexer {
 }
 
 trait DatabaseSaver: Send + Sync {
-    fn save(&self, database: &Database) -> impl Future<Output = Result<(), Error>> + Send;
+    fn save(
+        &self,
+        database: &Database,
+        timestamp: u32,
+    ) -> impl Future<Output = Result<(), Error>> + Send;
 }
 
 impl DatabaseSaver for DIDContractEvents {
-    async fn save(&self, database: &Database) -> Result<(), Error> {
+    async fn save(&self, database: &Database, _: u32) -> Result<(), Error> {
         match self {
             DIDContractEvents::UpdatedFilter(event) => {
                 database
@@ -153,7 +160,7 @@ impl DatabaseSaver for DIDContractEvents {
 }
 
 impl DatabaseSaver for AgreementContractEvents {
-    async fn save(&self, database: &Database) -> Result<(), Error> {
+    async fn save(&self, database: &Database, _: u32) -> Result<(), Error> {
         match self {
             AgreementContractEvents::CreatedFilter(event) => {
                 database
@@ -180,7 +187,7 @@ impl DatabaseSaver for AgreementContractEvents {
 }
 
 impl DatabaseSaver for GroundCycleContractEvents {
-    async fn save(&self, database: &Database) -> Result<(), Error> {
+    async fn save(&self, database: &Database, timestamp: u32) -> Result<(), Error> {
         match self {
             GroundCycleContractEvents::LandingFilter(event) => {
                 database
@@ -191,6 +198,7 @@ impl DatabaseSaver for GroundCycleContractEvents {
                         &format!("{:?}", Address::from(event.3)),
                         false,
                         false,
+                        timestamp,
                     )
                     .await
             }
@@ -203,6 +211,7 @@ impl DatabaseSaver for GroundCycleContractEvents {
                         &format!("{:?}", Address::from(event.3)),
                         true,
                         false,
+                        timestamp,
                     )
                     .await
             }
@@ -234,6 +243,7 @@ struct DatabaseLanding {
     landlord: String,
     is_taken_off: bool,
     is_rejected: bool,
+    date: u32,
 }
 
 #[derive(sqlx::FromRow)]
@@ -378,6 +388,7 @@ impl Database {
         Ok(query)
     }
 
+    #[allow(clippy::too_many_arguments)]
     async fn save_landing(
         &self,
         id: u32,
@@ -386,12 +397,13 @@ impl Database {
         landlord: &str,
         is_taken_off: bool,
         is_rejected: bool,
+        timestamp: u32,
     ) -> Result<(), Error> {
         let mut conn = self.conn.lock().await;
         sqlx::query(
             r#"
-                insert into landings (id, drone, station, landlord, is_taken_off, is_rejected)
-                values (?1, ?2, ?3, ?4, ?5, ?6)
+                insert into landings (id, drone, station, landlord, is_taken_off, is_rejected, date)
+                values (?1, ?2, ?3, ?4, ?5, ?6, ?7)
                 on conflict do update set is_taken_off = ?5, is_rejected = ?6
             "#,
         )
@@ -401,6 +413,7 @@ impl Database {
         .bind(landlord)
         .bind(is_taken_off)
         .bind(is_rejected)
+        .bind(timestamp)
         .execute(&mut *conn)
         .await?;
         Ok(())
@@ -564,6 +577,7 @@ struct LandingResponse {
     landlord: String,
     is_taken_off: bool,
     is_rejected: bool,
+    date: u32,
     agreements: Option<Vec<AgreementResponse>>,
 }
 
@@ -610,6 +624,7 @@ async fn get_landings(
             landlord: val.landlord.clone(),
             is_taken_off: val.is_taken_off,
             is_rejected: val.is_rejected,
+            date: val.date,
             agreements: None,
         })
     }
