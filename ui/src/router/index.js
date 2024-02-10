@@ -5,6 +5,7 @@ import GetAgreement from '@/views/GetAgreement.vue'
 import WalletManagement from '@/views/WalletManagement.vue'
 import DIDManagement from '@/views/DIDManagement.vue'
 import QRCode from '@/views/QRCode.vue'
+import AgreementsView from '@/views/AgreementsView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -28,6 +29,11 @@ const router = createRouter({
       path: '/get-agreement',
       name: 'getAgreement',
       component: GetAgreement,
+    },
+    {
+      path: '/agreements',
+      name: 'Agreements',
+      component: AgreementsView,
     },
     {
       path: '/wallet',
