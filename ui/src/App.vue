@@ -17,14 +17,22 @@ export default {
         <img class="logo" alt="Staex logo" src="@/assets/logo-light.svg" />
       </a>
       <ul>
-        <li>
-          <RouterLink to="/create-agreement">Create Agreement</RouterLink>
-        </li>
-        <li>
-          <RouterLink to="/sign-agreement">Sign Agreement</RouterLink>
-        </li>
-        <li>
-          <RouterLink to="/get-agreement">Get Agreement</RouterLink>
+        <li class="menu-item">
+          <RouterLink to="/">Agreements</RouterLink>
+          <ul class="submenu">
+            <li>
+              <RouterLink to="/create-agreement">Create Agreement</RouterLink>
+            </li>
+            <li>
+              <RouterLink to="/sign-agreement">Sign Agreement</RouterLink>
+            </li>
+            <li>
+              <RouterLink to="/agreements">Agreements</RouterLink>
+            </li>
+            <li>
+              <RouterLink to="/get-agreement">Get Agreement</RouterLink>
+            </li>
+          </ul>
         </li>
         <li>
           <RouterLink to="/wallet">Wallet</RouterLink>

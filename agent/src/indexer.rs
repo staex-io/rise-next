@@ -15,7 +15,7 @@ use ethers::{
     types::{Address, Filter, Log, H256},
     utils::keccak256,
 };
-use log::{error, info, trace};
+use log::{debug, error, info, trace};
 use serde::{Deserialize, Serialize};
 use sqlx::{Connection, QueryBuilder, SqliteConnection};
 use tokio::{sync::Mutex, time::sleep};
@@ -106,18 +106,21 @@ impl Indexer {
             let topic0 = log.topics[0];
             match topic0 {
                 _ if (topic0 == self.did_updated_hash) => {
+                    debug!("received did event");
                     let event = DIDContractEvents::decode_log(&RawLog::from(log))?;
                     event.save(&self.database).await?;
                 }
                 _ if (topic0 == self.agreement_created_hash
                     || topic0 == self.agreement_signed_hash) =>
                 {
+                    debug!("received agreement event");
                     let event = AgreementContractEvents::decode_log(&RawLog::from(log))?;
                     event.save(&self.database).await?;
                 }
                 _ if (topic0 == self.ground_cycle_landing_hash
                     || topic0 == self.ground_cycle_takeoff_hash) =>
                 {
+                    debug!("received ground cycle event");
                     let event = GroundCycleContractEvents::decode_log(&RawLog::from(log))?;
                     event.save(&self.database).await?;
                 }
@@ -214,10 +217,11 @@ struct DatabaseStation {
     location: String,
 }
 
-#[derive(sqlx::FromRow)]
+#[derive(sqlx::FromRow, Debug)]
 struct DatabaseAgreement {
     station: String,
     entity: String,
+    amount: i64,
     is_signed: bool,
 }
 
@@ -265,7 +269,8 @@ impl Database {
         sqlx::query(
             r#"
                 insert into stations (address, location, price)
-                values (?1, ?2, ?3)
+                values (?1, ?2, ?3) on conflict do update
+                set location = ?2, price = ?3
             "#,
         )
         .bind(address)
@@ -339,6 +344,7 @@ impl Database {
     {
         let mut query: QueryBuilder<DB> = QueryBuilder::new("select * from agreements");
         if let Some(address) = &address {
+            let address = address.to_lowercase();
             query.push(" where station = ");
             query.push_bind(address.clone());
             query.push(" or entity = ");
@@ -405,6 +411,7 @@ impl Database {
     {
         let mut query: QueryBuilder<DB> = QueryBuilder::new("select * from landings");
         if let Some(address) = &address {
+            let address = address.to_lowercase();
             query.push(" where drone = ");
             query.push_bind(address.clone());
             query.push(" or station = ");
@@ -462,20 +469,17 @@ async fn run_api(port: u16, database: Database) -> Result<(), Error> {
 #[derive(Deserialize)]
 struct QueryParams {
     address: Option<String>,
-    #[serde(default)]
+    #[serde(default = "default_limit")]
     limit: u32,
-    #[serde(default)]
+    #[serde(default = "default_offset")]
     offset: u32,
 }
 
-impl Default for QueryParams {
-    fn default() -> Self {
-        Self {
-            address: None,
-            limit: 10,
-            offset: 0,
-        }
-    }
+fn default_limit() -> u32 {
+    10
+}
+fn default_offset() -> u32 {
+    0
 }
 
 #[derive(Serialize)]
@@ -488,6 +492,7 @@ struct StationResponse {
 struct AgreementResponse {
     station: String,
     entity: String,
+    amount: i64,
     is_signed: bool,
 }
 
@@ -526,6 +531,7 @@ async fn get_agreements(
         external.push(AgreementResponse {
             station: val.station.clone(),
             entity: val.entity.clone(),
+            amount: val.amount,
             is_signed: val.is_signed,
         })
     }

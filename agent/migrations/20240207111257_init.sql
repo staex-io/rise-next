@@ -5,7 +5,7 @@ create table stations (
 );
 
 create table agreements (
-  id serial primary key,
+  id integer primary key autoincrement,
   station text not null,
   entity text not null,
   amount integer not null,
