@@ -60,8 +60,12 @@ impl Indexer {
                 "Created(address,address,uint256)".as_bytes(),
             )),
             agreement_signed_hash: H256::from(keccak256("Signed(address,address)".as_bytes())),
-            ground_cycle_landing_hash: H256::from(keccak256("Signed(address,address)".as_bytes())),
-            ground_cycle_takeoff_hash: H256::from(keccak256("Signed(address,address)".as_bytes())),
+            ground_cycle_landing_hash: H256::from(keccak256(
+                "Landing(uint256,address,address,address)".as_bytes(),
+            )),
+            ground_cycle_takeoff_hash: H256::from(keccak256(
+                "Takeoff(uint256,address,address,address)".as_bytes(),
+            )),
         })
     }
 
