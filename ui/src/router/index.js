@@ -3,6 +3,7 @@ import CreateAgreement from '@/views/CreateAgreement.vue'
 import SignAgreement from '@/views/SignAgreement.vue'
 import GetAgreement from '@/views/GetAgreement.vue'
 import WalletManagement from '@/views/WalletManagement.vue'
+import DIDManagement from '@/views/DIDManagement.vue'
 import QRCode from '@/views/QRCode.vue'
 
 const router = createRouter({
@@ -32,6 +33,11 @@ const router = createRouter({
       path: '/wallet',
       name: 'walletManagement',
       component: WalletManagement,
+    },
+    {
+      path: '/did',
+      name: 'didManagement',
+      component: DIDManagement,
     },
     {
       path: '/qrcode',

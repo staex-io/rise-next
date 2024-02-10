@@ -17,16 +17,14 @@ Everything except agreement contract address and RPC URL can be empty.
 ### Local
 
 ```shell
-VITE_AGREEMENT_CONTRACT_ADDRESS=0x5FbDB2315678afecb367f032d93F642f64180aa3
+VITE_DID_CONTRACT_ADDRESS=0x5FbDB2315678afecb367f032d93F642f64180aa3
+VITE_AGREEMENT_CONTRACT_ADDRESS=0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
 VITE_RPC_URL=http://localhost:8545/
 ```
 
 ### Testnet
 
-```shell
-VITE_AGREEMENT_CONTRACT_ADDRESS=0x61d6C8D1a59d2e191b5204EaA9C736017B963e95
-VITE_RPC_URL=https://ethereum-sepolia.publicnode.com
-```
+Contracts are not deployed to testnet right now.
 
 ## Backup
 
