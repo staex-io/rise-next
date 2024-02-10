@@ -1,4 +1,5 @@
 <script>
+import router from '@/router'
 import { WalletLocalStorageKey, WalletAccountsKey } from '@/constants/index.js'
 import { ReadWallet } from '../utils'
 
@@ -49,6 +50,14 @@ export default {
       const wallet = ReadWallet(walletJSON)
       this.wallet = wallet
     },
+    goToLandingPage(id) {
+      router.push({
+        name: 'landing',
+        params: {
+          id,
+        },
+      })
+    },
   },
   created() {
     this.loadWallet()
@@ -85,6 +94,8 @@ export default {
         <tr
           v-for="{ id, drone, station, landlord, is_taken_off, is_rejected } in landings"
           :key="station"
+          class="mouse-pointer"
+          @click="() => goToLandingPage(id)"
         >
           <td>{{ id }}</td>
           <td>{{ `${drone.slice(2, 6)}..${drone.slice(38, 42)}` }}</td>

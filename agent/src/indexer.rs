@@ -143,7 +143,7 @@ impl DatabaseSaver for DIDContractEvents {
                     .save_station(
                         &format!("{:?}", Address::from(event.p0)),
                         &event.location,
-                        (event.price / ethers::utils::WEI_IN_ETHER).as_u32() as i64,
+                        (event.price / ethers::utils::WEI_IN_ETHER).as_u32(),
                     )
                     .await
             }
@@ -160,7 +160,7 @@ impl DatabaseSaver for AgreementContractEvents {
                     .save_agreement(
                         &format!("{:?}", Address::from(event.0)),
                         &format!("{:?}", Address::from(event.1)),
-                        (event.2 / ethers::utils::WEI_IN_ETHER).as_u32() as i64,
+                        (event.2 / ethers::utils::WEI_IN_ETHER).as_u32(),
                         false,
                     )
                     .await
@@ -185,7 +185,7 @@ impl DatabaseSaver for GroundCycleContractEvents {
             GroundCycleContractEvents::LandingFilter(event) => {
                 database
                     .save_landing(
-                        event.0.as_u64() as i64,
+                        event.0.as_u32(),
                         &format!("{:?}", Address::from(event.1)),
                         &format!("{:?}", Address::from(event.2)),
                         &format!("{:?}", Address::from(event.3)),
@@ -197,7 +197,7 @@ impl DatabaseSaver for GroundCycleContractEvents {
             GroundCycleContractEvents::TakeoffFilter(event) => {
                 database
                     .save_landing(
-                        event.0.as_u64() as i64,
+                        event.0.as_u32(),
                         &format!("{:?}", Address::from(event.1)),
                         &format!("{:?}", Address::from(event.2)),
                         &format!("{:?}", Address::from(event.3)),
@@ -221,13 +221,13 @@ struct DatabaseStation {
 struct DatabaseAgreement {
     station: String,
     entity: String,
-    amount: i64,
+    amount: u32,
     is_signed: bool,
 }
 
 #[derive(sqlx::FromRow)]
 struct DatabaseLanding {
-    id: i64,
+    id: u32,
     drone: String,
     station: String,
     landlord: String,
@@ -264,7 +264,7 @@ impl Database {
         })
     }
 
-    async fn save_station(&self, address: &str, location: &str, price: i64) -> Result<(), Error> {
+    async fn save_station(&self, address: &str, location: &str, price: u32) -> Result<(), Error> {
         let mut conn = self.conn.lock().await;
         sqlx::query(
             r#"
@@ -296,7 +296,7 @@ impl Database {
         &self,
         station: &str,
         entity: &str,
-        amount: i64,
+        amount: u32,
         is_signed: bool,
     ) -> Result<(), Error> {
         let mut conn = self.conn.lock().await;
@@ -314,6 +314,22 @@ impl Database {
         .execute(&mut *conn)
         .await?;
         Ok(())
+    }
+
+    async fn get_agreement(
+        &self,
+        station: &String,
+        entity: &String,
+    ) -> Result<DatabaseAgreement, Error> {
+        let mut conn = self.conn.lock().await;
+        let station: DatabaseAgreement = sqlx::query_as::<_, DatabaseAgreement>(
+            "select * from agreements where station = ?1 and entity = ?2",
+        )
+        .bind(station)
+        .bind(entity)
+        .fetch_one(&mut *conn)
+        .await?;
+        Ok(station)
     }
 
     async fn query_agreements(
@@ -357,7 +373,7 @@ impl Database {
 
     async fn save_landing(
         &self,
-        id: i64,
+        id: u32,
         drone: &str,
         station: &str,
         landlord: &str,
@@ -385,12 +401,13 @@ impl Database {
 
     async fn query_landings(
         &self,
+        id: Option<u32>,
         address: Option<String>,
         limit: u32,
         offset: u32,
     ) -> Result<Vec<DatabaseLanding>, Error> {
         let mut query: QueryBuilder<sqlx::Sqlite> =
-            Self::prepare_query_landings::<sqlx::Sqlite>(&address, limit, offset)?;
+            Self::prepare_query_landings::<sqlx::Sqlite>(&id, &address, limit, offset)?;
         trace!("sql query landings: {}", query.sql());
         let query = query.build_query_as::<DatabaseLanding>();
         let mut conn = self.conn.lock().await;
@@ -399,6 +416,7 @@ impl Database {
     }
 
     fn prepare_query_landings<'a, DB: sqlx::Database>(
+        id: &'a Option<u32>,
         address: &'a Option<String>,
         limit: u32,
         offset: u32,
@@ -410,6 +428,11 @@ impl Database {
         u32: sqlx::Type<DB>,
     {
         let mut query: QueryBuilder<DB> = QueryBuilder::new("select * from landings");
+        if let Some(id) = &id {
+            query.push(" where id = ");
+            query.push_bind(id);
+            return Ok(query);
+        }
         if let Some(address) = &address {
             let address = address.to_lowercase();
             query.push(" where drone = ");
@@ -468,6 +491,7 @@ async fn run_api(port: u16, database: Database) -> Result<(), Error> {
 
 #[derive(Deserialize)]
 struct QueryParams {
+    id: Option<u32>,
     address: Option<String>,
     #[serde(default = "default_limit")]
     limit: u32,
@@ -492,18 +516,30 @@ struct StationResponse {
 struct AgreementResponse {
     station: String,
     entity: String,
-    amount: i64,
+    amount: u32,
     is_signed: bool,
+}
+
+impl From<DatabaseAgreement> for AgreementResponse {
+    fn from(value: DatabaseAgreement) -> Self {
+        Self {
+            station: value.station,
+            entity: value.entity,
+            amount: value.amount,
+            is_signed: value.is_signed,
+        }
+    }
 }
 
 #[derive(Serialize)]
 struct LandingResponse {
-    id: i64,
+    id: u32,
     drone: String,
     station: String,
     landlord: String,
     is_taken_off: bool,
     is_rejected: bool,
+    agreements: Option<Vec<AgreementResponse>>,
 }
 
 async fn get_stations(
@@ -528,12 +564,7 @@ async fn get_agreements(
     let internal = database.query_agreements(params.address, params.limit, params.offset).await?;
     let mut external: Vec<AgreementResponse> = Vec::with_capacity(internal.len());
     for val in internal {
-        external.push(AgreementResponse {
-            station: val.station.clone(),
-            entity: val.entity.clone(),
-            amount: val.amount,
-            is_signed: val.is_signed,
-        })
+        external.push(val.into())
     }
     Ok((StatusCode::OK, Json(external)))
 }
@@ -542,9 +573,10 @@ async fn get_landings(
     Query(params): Query<QueryParams>,
     Extension(database): Extension<Database>,
 ) -> Result<impl IntoResponse, ErrorResponse> {
-    let internal = database.query_landings(params.address, params.limit, params.offset).await?;
+    let internal =
+        database.query_landings(params.id, params.address, params.limit, params.offset).await?;
     let mut external: Vec<LandingResponse> = Vec::with_capacity(internal.len());
-    for val in internal {
+    for val in &internal {
         external.push(LandingResponse {
             id: val.id,
             drone: val.drone.clone(),
@@ -552,7 +584,16 @@ async fn get_landings(
             landlord: val.landlord.clone(),
             is_taken_off: val.is_taken_off,
             is_rejected: val.is_rejected,
+            agreements: None,
         })
+    }
+    // When user provides ID it means it wants to get particular landing.
+    if params.id.is_some() && internal.len() == 1 {
+        let internal = &internal[0];
+        let agreement_drone = database.get_agreement(&internal.station, &internal.drone).await?;
+        let agreement_landlord =
+            database.get_agreement(&internal.station, &internal.landlord).await?;
+        external[0].agreements = Some(vec![agreement_drone.into(), agreement_landlord.into()])
     }
     Ok((StatusCode::OK, Json(external)))
 }
