@@ -88,11 +88,12 @@ export default {
           <th>Landlord</th>
           <th>Taken Off</th>
           <th>Rejected</th>
+          <th>Date</th>
         </tr>
       </thead>
       <tbody>
         <tr
-          v-for="{ id, drone, station, landlord, is_taken_off, is_rejected } in landings"
+          v-for="{ id, drone, station, landlord, is_taken_off, is_rejected, date } in landings"
           :key="station"
           class="mouse-pointer"
           @click="() => goToLandingPage(id)"
@@ -103,6 +104,7 @@ export default {
           <td>{{ `${landlord.slice(2, 6)}..${landlord.slice(38, 42)}` }}</td>
           <td>{{ is_taken_off ? 'True' : 'False' }}</td>
           <td>{{ is_rejected ? 'True' : 'False' }}</td>
+          <td>{{ new Date(date * 1000).toDateString() }}</td>
         </tr>
       </tbody>
     </table>

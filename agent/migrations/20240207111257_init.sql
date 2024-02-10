@@ -21,6 +21,7 @@ create table landings (
   landlord text not null,
   is_taken_off bool not null default false,
   is_rejected bool not null default false,
+  date integer not null,
   unique (drone, station, landlord)
   on conflict replace
 );
