@@ -7,6 +7,7 @@ build:
 	{ echo '#![allow(warnings)]'; cat contracts-rs/src/contracts/mod.rs; } > contracts-rs/src/contracts/mod.rs_
 	rm -rf contracts-rs/src/contracts/mod.rs
 	mv contracts-rs/src/contracts/mod.rs_ contracts-rs/src/contracts/mod.rs
+	cd contracts && cp out/DID.sol/DIDContract.json ../ui/src/assets/DIDContract.json
 	cd contracts && cp out/Agreement.sol/AgreementContract.json ../ui/src/assets/AgreementContract.json
 
 test: lint
@@ -23,5 +24,5 @@ anvil:
 
 deploy:
 	cd contracts && PRIVATE_KEY=${PRIVATE_KEY} LANDING_WAIT_TIME=$(LANDING_WAIT_TIME) IS_TESTING=true \
-		forge script script/GroundCycle.s.sol:GroundCycleScript \
+		forge script --use 0.8.22 script/Rise.s.sol:RiseScript \
 		--fork-url ${RPC_URL} --broadcast -vvvv

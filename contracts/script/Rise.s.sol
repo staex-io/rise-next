@@ -4,9 +4,10 @@ pragma solidity ^0.8.22;
 import "forge-std/Script.sol";
 import {AgreementContract} from "../src/Agreement.sol";
 import {GroundCycleContract} from "../src/GroundCycle.sol";
+import {DIDContract} from "../src/DID.sol";
 import "forge-std/console.sol";
 
-contract GroundCycleScript is Script {
+contract RiseScript is Script {
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         // Landing wait time should be present in seconds.
@@ -18,6 +19,7 @@ contract GroundCycleScript is Script {
         }
         console.log("Landing wait time is:", landingWaitTime, "seconds");
         vm.startBroadcast(deployerPrivateKey);
+        new DIDContract();
         AgreementContract agreement = new AgreementContract();
         new GroundCycleContract(landingWaitTime, agreement);
         vm.stopBroadcast();

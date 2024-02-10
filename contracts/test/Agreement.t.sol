@@ -12,7 +12,7 @@ contract AgreementTest is Test {
     AgreementContract public agreementContract;
 
     // We need to copy that events from contract to avoid visibility errors.
-    event Created(address indexed, address indexed);
+    event Created(address indexed, address indexed, uint256 amount);
     event Signed(address indexed, address indexed);
 
     function setUp() public {
@@ -21,7 +21,7 @@ contract AgreementTest is Test {
 
     function test_createAgreement() public {
         vm.expectEmit(true, true, true, true);
-        emit Created(address(this), SIGNER_ADDRESS);
+        emit Created(address(this), SIGNER_ADDRESS, AMOUNT);
         agreementContract.create(SIGNER_ADDRESS, AMOUNT);
     }
 
