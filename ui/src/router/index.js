@@ -7,6 +7,7 @@ import DIDManagement from '@/views/DIDManagement.vue'
 import QRCode from '@/views/QRCode.vue'
 import AgreementsView from '@/views/AgreementsView.vue'
 import LandingsView from '@/views/LandingsView.vue'
+import LandingView from '@/views/LandingView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -45,6 +46,11 @@ const router = createRouter({
       path: '/did',
       name: 'didManagement',
       component: DIDManagement,
+    },
+    {
+      path: '/landing/:id',
+      name: 'landing',
+      component: LandingView,
     },
     {
       path: '/landings',
