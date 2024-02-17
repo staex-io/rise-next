@@ -26,3 +26,6 @@ deploy:
 	cd contracts && PRIVATE_KEY=${PRIVATE_KEY} LANDING_WAIT_TIME=$(LANDING_WAIT_TIME) IS_TESTING=true \
 		forge script --use 0.8.22 script/Rise.s.sol:RiseScript \
 		--fork-url ${RPC_URL} --broadcast -vvvv
+
+build_agent:
+	docker build -f deploy/Dockerfile -t ghcr.io/staex-mcc/rise-next/agent .

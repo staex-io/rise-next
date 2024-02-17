@@ -15,3 +15,10 @@ run:
 
 run_docker:
 	./run.sh bun dev-docker --host 0.0.0.0
+
+build:
+	./run.sh bun run build
+
+.PHONY: rsync
+rsync:
+	rsync -a --delete dist/ he1:/srv/iod/
