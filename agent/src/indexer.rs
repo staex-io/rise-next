@@ -22,12 +22,12 @@ use tokio::{sync::Mutex, time::sleep};
 
 use crate::{Config, Error, BLOCK_STEP};
 
-pub(crate) async fn run(cfg: Config, dsn: String, port: u16) -> Result<(), Error> {
+pub(crate) async fn run(cfg: Config, dsn: String, port: u16, from_block: u64) -> Result<(), Error> {
     let database = Database::new(dsn).await?;
 
     let indexer = Indexer::new(database.clone()).await?;
     tokio::spawn(async move {
-        if let Err(e) = indexer.run(cfg).await {
+        if let Err(e) = indexer.run(cfg, from_block).await {
             error!("failed to run indexer: {e}");
         }
     });
@@ -70,7 +70,7 @@ impl Indexer {
         })
     }
 
-    async fn run(&self, cfg: Config) -> Result<(), Error> {
+    async fn run(&self, cfg: Config, from_block: u64) -> Result<(), Error> {
         let did_contract_addr: Address = cfg.did_contract_addr.parse()?;
         let agreement_contract_addr: Address = cfg.agreement_contract_addr.parse()?;
         let ground_cycle_contract_addr: Address = cfg.ground_cycle_contract_addr.parse()?;
@@ -82,7 +82,7 @@ impl Indexer {
 
         let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url.clone())?;
 
-        let mut from_block: u64 = 0;
+        let mut from_block: u64 = from_block;
         loop {
             let to_block: u64 = from_block + BLOCK_STEP;
             let block = provider.get_block(to_block).await?;

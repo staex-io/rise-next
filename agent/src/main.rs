@@ -128,6 +128,9 @@ enum Commands {
         dsn: String,
         /// HTTP API port number.
         port: u16,
+        /// From which block indexer should start scanning.
+        #[arg(default_value = "0")]
+        from_block: u64,
     },
 }
 
@@ -231,8 +234,12 @@ async fn main() -> Result<(), Error> {
             station_private_key,
         } => app.takeoff(station_private_key).await?,
         Commands::Events { from_block } => app.events(from_block).await?,
-        Commands::Indexer { dsn, port } => {
-            indexer::run(cfg, dsn, port).await?;
+        Commands::Indexer {
+            dsn,
+            port,
+            from_block,
+        } => {
+            indexer::run(cfg, dsn, port, from_block).await?;
             tokio::signal::ctrl_c().await?;
         }
     }
