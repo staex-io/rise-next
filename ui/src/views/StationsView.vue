@@ -1,4 +1,6 @@
 <script>
+import { ethers } from 'ethers'
+
 export default {
   data() {
     return {
@@ -17,6 +19,9 @@ export default {
             return
         }
         let data = await res.json()
+        for (let i = 0; i < data.length; i++) {
+          data[i].price = ethers.formatEther(ethers.parseEther(data[i].price))
+        }
         this.stations = data
       } catch (e) {
         console.error(e)

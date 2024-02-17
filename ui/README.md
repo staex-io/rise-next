@@ -24,7 +24,11 @@ VITE_RPC_URL=http://localhost:8545/
 
 ### Testnet
 
-Contracts are not deployed to testnet right now.
+```shell
+VITE_DID_CONTRACT_ADDRESS=0x17536460b997842f8396409514986905eF63b58E
+VITE_AGREEMENT_CONTRACT_ADDRESS=0x94a71B1940741145454Bb7AA490A66b86369F160
+VITE_RPC_URL=https://ethereum-sepolia.publicnode.com
+```
 
 ## Backup
 

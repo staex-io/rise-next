@@ -27,7 +27,7 @@ mod indexer;
 
 // We use this step when iterating over blocks
 // to get smart contract events from these blocks.
-pub(crate) const BLOCK_STEP: u64 = 1;
+pub(crate) const BLOCK_STEP: u64 = 25;
 
 type Error = Box<dyn std::error::Error>;
 
@@ -125,11 +125,13 @@ enum Commands {
     Indexer {
         /// Database data source name.
         /// Use it for database connection.
+        #[arg(default_value = "sqlite:rise-next.sqlite")]
         dsn: String,
         /// HTTP API port number.
+        #[arg(default_value = "4698")]
         port: u16,
         /// From which block indexer should start scanning.
-        #[arg(default_value = "0")]
+        #[arg(default_value = "5306804")]
         from_block: u64,
     },
 }
@@ -166,9 +168,10 @@ impl Config {
                 rpc_url: "https://ethereum-sepolia.publicnode.com".to_string(),
                 chain_id: 11155111,
                 // Currently smart contacts are not deployed to Sepolia.
-                did_contract_addr: "".to_string(),
-                agreement_contract_addr: "".to_string(),
-                ground_cycle_contract_addr: "".to_string(),
+                did_contract_addr: "0x17536460b997842f8396409514986905eF63b58E".to_string(),
+                agreement_contract_addr: "0x94a71B1940741145454Bb7AA490A66b86369F160".to_string(),
+                ground_cycle_contract_addr: "0x60197B0C29EE4F80ad3B5e88A86EC235aF05d0CA"
+                    .to_string(),
             },
             _ => unimplemented!(),
         };
@@ -195,7 +198,7 @@ impl Config {
 async fn main() -> Result<(), Error> {
     env_logger::builder()
         .filter_level(LevelFilter::Off)
-        .filter_module("agent", LevelFilter::Debug)
+        .filter_module("agent", LevelFilter::Trace)
         .init();
     let cli = Cli::parse();
     let cfg = Config::new(

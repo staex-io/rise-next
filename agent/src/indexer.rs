@@ -12,15 +12,15 @@ use ethers::{
     abi::RawLog,
     contract::EthLogDecode,
     providers::{Http, Middleware, Provider},
-    types::{Address, Block, Filter, Log, H256},
-    utils::keccak256,
+    types::{Address, Block, Filter, Log, H256, U256},
+    utils::{self, format_ether, keccak256, parse_ether},
 };
 use log::{debug, error, info, trace};
 use serde::{Deserialize, Serialize};
 use sqlx::{Connection, QueryBuilder, SqliteConnection};
 use tokio::{sync::Mutex, time::sleep};
 
-use crate::{Config, Error, BLOCK_STEP};
+use crate::{Config, Error};
 
 pub(crate) async fn run(cfg: Config, dsn: String, port: u16, from_block: u64) -> Result<(), Error> {
     let database = Database::new(dsn).await?;
@@ -83,10 +83,16 @@ impl Indexer {
         let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url.clone())?;
 
         let mut from_block: u64 = from_block;
+        let mut block_step: u64 = 2625;
         loop {
-            let to_block: u64 = from_block + BLOCK_STEP;
+            let to_block: u64 = from_block + block_step;
             let block = provider.get_block(to_block).await?;
+            trace!("scanning from {from_block} to {to_block} block");
             if block.is_none() {
+                block_step /= 10;
+                if block_step == 0 {
+                    block_step = 1;
+                }
                 trace!("{} (to_block) is not exists yet, waiting", to_block);
                 sleep(Duration::from_secs(1)).await;
                 continue;
@@ -100,7 +106,8 @@ impl Indexer {
                     .await?;
                 self.process_logs(&block, logs).await?;
             }
-            from_block += BLOCK_STEP;
+            from_block += block_step;
+            sleep(Duration::from_secs(4)).await;
         }
     }
 
@@ -150,7 +157,7 @@ impl DatabaseSaver for DIDContractEvents {
                     .save_station(
                         &format!("{:?}", Address::from(event.p0)),
                         &event.location,
-                        (event.price / ethers::utils::WEI_IN_ETHER).as_u32(),
+                        &utils::format_ether(event.price),
                     )
                     .await
             }
@@ -167,7 +174,7 @@ impl DatabaseSaver for AgreementContractEvents {
                     .save_agreement(
                         &format!("{:?}", Address::from(event.0)),
                         &format!("{:?}", Address::from(event.1)),
-                        (event.2 / ethers::utils::WEI_IN_ETHER).as_u32(),
+                        &utils::format_ether(event.2),
                         false,
                     )
                     .await
@@ -177,7 +184,7 @@ impl DatabaseSaver for AgreementContractEvents {
                     .save_agreement(
                         &format!("{:?}", Address::from(event.0)),
                         &format!("{:?}", Address::from(event.1)),
-                        0,
+                        "",
                         true,
                     )
                     .await
@@ -224,14 +231,14 @@ impl DatabaseSaver for GroundCycleContractEvents {
 struct DatabaseStation {
     address: String,
     location: String,
-    price: u32,
+    price: String,
 }
 
 #[derive(sqlx::FromRow, Debug)]
 struct DatabaseAgreement {
     station: String,
     entity: String,
-    amount: u32,
+    amount: String,
     is_signed: bool,
 }
 
@@ -249,7 +256,7 @@ struct DatabaseLanding {
 #[derive(sqlx::FromRow)]
 struct DatabaseStats {
     landings: u32,
-    amount: i64,
+    amount: String,
 }
 
 #[derive(Clone)]
@@ -281,7 +288,7 @@ impl Database {
         })
     }
 
-    async fn save_station(&self, address: &str, location: &str, price: u32) -> Result<(), Error> {
+    async fn save_station(&self, address: &str, location: &str, price: &str) -> Result<(), Error> {
         let mut conn = self.conn.lock().await;
         sqlx::query(
             r#"
@@ -313,7 +320,7 @@ impl Database {
         &self,
         station: &str,
         entity: &str,
-        amount: u32,
+        amount: &str,
         is_signed: bool,
     ) -> Result<(), Error> {
         let mut conn = self.conn.lock().await;
@@ -333,11 +340,7 @@ impl Database {
         Ok(())
     }
 
-    async fn get_agreement(
-        &self,
-        station: &String,
-        entity: &String,
-    ) -> Result<DatabaseAgreement, Error> {
+    async fn get_agreement(&self, station: &str, entity: &str) -> Result<DatabaseAgreement, Error> {
         let mut conn = self.conn.lock().await;
         let agreement: DatabaseAgreement = sqlx::query_as::<_, DatabaseAgreement>(
             "select * from agreements where station = ?1 and entity = ?2",
@@ -399,6 +402,38 @@ impl Database {
         is_rejected: bool,
         timestamp: u32,
     ) -> Result<(), Error> {
+        let station_drone_agreement = self.get_agreement(station, drone).await?;
+        let station_landlord_agreement = self.get_agreement(station, landlord).await?;
+
+        let drone_stats = self.get_stats(drone).await?;
+        self.update_stats(drone, drone_stats.landings + 1, &U256::from(0).to_string()).await?;
+
+        let station_stats = self.get_stats(station).await?;
+        self.update_stats(
+            station,
+            station_stats.landings + 1,
+            &format_ether(
+                parse_ether(station_stats.amount)?
+                    .checked_add(parse_ether(&station_drone_agreement.amount)?)
+                    .ok_or_else(|| "failed to add station stats amount".to_string())?
+                    .checked_sub(parse_ether(&station_landlord_agreement.amount)?)
+                    .unwrap_or(U256::from(0)),
+            ),
+        )
+        .await?;
+
+        let landlord_stats = self.get_stats(landlord).await?;
+        self.update_stats(
+            landlord,
+            landlord_stats.landings + 1,
+            &format_ether(
+                parse_ether(landlord_stats.amount)?
+                    .checked_add(parse_ether(&station_landlord_agreement.amount)?)
+                    .ok_or_else(|| "failed to add landlord stats amount".to_string())?,
+            ),
+        )
+        .await?;
+
         let mut conn = self.conn.lock().await;
         sqlx::query(
             r#"
@@ -467,13 +502,26 @@ impl Database {
         Ok(query)
     }
 
-    async fn get_stats(&self, address: &str) -> Result<DatabaseStats, Error> {
+    async fn update_stats(&self, address: &str, landings: u32, amount: &str) -> Result<(), Error> {
         let mut conn = self.conn.lock().await;
-        let stats: DatabaseStats =
-            sqlx::query_as::<_, DatabaseStats>("select * from stats where address = ?1")
-                .bind(address.to_lowercase())
-                .fetch_one(&mut *conn)
-                .await?;
+        sqlx::query("update stats set landings = ?2, amount = ?3 where address = ?1")
+            .bind(address.to_lowercase())
+            .bind(landings)
+            .bind(amount)
+            .execute(&mut *conn)
+            .await?;
+        Ok(())
+    }
+
+    async fn get_stats(&self, address: &str) -> Result<DatabaseStats, Error> {
+        eprintln!("...");
+        let mut conn = self.conn.lock().await;
+        let stats: DatabaseStats = sqlx::query_as::<_, DatabaseStats>(
+            "insert into stats (address, landings, amount) values (?1, 0, '0') on conflict do nothing returning *",
+        )
+        .bind(address.to_lowercase())
+        .fetch_one(&mut *conn)
+        .await?;
         Ok(stats)
     }
 }
@@ -541,14 +589,14 @@ fn default_offset() -> u32 {
 struct StationResponse {
     address: String,
     location: String,
-    price: u32,
+    price: String,
 }
 
 #[derive(Serialize)]
 struct AgreementResponse {
     station: String,
     entity: String,
-    amount: u32,
+    amount: String,
     is_signed: bool,
 }
 
@@ -566,7 +614,7 @@ impl From<DatabaseAgreement> for AgreementResponse {
 #[derive(Serialize)]
 struct StatsResponse {
     landings: u32,
-    amount: i64,
+    amount: String,
 }
 
 #[derive(Serialize)]
