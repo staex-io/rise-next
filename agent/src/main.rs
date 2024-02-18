@@ -260,8 +260,8 @@ struct App {
 
 impl App {
     #[cfg(target_os = "linux")]
-    fn new(cfg: Config, landing_wait_time: u64, device_index: Option<u8>) -> Result<Self, Error> {
-        let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url)?;
+    fn new(cfg: &Config, landing_wait_time: u64, device_index: Option<u8>) -> Result<Self, Error> {
+        let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url.clone())?;
         let agreement_contract_addr: Address = cfg.agreement_contract_addr.parse()?;
         let ground_cycle_contract_addr: Address = cfg.ground_cycle_contract_addr.parse()?;
         let contracts_client =
