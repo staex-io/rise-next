@@ -127,6 +127,9 @@ enum Commands {
         /// Use it for database connection.
         #[arg(default_value = "sqlite:rise-next.sqlite")]
         dsn: String,
+        /// HTTP API host.
+        #[arg(default_value = "127.0.0.1")]
+        host: String,
         /// HTTP API port number.
         #[arg(default_value = "4698")]
         port: u16,
@@ -239,10 +242,11 @@ async fn main() -> Result<(), Error> {
         Commands::Events { from_block } => app.events(from_block).await?,
         Commands::Indexer {
             dsn,
+            host,
             port,
             from_block,
         } => {
-            indexer::run(cfg, dsn, port, from_block).await?;
+            indexer::run(cfg, dsn, host, port, from_block).await?;
             tokio::signal::ctrl_c().await?;
         }
     }

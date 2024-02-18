@@ -25,7 +25,13 @@ use tokio::{sync::Mutex, time::sleep};
 
 use crate::{Config, Error};
 
-pub(crate) async fn run(cfg: Config, dsn: String, port: u16, from_block: u64) -> Result<(), Error> {
+pub(crate) async fn run(
+    cfg: Config,
+    dsn: String,
+    host: String,
+    port: u16,
+    from_block: u64,
+) -> Result<(), Error> {
     let database = Database::new(dsn).await?;
 
     let indexer = Indexer::new(database.clone()).await?;
@@ -36,7 +42,7 @@ pub(crate) async fn run(cfg: Config, dsn: String, port: u16, from_block: u64) ->
     });
 
     tokio::spawn(async move {
-        if let Err(e) = run_api(port, database).await {
+        if let Err(e) = run_api(host, port, database).await {
             error!("failed to run api: {e}")
         }
     });
@@ -581,7 +587,7 @@ impl IntoResponse for ErrorResponse {
     }
 }
 
-async fn run_api(port: u16, database: Database) -> Result<(), Error> {
+async fn run_api(host: String, port: u16, database: Database) -> Result<(), Error> {
     let app = Router::new()
         .route("/stations", get(get_stations))
         .route("/agreements", get(get_agreements))
@@ -589,7 +595,7 @@ async fn run_api(port: u16, database: Database) -> Result<(), Error> {
         .route("/stats", get(get_stats))
         .layer(Extension(database))
         .fallback(fallback);
-    let addr = format!("127.0.0.1:{}", port);
+    let addr = format!("{}:{}", host, port);
     let listener = tokio::net::TcpListener::bind(&addr).await?;
     info!("listen on {addr} for HTTP requests");
     axum::serve(listener, app).await?;
