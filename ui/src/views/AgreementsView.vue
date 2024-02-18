@@ -1,6 +1,7 @@
 <script>
 import { WalletLocalStorageKey, WalletAccountsKey } from '@/constants/index.js'
 import { ReadWallet } from '../utils'
+import { ethers } from 'ethers'
 
 export default {
   data() {
@@ -38,6 +39,9 @@ export default {
             return
         }
         let data = await res.json()
+        for (let i = 0; i < data.length; i++) {
+          data[i].amount = ethers.formatEther(ethers.parseEther(data[i].amount))
+        }
         this.agreements = data
       } catch (e) {
         console.error(e)
@@ -75,7 +79,7 @@ export default {
         <tr>
           <th>Station</th>
           <th>Entity</th>
-          <th>Price</th>
+          <th>Price (ETH)</th>
           <th>Signed</th>
         </tr>
       </thead>

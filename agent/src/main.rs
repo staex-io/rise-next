@@ -125,9 +125,17 @@ enum Commands {
     Indexer {
         /// Database data source name.
         /// Use it for database connection.
+        #[arg(default_value = "sqlite:rise-next.sqlite")]
         dsn: String,
+        /// HTTP API host.
+        #[arg(default_value = "127.0.0.1")]
+        host: String,
         /// HTTP API port number.
+        #[arg(default_value = "4698")]
         port: u16,
+        /// From which block indexer should start scanning.
+        #[arg(default_value = "5306804")]
+        from_block: u64,
     },
 }
 
@@ -163,9 +171,10 @@ impl Config {
                 rpc_url: "https://ethereum-sepolia.publicnode.com".to_string(),
                 chain_id: 11155111,
                 // Currently smart contacts are not deployed to Sepolia.
-                did_contract_addr: "".to_string(),
-                agreement_contract_addr: "".to_string(),
-                ground_cycle_contract_addr: "".to_string(),
+                did_contract_addr: "0x17536460b997842f8396409514986905eF63b58E".to_string(),
+                agreement_contract_addr: "0x94a71B1940741145454Bb7AA490A66b86369F160".to_string(),
+                ground_cycle_contract_addr: "0x60197B0C29EE4F80ad3B5e88A86EC235aF05d0CA"
+                    .to_string(),
             },
             _ => unimplemented!(),
         };
@@ -192,7 +201,7 @@ impl Config {
 async fn main() -> Result<(), Error> {
     env_logger::builder()
         .filter_level(LevelFilter::Off)
-        .filter_module("agent", LevelFilter::Debug)
+        .filter_module("agent", LevelFilter::Trace)
         .init();
     let cli = Cli::parse();
     let cfg = Config::new(
@@ -204,7 +213,7 @@ async fn main() -> Result<(), Error> {
         cli.ground_cycle_contract_addr,
     );
     #[cfg(target_os = "linux")]
-    let app = App::new(cfg, cli.landing_wait_time, cli.device_index)?;
+    let app = App::new(&cfg, cli.landing_wait_time, cli.device_index)?;
     #[cfg(target_os = "macos")]
     let app = App::new(&cfg, cli.landing_wait_time)?;
     match cli.command {
@@ -231,8 +240,13 @@ async fn main() -> Result<(), Error> {
             station_private_key,
         } => app.takeoff(station_private_key).await?,
         Commands::Events { from_block } => app.events(from_block).await?,
-        Commands::Indexer { dsn, port } => {
-            indexer::run(cfg, dsn, port).await?;
+        Commands::Indexer {
+            dsn,
+            host,
+            port,
+            from_block,
+        } => {
+            indexer::run(cfg, dsn, host, port, from_block).await?;
             tokio::signal::ctrl_c().await?;
         }
     }
@@ -250,8 +264,8 @@ struct App {
 
 impl App {
     #[cfg(target_os = "linux")]
-    fn new(cfg: Config, landing_wait_time: u64, device_index: Option<u8>) -> Result<Self, Error> {
-        let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url)?;
+    fn new(cfg: &Config, landing_wait_time: u64, device_index: Option<u8>) -> Result<Self, Error> {
+        let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url.clone())?;
         let agreement_contract_addr: Address = cfg.agreement_contract_addr.parse()?;
         let ground_cycle_contract_addr: Address = cfg.ground_cycle_contract_addr.parse()?;
         let contracts_client =

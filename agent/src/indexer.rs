@@ -1,4 +1,6 @@
-use std::{fs::OpenOptions, future::Future, io::ErrorKind, sync::Arc, time::Duration};
+use std::{
+    fs::OpenOptions, future::Future, io::ErrorKind, str::FromStr, sync::Arc, time::Duration,
+};
 
 use axum::{
     extract::Query,
@@ -13,27 +15,34 @@ use ethers::{
     contract::EthLogDecode,
     providers::{Http, Middleware, Provider},
     types::{Address, Block, Filter, Log, H256},
-    utils::keccak256,
+    utils::{format_ether, keccak256},
 };
 use log::{debug, error, info, trace};
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use sqlx::{Connection, QueryBuilder, SqliteConnection};
 use tokio::{sync::Mutex, time::sleep};
 
-use crate::{Config, Error, BLOCK_STEP};
+use crate::{Config, Error};
 
-pub(crate) async fn run(cfg: Config, dsn: String, port: u16) -> Result<(), Error> {
+pub(crate) async fn run(
+    cfg: Config,
+    dsn: String,
+    host: String,
+    port: u16,
+    from_block: u64,
+) -> Result<(), Error> {
     let database = Database::new(dsn).await?;
 
     let indexer = Indexer::new(database.clone()).await?;
     tokio::spawn(async move {
-        if let Err(e) = indexer.run(cfg).await {
+        if let Err(e) = indexer.run(cfg, from_block).await {
             error!("failed to run indexer: {e}");
         }
     });
 
     tokio::spawn(async move {
-        if let Err(e) = run_api(port, database).await {
+        if let Err(e) = run_api(host, port, database).await {
             error!("failed to run api: {e}")
         }
     });
@@ -70,7 +79,7 @@ impl Indexer {
         })
     }
 
-    async fn run(&self, cfg: Config) -> Result<(), Error> {
+    async fn run(&self, cfg: Config, from_block: u64) -> Result<(), Error> {
         let did_contract_addr: Address = cfg.did_contract_addr.parse()?;
         let agreement_contract_addr: Address = cfg.agreement_contract_addr.parse()?;
         let ground_cycle_contract_addr: Address = cfg.ground_cycle_contract_addr.parse()?;
@@ -82,11 +91,17 @@ impl Indexer {
 
         let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url.clone())?;
 
-        let mut from_block: u64 = 0;
+        let mut from_block: u64 = from_block;
+        let mut block_step: u64 = 3000;
         loop {
-            let to_block: u64 = from_block + BLOCK_STEP;
+            let to_block: u64 = from_block + block_step;
             let block = provider.get_block(to_block).await?;
+            trace!("scanning from {from_block} to {to_block} block");
             if block.is_none() {
+                block_step /= 10;
+                if block_step == 0 {
+                    block_step = 1;
+                }
                 trace!("{} (to_block) is not exists yet, waiting", to_block);
                 sleep(Duration::from_secs(1)).await;
                 continue;
@@ -100,7 +115,8 @@ impl Indexer {
                     .await?;
                 self.process_logs(&block, logs).await?;
             }
-            from_block += BLOCK_STEP;
+            from_block += block_step;
+            sleep(Duration::from_secs(1)).await;
         }
     }
 
@@ -150,7 +166,7 @@ impl DatabaseSaver for DIDContractEvents {
                     .save_station(
                         &format!("{:?}", Address::from(event.p0)),
                         &event.location,
-                        (event.price / ethers::utils::WEI_IN_ETHER).as_u32(),
+                        &format_ether(event.price),
                     )
                     .await
             }
@@ -167,7 +183,7 @@ impl DatabaseSaver for AgreementContractEvents {
                     .save_agreement(
                         &format!("{:?}", Address::from(event.0)),
                         &format!("{:?}", Address::from(event.1)),
-                        (event.2 / ethers::utils::WEI_IN_ETHER).as_u32(),
+                        &format_ether(event.2),
                         false,
                     )
                     .await
@@ -177,7 +193,7 @@ impl DatabaseSaver for AgreementContractEvents {
                     .save_agreement(
                         &format!("{:?}", Address::from(event.0)),
                         &format!("{:?}", Address::from(event.1)),
-                        0,
+                        "",
                         true,
                     )
                     .await
@@ -224,14 +240,14 @@ impl DatabaseSaver for GroundCycleContractEvents {
 struct DatabaseStation {
     address: String,
     location: String,
-    price: u32,
+    price: String,
 }
 
 #[derive(sqlx::FromRow, Debug)]
 struct DatabaseAgreement {
     station: String,
     entity: String,
-    amount: u32,
+    amount: String,
     is_signed: bool,
 }
 
@@ -249,7 +265,16 @@ struct DatabaseLanding {
 #[derive(sqlx::FromRow)]
 struct DatabaseStats {
     landings: u32,
-    amount: i64,
+    amount: String,
+}
+
+impl Default for DatabaseStats {
+    fn default() -> Self {
+        Self {
+            landings: 0,
+            amount: "0".to_string(),
+        }
+    }
 }
 
 #[derive(Clone)]
@@ -281,7 +306,7 @@ impl Database {
         })
     }
 
-    async fn save_station(&self, address: &str, location: &str, price: u32) -> Result<(), Error> {
+    async fn save_station(&self, address: &str, location: &str, price: &str) -> Result<(), Error> {
         let mut conn = self.conn.lock().await;
         sqlx::query(
             r#"
@@ -313,7 +338,7 @@ impl Database {
         &self,
         station: &str,
         entity: &str,
-        amount: u32,
+        amount: &str,
         is_signed: bool,
     ) -> Result<(), Error> {
         let mut conn = self.conn.lock().await;
@@ -333,11 +358,7 @@ impl Database {
         Ok(())
     }
 
-    async fn get_agreement(
-        &self,
-        station: &String,
-        entity: &String,
-    ) -> Result<DatabaseAgreement, Error> {
+    async fn get_agreement(&self, station: &str, entity: &str) -> Result<DatabaseAgreement, Error> {
         let mut conn = self.conn.lock().await;
         let agreement: DatabaseAgreement = sqlx::query_as::<_, DatabaseAgreement>(
             "select * from agreements where station = ?1 and entity = ?2",
@@ -399,6 +420,47 @@ impl Database {
         is_rejected: bool,
         timestamp: u32,
     ) -> Result<(), Error> {
+        let station_drone_agreement = self.get_agreement(station, drone).await?;
+        let station_landlord_agreement = self.get_agreement(station, landlord).await?;
+
+        // If it is not takeoff or rejected it is approved landing so we can update stats.
+        if is_taken_off || is_rejected {
+            let drone_stats = self.get_stats(drone).await?;
+            self.save_stats(
+                drone,
+                drone_stats.landings + 1,
+                &(Decimal::from_str(&drone_stats.amount).map_err(map_decimal_err)?
+                    - Decimal::from_str(&station_drone_agreement.amount)
+                        .map_err(map_decimal_err)?)
+                .to_string(),
+            )
+            .await?;
+
+            let station_stats = self.get_stats(station).await?;
+            self.save_stats(
+                station,
+                station_stats.landings + 1,
+                &(Decimal::from_str(&station_stats.amount).map_err(map_decimal_err)?
+                    + Decimal::from_str(&station_drone_agreement.amount)
+                        .map_err(map_decimal_err)?
+                    - Decimal::from_str(&station_landlord_agreement.amount)
+                        .map_err(map_decimal_err)?)
+                .to_string(),
+            )
+            .await?;
+
+            let landlord_stats = self.get_stats(landlord).await?;
+            self.save_stats(
+                landlord,
+                landlord_stats.landings + 1,
+                &(Decimal::from_str(&landlord_stats.amount).map_err(map_decimal_err)?
+                    + Decimal::from_str(&station_landlord_agreement.amount)
+                        .map_err(map_decimal_err)?)
+                .to_string(),
+            )
+            .await?;
+        }
+
         let mut conn = self.conn.lock().await;
         sqlx::query(
             r#"
@@ -467,15 +529,35 @@ impl Database {
         Ok(query)
     }
 
+    async fn save_stats(&self, address: &str, landings: u32, amount: &str) -> Result<(), Error> {
+        let mut conn = self.conn.lock().await;
+        sqlx::query("insert into stats values (?1, ?2, ?3) on conflict do update set landings = ?2, amount = ?3")
+            .bind(address.to_lowercase())
+            .bind(landings)
+            .bind(amount)
+            .execute(&mut *conn)
+            .await?;
+        Ok(())
+    }
+
     async fn get_stats(&self, address: &str) -> Result<DatabaseStats, Error> {
         let mut conn = self.conn.lock().await;
-        let stats: DatabaseStats =
-            sqlx::query_as::<_, DatabaseStats>("select * from stats where address = ?1")
-                .bind(address.to_lowercase())
-                .fetch_one(&mut *conn)
-                .await?;
-        Ok(stats)
+        match sqlx::query_as::<_, DatabaseStats>("select * from stats where address = ?1")
+            .bind(address.to_lowercase())
+            .fetch_one(&mut *conn)
+            .await
+        {
+            Ok(stats) => Ok(stats),
+            Err(e) => match e {
+                sqlx::Error::RowNotFound => Ok(DatabaseStats::default()),
+                _ => Err(e.into()),
+            },
+        }
     }
+}
+
+fn map_decimal_err(e: rust_decimal::Error) -> String {
+    e.to_string()
 }
 
 struct ErrorResponse {
@@ -505,7 +587,7 @@ impl IntoResponse for ErrorResponse {
     }
 }
 
-async fn run_api(port: u16, database: Database) -> Result<(), Error> {
+async fn run_api(host: String, port: u16, database: Database) -> Result<(), Error> {
     let app = Router::new()
         .route("/stations", get(get_stations))
         .route("/agreements", get(get_agreements))
@@ -513,7 +595,7 @@ async fn run_api(port: u16, database: Database) -> Result<(), Error> {
         .route("/stats", get(get_stats))
         .layer(Extension(database))
         .fallback(fallback);
-    let addr = format!("127.0.0.1:{}", port);
+    let addr = format!("{}:{}", host, port);
     let listener = tokio::net::TcpListener::bind(&addr).await?;
     info!("listen on {addr} for HTTP requests");
     axum::serve(listener, app).await?;
@@ -541,14 +623,14 @@ fn default_offset() -> u32 {
 struct StationResponse {
     address: String,
     location: String,
-    price: u32,
+    price: String,
 }
 
 #[derive(Serialize)]
 struct AgreementResponse {
     station: String,
     entity: String,
-    amount: u32,
+    amount: String,
     is_signed: bool,
 }
 
@@ -566,7 +648,7 @@ impl From<DatabaseAgreement> for AgreementResponse {
 #[derive(Serialize)]
 struct StatsResponse {
     landings: u32,
-    amount: i64,
+    amount: String,
 }
 
 #[derive(Serialize)]

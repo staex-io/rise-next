@@ -2651,6 +2651,5212 @@ pub mod ground_cycle_contract {
         pub timestamp: ::ethers::core::types::U256,
     }
 }
+pub use ierc165::*;
+/// This module was auto-generated with ethers-rs Abigen.
+/// More information at: <https://github.com/gakonst/ethers-rs>
+#[allow(
+    clippy::enum_variant_names,
+    clippy::too_many_arguments,
+    clippy::upper_case_acronyms,
+    clippy::type_complexity,
+    dead_code,
+    non_camel_case_types,
+)]
+pub mod ierc165 {
+    #[allow(deprecated)]
+    fn __abi() -> ::ethers::core::abi::Abi {
+        ::ethers::core::abi::ethabi::Contract {
+            constructor: ::core::option::Option::None,
+            functions: ::core::convert::From::from([
+                (
+                    ::std::borrow::ToOwned::to_owned("supportsInterface"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("supportsInterface"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("interfaceID"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::FixedBytes(
+                                        4usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bytes4"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bool,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bool"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+            ]),
+            events: ::std::collections::BTreeMap::new(),
+            errors: ::std::collections::BTreeMap::new(),
+            receive: false,
+            fallback: false,
+        }
+    }
+    ///The parsed JSON ABI of the contract.
+    pub static IERC165_ABI: ::ethers::contract::Lazy<::ethers::core::abi::Abi> = ::ethers::contract::Lazy::new(
+        __abi,
+    );
+    pub struct IERC165<M>(::ethers::contract::Contract<M>);
+    impl<M> ::core::clone::Clone for IERC165<M> {
+        fn clone(&self) -> Self {
+            Self(::core::clone::Clone::clone(&self.0))
+        }
+    }
+    impl<M> ::core::ops::Deref for IERC165<M> {
+        type Target = ::ethers::contract::Contract<M>;
+        fn deref(&self) -> &Self::Target {
+            &self.0
+        }
+    }
+    impl<M> ::core::ops::DerefMut for IERC165<M> {
+        fn deref_mut(&mut self) -> &mut Self::Target {
+            &mut self.0
+        }
+    }
+    impl<M> ::core::fmt::Debug for IERC165<M> {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            f.debug_tuple(::core::stringify!(IERC165)).field(&self.address()).finish()
+        }
+    }
+    impl<M: ::ethers::providers::Middleware> IERC165<M> {
+        /// Creates a new contract instance with the specified `ethers` client at
+        /// `address`. The contract derefs to a `ethers::Contract` object.
+        pub fn new<T: Into<::ethers::core::types::Address>>(
+            address: T,
+            client: ::std::sync::Arc<M>,
+        ) -> Self {
+            Self(
+                ::ethers::contract::Contract::new(
+                    address.into(),
+                    IERC165_ABI.clone(),
+                    client,
+                ),
+            )
+        }
+        ///Calls the contract's `supportsInterface` (0x01ffc9a7) function
+        pub fn supports_interface(
+            &self,
+            interface_id: [u8; 4],
+        ) -> ::ethers::contract::builders::ContractCall<M, bool> {
+            self.0
+                .method_hash([1, 255, 201, 167], interface_id)
+                .expect("method not found (this should never happen)")
+        }
+    }
+    impl<M: ::ethers::providers::Middleware> From<::ethers::contract::Contract<M>>
+    for IERC165<M> {
+        fn from(contract: ::ethers::contract::Contract<M>) -> Self {
+            Self::new(contract.address(), contract.client())
+        }
+    }
+    ///Container type for all input parameters for the `supportsInterface` function with signature `supportsInterface(bytes4)` and selector `0x01ffc9a7`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "supportsInterface", abi = "supportsInterface(bytes4)")]
+    pub struct SupportsInterfaceCall {
+        pub interface_id: [u8; 4],
+    }
+    ///Container type for all return fields from the `supportsInterface` function with signature `supportsInterface(bytes4)` and selector `0x01ffc9a7`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct SupportsInterfaceReturn(pub bool);
+}
+pub use ierc20::*;
+/// This module was auto-generated with ethers-rs Abigen.
+/// More information at: <https://github.com/gakonst/ethers-rs>
+#[allow(
+    clippy::enum_variant_names,
+    clippy::too_many_arguments,
+    clippy::upper_case_acronyms,
+    clippy::type_complexity,
+    dead_code,
+    non_camel_case_types,
+)]
+pub mod ierc20 {
+    #[allow(deprecated)]
+    fn __abi() -> ::ethers::core::abi::Abi {
+        ::ethers::core::abi::ethabi::Contract {
+            constructor: ::core::option::Option::None,
+            functions: ::core::convert::From::from([
+                (
+                    ::std::borrow::ToOwned::to_owned("allowance"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("allowance"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("owner"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("spender"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("approve"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("approve"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("spender"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("amount"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bool,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bool"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::NonPayable,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("balanceOf"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("balanceOf"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("account"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("decimals"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("decimals"),
+                            inputs: ::std::vec![],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(8usize),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint8"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("name"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("name"),
+                            inputs: ::std::vec![],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::String,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("string"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("symbol"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("symbol"),
+                            inputs: ::std::vec![],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::String,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("string"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("totalSupply"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("totalSupply"),
+                            inputs: ::std::vec![],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("transfer"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("transfer"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("to"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("amount"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bool,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bool"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::NonPayable,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("transferFrom"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("transferFrom"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("from"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("to"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("amount"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bool,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bool"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::NonPayable,
+                        },
+                    ],
+                ),
+            ]),
+            events: ::core::convert::From::from([
+                (
+                    ::std::borrow::ToOwned::to_owned("Approval"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Event {
+                            name: ::std::borrow::ToOwned::to_owned("Approval"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("owner"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("spender"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("value"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    indexed: false,
+                                },
+                            ],
+                            anonymous: false,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("Transfer"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Event {
+                            name: ::std::borrow::ToOwned::to_owned("Transfer"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("from"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("to"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("value"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    indexed: false,
+                                },
+                            ],
+                            anonymous: false,
+                        },
+                    ],
+                ),
+            ]),
+            errors: ::std::collections::BTreeMap::new(),
+            receive: false,
+            fallback: false,
+        }
+    }
+    ///The parsed JSON ABI of the contract.
+    pub static IERC20_ABI: ::ethers::contract::Lazy<::ethers::core::abi::Abi> = ::ethers::contract::Lazy::new(
+        __abi,
+    );
+    pub struct IERC20<M>(::ethers::contract::Contract<M>);
+    impl<M> ::core::clone::Clone for IERC20<M> {
+        fn clone(&self) -> Self {
+            Self(::core::clone::Clone::clone(&self.0))
+        }
+    }
+    impl<M> ::core::ops::Deref for IERC20<M> {
+        type Target = ::ethers::contract::Contract<M>;
+        fn deref(&self) -> &Self::Target {
+            &self.0
+        }
+    }
+    impl<M> ::core::ops::DerefMut for IERC20<M> {
+        fn deref_mut(&mut self) -> &mut Self::Target {
+            &mut self.0
+        }
+    }
+    impl<M> ::core::fmt::Debug for IERC20<M> {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            f.debug_tuple(::core::stringify!(IERC20)).field(&self.address()).finish()
+        }
+    }
+    impl<M: ::ethers::providers::Middleware> IERC20<M> {
+        /// Creates a new contract instance with the specified `ethers` client at
+        /// `address`. The contract derefs to a `ethers::Contract` object.
+        pub fn new<T: Into<::ethers::core::types::Address>>(
+            address: T,
+            client: ::std::sync::Arc<M>,
+        ) -> Self {
+            Self(
+                ::ethers::contract::Contract::new(
+                    address.into(),
+                    IERC20_ABI.clone(),
+                    client,
+                ),
+            )
+        }
+        ///Calls the contract's `allowance` (0xdd62ed3e) function
+        pub fn allowance(
+            &self,
+            owner: ::ethers::core::types::Address,
+            spender: ::ethers::core::types::Address,
+        ) -> ::ethers::contract::builders::ContractCall<M, ::ethers::core::types::U256> {
+            self.0
+                .method_hash([221, 98, 237, 62], (owner, spender))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `approve` (0x095ea7b3) function
+        pub fn approve(
+            &self,
+            spender: ::ethers::core::types::Address,
+            amount: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<M, bool> {
+            self.0
+                .method_hash([9, 94, 167, 179], (spender, amount))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `balanceOf` (0x70a08231) function
+        pub fn balance_of(
+            &self,
+            account: ::ethers::core::types::Address,
+        ) -> ::ethers::contract::builders::ContractCall<M, ::ethers::core::types::U256> {
+            self.0
+                .method_hash([112, 160, 130, 49], account)
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `decimals` (0x313ce567) function
+        pub fn decimals(&self) -> ::ethers::contract::builders::ContractCall<M, u8> {
+            self.0
+                .method_hash([49, 60, 229, 103], ())
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `name` (0x06fdde03) function
+        pub fn name(
+            &self,
+        ) -> ::ethers::contract::builders::ContractCall<M, ::std::string::String> {
+            self.0
+                .method_hash([6, 253, 222, 3], ())
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `symbol` (0x95d89b41) function
+        pub fn symbol(
+            &self,
+        ) -> ::ethers::contract::builders::ContractCall<M, ::std::string::String> {
+            self.0
+                .method_hash([149, 216, 155, 65], ())
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `totalSupply` (0x18160ddd) function
+        pub fn total_supply(
+            &self,
+        ) -> ::ethers::contract::builders::ContractCall<M, ::ethers::core::types::U256> {
+            self.0
+                .method_hash([24, 22, 13, 221], ())
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `transfer` (0xa9059cbb) function
+        pub fn transfer(
+            &self,
+            to: ::ethers::core::types::Address,
+            amount: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<M, bool> {
+            self.0
+                .method_hash([169, 5, 156, 187], (to, amount))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `transferFrom` (0x23b872dd) function
+        pub fn transfer_from(
+            &self,
+            from: ::ethers::core::types::Address,
+            to: ::ethers::core::types::Address,
+            amount: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<M, bool> {
+            self.0
+                .method_hash([35, 184, 114, 221], (from, to, amount))
+                .expect("method not found (this should never happen)")
+        }
+        ///Gets the contract's `Approval` event
+        pub fn approval_filter(
+            &self,
+        ) -> ::ethers::contract::builders::Event<
+            ::std::sync::Arc<M>,
+            M,
+            ApprovalFilter,
+        > {
+            self.0.event()
+        }
+        ///Gets the contract's `Transfer` event
+        pub fn transfer_filter(
+            &self,
+        ) -> ::ethers::contract::builders::Event<
+            ::std::sync::Arc<M>,
+            M,
+            TransferFilter,
+        > {
+            self.0.event()
+        }
+        /// Returns an `Event` builder for all the events of this contract.
+        pub fn events(
+            &self,
+        ) -> ::ethers::contract::builders::Event<::std::sync::Arc<M>, M, IERC20Events> {
+            self.0.event_with_filter(::core::default::Default::default())
+        }
+    }
+    impl<M: ::ethers::providers::Middleware> From<::ethers::contract::Contract<M>>
+    for IERC20<M> {
+        fn from(contract: ::ethers::contract::Contract<M>) -> Self {
+            Self::new(contract.address(), contract.client())
+        }
+    }
+    #[derive(
+        Clone,
+        ::ethers::contract::EthEvent,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethevent(name = "Approval", abi = "Approval(address,address,uint256)")]
+    pub struct ApprovalFilter {
+        #[ethevent(indexed)]
+        pub owner: ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub spender: ::ethers::core::types::Address,
+        pub value: ::ethers::core::types::U256,
+    }
+    #[derive(
+        Clone,
+        ::ethers::contract::EthEvent,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethevent(name = "Transfer", abi = "Transfer(address,address,uint256)")]
+    pub struct TransferFilter {
+        #[ethevent(indexed)]
+        pub from: ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub to: ::ethers::core::types::Address,
+        pub value: ::ethers::core::types::U256,
+    }
+    ///Container type for all of the contract's events
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        serde::Serialize,
+        serde::Deserialize,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub enum IERC20Events {
+        ApprovalFilter(ApprovalFilter),
+        TransferFilter(TransferFilter),
+    }
+    impl ::ethers::contract::EthLogDecode for IERC20Events {
+        fn decode_log(
+            log: &::ethers::core::abi::RawLog,
+        ) -> ::core::result::Result<Self, ::ethers::core::abi::Error> {
+            if let Ok(decoded) = ApprovalFilter::decode_log(log) {
+                return Ok(IERC20Events::ApprovalFilter(decoded));
+            }
+            if let Ok(decoded) = TransferFilter::decode_log(log) {
+                return Ok(IERC20Events::TransferFilter(decoded));
+            }
+            Err(::ethers::core::abi::Error::InvalidData)
+        }
+    }
+    impl ::core::fmt::Display for IERC20Events {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            match self {
+                Self::ApprovalFilter(element) => ::core::fmt::Display::fmt(element, f),
+                Self::TransferFilter(element) => ::core::fmt::Display::fmt(element, f),
+            }
+        }
+    }
+    impl ::core::convert::From<ApprovalFilter> for IERC20Events {
+        fn from(value: ApprovalFilter) -> Self {
+            Self::ApprovalFilter(value)
+        }
+    }
+    impl ::core::convert::From<TransferFilter> for IERC20Events {
+        fn from(value: TransferFilter) -> Self {
+            Self::TransferFilter(value)
+        }
+    }
+    ///Container type for all input parameters for the `allowance` function with signature `allowance(address,address)` and selector `0xdd62ed3e`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "allowance", abi = "allowance(address,address)")]
+    pub struct AllowanceCall {
+        pub owner: ::ethers::core::types::Address,
+        pub spender: ::ethers::core::types::Address,
+    }
+    ///Container type for all input parameters for the `approve` function with signature `approve(address,uint256)` and selector `0x095ea7b3`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "approve", abi = "approve(address,uint256)")]
+    pub struct ApproveCall {
+        pub spender: ::ethers::core::types::Address,
+        pub amount: ::ethers::core::types::U256,
+    }
+    ///Container type for all input parameters for the `balanceOf` function with signature `balanceOf(address)` and selector `0x70a08231`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "balanceOf", abi = "balanceOf(address)")]
+    pub struct BalanceOfCall {
+        pub account: ::ethers::core::types::Address,
+    }
+    ///Container type for all input parameters for the `decimals` function with signature `decimals()` and selector `0x313ce567`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "decimals", abi = "decimals()")]
+    pub struct DecimalsCall;
+    ///Container type for all input parameters for the `name` function with signature `name()` and selector `0x06fdde03`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "name", abi = "name()")]
+    pub struct NameCall;
+    ///Container type for all input parameters for the `symbol` function with signature `symbol()` and selector `0x95d89b41`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "symbol", abi = "symbol()")]
+    pub struct SymbolCall;
+    ///Container type for all input parameters for the `totalSupply` function with signature `totalSupply()` and selector `0x18160ddd`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "totalSupply", abi = "totalSupply()")]
+    pub struct TotalSupplyCall;
+    ///Container type for all input parameters for the `transfer` function with signature `transfer(address,uint256)` and selector `0xa9059cbb`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "transfer", abi = "transfer(address,uint256)")]
+    pub struct TransferCall {
+        pub to: ::ethers::core::types::Address,
+        pub amount: ::ethers::core::types::U256,
+    }
+    ///Container type for all input parameters for the `transferFrom` function with signature `transferFrom(address,address,uint256)` and selector `0x23b872dd`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "transferFrom", abi = "transferFrom(address,address,uint256)")]
+    pub struct TransferFromCall {
+        pub from: ::ethers::core::types::Address,
+        pub to: ::ethers::core::types::Address,
+        pub amount: ::ethers::core::types::U256,
+    }
+    ///Container type for all of the contract's call
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        serde::Serialize,
+        serde::Deserialize,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub enum IERC20Calls {
+        Allowance(AllowanceCall),
+        Approve(ApproveCall),
+        BalanceOf(BalanceOfCall),
+        Decimals(DecimalsCall),
+        Name(NameCall),
+        Symbol(SymbolCall),
+        TotalSupply(TotalSupplyCall),
+        Transfer(TransferCall),
+        TransferFrom(TransferFromCall),
+    }
+    impl ::ethers::core::abi::AbiDecode for IERC20Calls {
+        fn decode(
+            data: impl AsRef<[u8]>,
+        ) -> ::core::result::Result<Self, ::ethers::core::abi::AbiError> {
+            let data = data.as_ref();
+            if let Ok(decoded) = <AllowanceCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::Allowance(decoded));
+            }
+            if let Ok(decoded) = <ApproveCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::Approve(decoded));
+            }
+            if let Ok(decoded) = <BalanceOfCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::BalanceOf(decoded));
+            }
+            if let Ok(decoded) = <DecimalsCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::Decimals(decoded));
+            }
+            if let Ok(decoded) = <NameCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::Name(decoded));
+            }
+            if let Ok(decoded) = <SymbolCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::Symbol(decoded));
+            }
+            if let Ok(decoded) = <TotalSupplyCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::TotalSupply(decoded));
+            }
+            if let Ok(decoded) = <TransferCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::Transfer(decoded));
+            }
+            if let Ok(decoded) = <TransferFromCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::TransferFrom(decoded));
+            }
+            Err(::ethers::core::abi::Error::InvalidData.into())
+        }
+    }
+    impl ::ethers::core::abi::AbiEncode for IERC20Calls {
+        fn encode(self) -> Vec<u8> {
+            match self {
+                Self::Allowance(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::Approve(element) => ::ethers::core::abi::AbiEncode::encode(element),
+                Self::BalanceOf(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::Decimals(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::Name(element) => ::ethers::core::abi::AbiEncode::encode(element),
+                Self::Symbol(element) => ::ethers::core::abi::AbiEncode::encode(element),
+                Self::TotalSupply(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::Transfer(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::TransferFrom(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+            }
+        }
+    }
+    impl ::core::fmt::Display for IERC20Calls {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            match self {
+                Self::Allowance(element) => ::core::fmt::Display::fmt(element, f),
+                Self::Approve(element) => ::core::fmt::Display::fmt(element, f),
+                Self::BalanceOf(element) => ::core::fmt::Display::fmt(element, f),
+                Self::Decimals(element) => ::core::fmt::Display::fmt(element, f),
+                Self::Name(element) => ::core::fmt::Display::fmt(element, f),
+                Self::Symbol(element) => ::core::fmt::Display::fmt(element, f),
+                Self::TotalSupply(element) => ::core::fmt::Display::fmt(element, f),
+                Self::Transfer(element) => ::core::fmt::Display::fmt(element, f),
+                Self::TransferFrom(element) => ::core::fmt::Display::fmt(element, f),
+            }
+        }
+    }
+    impl ::core::convert::From<AllowanceCall> for IERC20Calls {
+        fn from(value: AllowanceCall) -> Self {
+            Self::Allowance(value)
+        }
+    }
+    impl ::core::convert::From<ApproveCall> for IERC20Calls {
+        fn from(value: ApproveCall) -> Self {
+            Self::Approve(value)
+        }
+    }
+    impl ::core::convert::From<BalanceOfCall> for IERC20Calls {
+        fn from(value: BalanceOfCall) -> Self {
+            Self::BalanceOf(value)
+        }
+    }
+    impl ::core::convert::From<DecimalsCall> for IERC20Calls {
+        fn from(value: DecimalsCall) -> Self {
+            Self::Decimals(value)
+        }
+    }
+    impl ::core::convert::From<NameCall> for IERC20Calls {
+        fn from(value: NameCall) -> Self {
+            Self::Name(value)
+        }
+    }
+    impl ::core::convert::From<SymbolCall> for IERC20Calls {
+        fn from(value: SymbolCall) -> Self {
+            Self::Symbol(value)
+        }
+    }
+    impl ::core::convert::From<TotalSupplyCall> for IERC20Calls {
+        fn from(value: TotalSupplyCall) -> Self {
+            Self::TotalSupply(value)
+        }
+    }
+    impl ::core::convert::From<TransferCall> for IERC20Calls {
+        fn from(value: TransferCall) -> Self {
+            Self::Transfer(value)
+        }
+    }
+    impl ::core::convert::From<TransferFromCall> for IERC20Calls {
+        fn from(value: TransferFromCall) -> Self {
+            Self::TransferFrom(value)
+        }
+    }
+    ///Container type for all return fields from the `allowance` function with signature `allowance(address,address)` and selector `0xdd62ed3e`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct AllowanceReturn(pub ::ethers::core::types::U256);
+    ///Container type for all return fields from the `approve` function with signature `approve(address,uint256)` and selector `0x095ea7b3`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct ApproveReturn(pub bool);
+    ///Container type for all return fields from the `balanceOf` function with signature `balanceOf(address)` and selector `0x70a08231`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct BalanceOfReturn(pub ::ethers::core::types::U256);
+    ///Container type for all return fields from the `decimals` function with signature `decimals()` and selector `0x313ce567`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct DecimalsReturn(pub u8);
+    ///Container type for all return fields from the `name` function with signature `name()` and selector `0x06fdde03`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct NameReturn(pub ::std::string::String);
+    ///Container type for all return fields from the `symbol` function with signature `symbol()` and selector `0x95d89b41`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct SymbolReturn(pub ::std::string::String);
+    ///Container type for all return fields from the `totalSupply` function with signature `totalSupply()` and selector `0x18160ddd`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct TotalSupplyReturn(pub ::ethers::core::types::U256);
+    ///Container type for all return fields from the `transfer` function with signature `transfer(address,uint256)` and selector `0xa9059cbb`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct TransferReturn(pub bool);
+    ///Container type for all return fields from the `transferFrom` function with signature `transferFrom(address,address,uint256)` and selector `0x23b872dd`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct TransferFromReturn(pub bool);
+}
+pub use ierc721::*;
+/// This module was auto-generated with ethers-rs Abigen.
+/// More information at: <https://github.com/gakonst/ethers-rs>
+#[allow(
+    clippy::enum_variant_names,
+    clippy::too_many_arguments,
+    clippy::upper_case_acronyms,
+    clippy::type_complexity,
+    dead_code,
+    non_camel_case_types,
+)]
+pub mod ierc721 {
+    #[allow(deprecated)]
+    fn __abi() -> ::ethers::core::abi::Abi {
+        ::ethers::core::abi::ethabi::Contract {
+            constructor: ::core::option::Option::None,
+            functions: ::core::convert::From::from([
+                (
+                    ::std::borrow::ToOwned::to_owned("approve"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("approve"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_approved"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::Payable,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("balanceOf"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("balanceOf"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_owner"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("getApproved"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("getApproved"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("isApprovedForAll"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("isApprovedForAll"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_owner"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_operator"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bool,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bool"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("ownerOf"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("ownerOf"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("safeTransferFrom"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("safeTransferFrom"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_from"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_to"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::Payable,
+                        },
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("safeTransferFrom"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_from"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_to"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("data"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bytes,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bytes"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::Payable,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("setApprovalForAll"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("setApprovalForAll"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_operator"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_approved"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bool,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bool"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::NonPayable,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("supportsInterface"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("supportsInterface"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("interfaceID"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::FixedBytes(
+                                        4usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bytes4"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bool,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bool"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("transferFrom"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("transferFrom"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_from"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_to"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::Payable,
+                        },
+                    ],
+                ),
+            ]),
+            events: ::core::convert::From::from([
+                (
+                    ::std::borrow::ToOwned::to_owned("Approval"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Event {
+                            name: ::std::borrow::ToOwned::to_owned("Approval"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_owner"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_approved"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    indexed: true,
+                                },
+                            ],
+                            anonymous: false,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("ApprovalForAll"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Event {
+                            name: ::std::borrow::ToOwned::to_owned("ApprovalForAll"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_owner"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_operator"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_approved"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bool,
+                                    indexed: false,
+                                },
+                            ],
+                            anonymous: false,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("Transfer"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Event {
+                            name: ::std::borrow::ToOwned::to_owned("Transfer"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_from"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_to"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    indexed: true,
+                                },
+                            ],
+                            anonymous: false,
+                        },
+                    ],
+                ),
+            ]),
+            errors: ::std::collections::BTreeMap::new(),
+            receive: false,
+            fallback: false,
+        }
+    }
+    ///The parsed JSON ABI of the contract.
+    pub static IERC721_ABI: ::ethers::contract::Lazy<::ethers::core::abi::Abi> = ::ethers::contract::Lazy::new(
+        __abi,
+    );
+    pub struct IERC721<M>(::ethers::contract::Contract<M>);
+    impl<M> ::core::clone::Clone for IERC721<M> {
+        fn clone(&self) -> Self {
+            Self(::core::clone::Clone::clone(&self.0))
+        }
+    }
+    impl<M> ::core::ops::Deref for IERC721<M> {
+        type Target = ::ethers::contract::Contract<M>;
+        fn deref(&self) -> &Self::Target {
+            &self.0
+        }
+    }
+    impl<M> ::core::ops::DerefMut for IERC721<M> {
+        fn deref_mut(&mut self) -> &mut Self::Target {
+            &mut self.0
+        }
+    }
+    impl<M> ::core::fmt::Debug for IERC721<M> {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            f.debug_tuple(::core::stringify!(IERC721)).field(&self.address()).finish()
+        }
+    }
+    impl<M: ::ethers::providers::Middleware> IERC721<M> {
+        /// Creates a new contract instance with the specified `ethers` client at
+        /// `address`. The contract derefs to a `ethers::Contract` object.
+        pub fn new<T: Into<::ethers::core::types::Address>>(
+            address: T,
+            client: ::std::sync::Arc<M>,
+        ) -> Self {
+            Self(
+                ::ethers::contract::Contract::new(
+                    address.into(),
+                    IERC721_ABI.clone(),
+                    client,
+                ),
+            )
+        }
+        ///Calls the contract's `approve` (0x095ea7b3) function
+        pub fn approve(
+            &self,
+            approved: ::ethers::core::types::Address,
+            token_id: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([9, 94, 167, 179], (approved, token_id))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `balanceOf` (0x70a08231) function
+        pub fn balance_of(
+            &self,
+            owner: ::ethers::core::types::Address,
+        ) -> ::ethers::contract::builders::ContractCall<M, ::ethers::core::types::U256> {
+            self.0
+                .method_hash([112, 160, 130, 49], owner)
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `getApproved` (0x081812fc) function
+        pub fn get_approved(
+            &self,
+            token_id: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<
+            M,
+            ::ethers::core::types::Address,
+        > {
+            self.0
+                .method_hash([8, 24, 18, 252], token_id)
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `isApprovedForAll` (0xe985e9c5) function
+        pub fn is_approved_for_all(
+            &self,
+            owner: ::ethers::core::types::Address,
+            operator: ::ethers::core::types::Address,
+        ) -> ::ethers::contract::builders::ContractCall<M, bool> {
+            self.0
+                .method_hash([233, 133, 233, 197], (owner, operator))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `ownerOf` (0x6352211e) function
+        pub fn owner_of(
+            &self,
+            token_id: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<
+            M,
+            ::ethers::core::types::Address,
+        > {
+            self.0
+                .method_hash([99, 82, 33, 30], token_id)
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `safeTransferFrom` (0x42842e0e) function
+        pub fn safe_transfer_from(
+            &self,
+            from: ::ethers::core::types::Address,
+            to: ::ethers::core::types::Address,
+            token_id: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([66, 132, 46, 14], (from, to, token_id))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `safeTransferFrom` (0xb88d4fde) function
+        pub fn safe_transfer_from_with_from_and_to_and_data(
+            &self,
+            from: ::ethers::core::types::Address,
+            to: ::ethers::core::types::Address,
+            token_id: ::ethers::core::types::U256,
+            data: ::ethers::core::types::Bytes,
+        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([184, 141, 79, 222], (from, to, token_id, data))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `setApprovalForAll` (0xa22cb465) function
+        pub fn set_approval_for_all(
+            &self,
+            operator: ::ethers::core::types::Address,
+            approved: bool,
+        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([162, 44, 180, 101], (operator, approved))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `supportsInterface` (0x01ffc9a7) function
+        pub fn supports_interface(
+            &self,
+            interface_id: [u8; 4],
+        ) -> ::ethers::contract::builders::ContractCall<M, bool> {
+            self.0
+                .method_hash([1, 255, 201, 167], interface_id)
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `transferFrom` (0x23b872dd) function
+        pub fn transfer_from(
+            &self,
+            from: ::ethers::core::types::Address,
+            to: ::ethers::core::types::Address,
+            token_id: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([35, 184, 114, 221], (from, to, token_id))
+                .expect("method not found (this should never happen)")
+        }
+        ///Gets the contract's `Approval` event
+        pub fn approval_filter(
+            &self,
+        ) -> ::ethers::contract::builders::Event<
+            ::std::sync::Arc<M>,
+            M,
+            ApprovalFilter,
+        > {
+            self.0.event()
+        }
+        ///Gets the contract's `ApprovalForAll` event
+        pub fn approval_for_all_filter(
+            &self,
+        ) -> ::ethers::contract::builders::Event<
+            ::std::sync::Arc<M>,
+            M,
+            ApprovalForAllFilter,
+        > {
+            self.0.event()
+        }
+        ///Gets the contract's `Transfer` event
+        pub fn transfer_filter(
+            &self,
+        ) -> ::ethers::contract::builders::Event<
+            ::std::sync::Arc<M>,
+            M,
+            TransferFilter,
+        > {
+            self.0.event()
+        }
+        /// Returns an `Event` builder for all the events of this contract.
+        pub fn events(
+            &self,
+        ) -> ::ethers::contract::builders::Event<::std::sync::Arc<M>, M, IERC721Events> {
+            self.0.event_with_filter(::core::default::Default::default())
+        }
+    }
+    impl<M: ::ethers::providers::Middleware> From<::ethers::contract::Contract<M>>
+    for IERC721<M> {
+        fn from(contract: ::ethers::contract::Contract<M>) -> Self {
+            Self::new(contract.address(), contract.client())
+        }
+    }
+    #[derive(
+        Clone,
+        ::ethers::contract::EthEvent,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethevent(name = "Approval", abi = "Approval(address,address,uint256)")]
+    pub struct ApprovalFilter {
+        #[ethevent(indexed)]
+        pub owner: ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub approved: ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub token_id: ::ethers::core::types::U256,
+    }
+    #[derive(
+        Clone,
+        ::ethers::contract::EthEvent,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethevent(name = "ApprovalForAll", abi = "ApprovalForAll(address,address,bool)")]
+    pub struct ApprovalForAllFilter {
+        #[ethevent(indexed)]
+        pub owner: ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub operator: ::ethers::core::types::Address,
+        pub approved: bool,
+    }
+    #[derive(
+        Clone,
+        ::ethers::contract::EthEvent,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethevent(name = "Transfer", abi = "Transfer(address,address,uint256)")]
+    pub struct TransferFilter {
+        #[ethevent(indexed)]
+        pub from: ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub to: ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all of the contract's events
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        serde::Serialize,
+        serde::Deserialize,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub enum IERC721Events {
+        ApprovalFilter(ApprovalFilter),
+        ApprovalForAllFilter(ApprovalForAllFilter),
+        TransferFilter(TransferFilter),
+    }
+    impl ::ethers::contract::EthLogDecode for IERC721Events {
+        fn decode_log(
+            log: &::ethers::core::abi::RawLog,
+        ) -> ::core::result::Result<Self, ::ethers::core::abi::Error> {
+            if let Ok(decoded) = ApprovalFilter::decode_log(log) {
+                return Ok(IERC721Events::ApprovalFilter(decoded));
+            }
+            if let Ok(decoded) = ApprovalForAllFilter::decode_log(log) {
+                return Ok(IERC721Events::ApprovalForAllFilter(decoded));
+            }
+            if let Ok(decoded) = TransferFilter::decode_log(log) {
+                return Ok(IERC721Events::TransferFilter(decoded));
+            }
+            Err(::ethers::core::abi::Error::InvalidData)
+        }
+    }
+    impl ::core::fmt::Display for IERC721Events {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            match self {
+                Self::ApprovalFilter(element) => ::core::fmt::Display::fmt(element, f),
+                Self::ApprovalForAllFilter(element) => {
+                    ::core::fmt::Display::fmt(element, f)
+                }
+                Self::TransferFilter(element) => ::core::fmt::Display::fmt(element, f),
+            }
+        }
+    }
+    impl ::core::convert::From<ApprovalFilter> for IERC721Events {
+        fn from(value: ApprovalFilter) -> Self {
+            Self::ApprovalFilter(value)
+        }
+    }
+    impl ::core::convert::From<ApprovalForAllFilter> for IERC721Events {
+        fn from(value: ApprovalForAllFilter) -> Self {
+            Self::ApprovalForAllFilter(value)
+        }
+    }
+    impl ::core::convert::From<TransferFilter> for IERC721Events {
+        fn from(value: TransferFilter) -> Self {
+            Self::TransferFilter(value)
+        }
+    }
+    ///Container type for all input parameters for the `approve` function with signature `approve(address,uint256)` and selector `0x095ea7b3`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "approve", abi = "approve(address,uint256)")]
+    pub struct ApproveCall {
+        pub approved: ::ethers::core::types::Address,
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all input parameters for the `balanceOf` function with signature `balanceOf(address)` and selector `0x70a08231`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "balanceOf", abi = "balanceOf(address)")]
+    pub struct BalanceOfCall {
+        pub owner: ::ethers::core::types::Address,
+    }
+    ///Container type for all input parameters for the `getApproved` function with signature `getApproved(uint256)` and selector `0x081812fc`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "getApproved", abi = "getApproved(uint256)")]
+    pub struct GetApprovedCall {
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all input parameters for the `isApprovedForAll` function with signature `isApprovedForAll(address,address)` and selector `0xe985e9c5`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "isApprovedForAll", abi = "isApprovedForAll(address,address)")]
+    pub struct IsApprovedForAllCall {
+        pub owner: ::ethers::core::types::Address,
+        pub operator: ::ethers::core::types::Address,
+    }
+    ///Container type for all input parameters for the `ownerOf` function with signature `ownerOf(uint256)` and selector `0x6352211e`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "ownerOf", abi = "ownerOf(uint256)")]
+    pub struct OwnerOfCall {
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all input parameters for the `safeTransferFrom` function with signature `safeTransferFrom(address,address,uint256)` and selector `0x42842e0e`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(
+        name = "safeTransferFrom",
+        abi = "safeTransferFrom(address,address,uint256)"
+    )]
+    pub struct SafeTransferFromCall {
+        pub from: ::ethers::core::types::Address,
+        pub to: ::ethers::core::types::Address,
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all input parameters for the `safeTransferFrom` function with signature `safeTransferFrom(address,address,uint256,bytes)` and selector `0xb88d4fde`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(
+        name = "safeTransferFrom",
+        abi = "safeTransferFrom(address,address,uint256,bytes)"
+    )]
+    pub struct SafeTransferFromWithFromAndToAndDataCall {
+        pub from: ::ethers::core::types::Address,
+        pub to: ::ethers::core::types::Address,
+        pub token_id: ::ethers::core::types::U256,
+        pub data: ::ethers::core::types::Bytes,
+    }
+    ///Container type for all input parameters for the `setApprovalForAll` function with signature `setApprovalForAll(address,bool)` and selector `0xa22cb465`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "setApprovalForAll", abi = "setApprovalForAll(address,bool)")]
+    pub struct SetApprovalForAllCall {
+        pub operator: ::ethers::core::types::Address,
+        pub approved: bool,
+    }
+    ///Container type for all input parameters for the `supportsInterface` function with signature `supportsInterface(bytes4)` and selector `0x01ffc9a7`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "supportsInterface", abi = "supportsInterface(bytes4)")]
+    pub struct SupportsInterfaceCall {
+        pub interface_id: [u8; 4],
+    }
+    ///Container type for all input parameters for the `transferFrom` function with signature `transferFrom(address,address,uint256)` and selector `0x23b872dd`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "transferFrom", abi = "transferFrom(address,address,uint256)")]
+    pub struct TransferFromCall {
+        pub from: ::ethers::core::types::Address,
+        pub to: ::ethers::core::types::Address,
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all of the contract's call
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        serde::Serialize,
+        serde::Deserialize,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub enum IERC721Calls {
+        Approve(ApproveCall),
+        BalanceOf(BalanceOfCall),
+        GetApproved(GetApprovedCall),
+        IsApprovedForAll(IsApprovedForAllCall),
+        OwnerOf(OwnerOfCall),
+        SafeTransferFrom(SafeTransferFromCall),
+        SafeTransferFromWithFromAndToAndData(SafeTransferFromWithFromAndToAndDataCall),
+        SetApprovalForAll(SetApprovalForAllCall),
+        SupportsInterface(SupportsInterfaceCall),
+        TransferFrom(TransferFromCall),
+    }
+    impl ::ethers::core::abi::AbiDecode for IERC721Calls {
+        fn decode(
+            data: impl AsRef<[u8]>,
+        ) -> ::core::result::Result<Self, ::ethers::core::abi::AbiError> {
+            let data = data.as_ref();
+            if let Ok(decoded) = <ApproveCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::Approve(decoded));
+            }
+            if let Ok(decoded) = <BalanceOfCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::BalanceOf(decoded));
+            }
+            if let Ok(decoded) = <GetApprovedCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::GetApproved(decoded));
+            }
+            if let Ok(decoded) = <IsApprovedForAllCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::IsApprovedForAll(decoded));
+            }
+            if let Ok(decoded) = <OwnerOfCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::OwnerOf(decoded));
+            }
+            if let Ok(decoded) = <SafeTransferFromCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::SafeTransferFrom(decoded));
+            }
+            if let Ok(decoded) = <SafeTransferFromWithFromAndToAndDataCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::SafeTransferFromWithFromAndToAndData(decoded));
+            }
+            if let Ok(decoded) = <SetApprovalForAllCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::SetApprovalForAll(decoded));
+            }
+            if let Ok(decoded) = <SupportsInterfaceCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::SupportsInterface(decoded));
+            }
+            if let Ok(decoded) = <TransferFromCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::TransferFrom(decoded));
+            }
+            Err(::ethers::core::abi::Error::InvalidData.into())
+        }
+    }
+    impl ::ethers::core::abi::AbiEncode for IERC721Calls {
+        fn encode(self) -> Vec<u8> {
+            match self {
+                Self::Approve(element) => ::ethers::core::abi::AbiEncode::encode(element),
+                Self::BalanceOf(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::GetApproved(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::IsApprovedForAll(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::OwnerOf(element) => ::ethers::core::abi::AbiEncode::encode(element),
+                Self::SafeTransferFrom(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::SafeTransferFromWithFromAndToAndData(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::SetApprovalForAll(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::SupportsInterface(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::TransferFrom(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+            }
+        }
+    }
+    impl ::core::fmt::Display for IERC721Calls {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            match self {
+                Self::Approve(element) => ::core::fmt::Display::fmt(element, f),
+                Self::BalanceOf(element) => ::core::fmt::Display::fmt(element, f),
+                Self::GetApproved(element) => ::core::fmt::Display::fmt(element, f),
+                Self::IsApprovedForAll(element) => ::core::fmt::Display::fmt(element, f),
+                Self::OwnerOf(element) => ::core::fmt::Display::fmt(element, f),
+                Self::SafeTransferFrom(element) => ::core::fmt::Display::fmt(element, f),
+                Self::SafeTransferFromWithFromAndToAndData(element) => {
+                    ::core::fmt::Display::fmt(element, f)
+                }
+                Self::SetApprovalForAll(element) => ::core::fmt::Display::fmt(element, f),
+                Self::SupportsInterface(element) => ::core::fmt::Display::fmt(element, f),
+                Self::TransferFrom(element) => ::core::fmt::Display::fmt(element, f),
+            }
+        }
+    }
+    impl ::core::convert::From<ApproveCall> for IERC721Calls {
+        fn from(value: ApproveCall) -> Self {
+            Self::Approve(value)
+        }
+    }
+    impl ::core::convert::From<BalanceOfCall> for IERC721Calls {
+        fn from(value: BalanceOfCall) -> Self {
+            Self::BalanceOf(value)
+        }
+    }
+    impl ::core::convert::From<GetApprovedCall> for IERC721Calls {
+        fn from(value: GetApprovedCall) -> Self {
+            Self::GetApproved(value)
+        }
+    }
+    impl ::core::convert::From<IsApprovedForAllCall> for IERC721Calls {
+        fn from(value: IsApprovedForAllCall) -> Self {
+            Self::IsApprovedForAll(value)
+        }
+    }
+    impl ::core::convert::From<OwnerOfCall> for IERC721Calls {
+        fn from(value: OwnerOfCall) -> Self {
+            Self::OwnerOf(value)
+        }
+    }
+    impl ::core::convert::From<SafeTransferFromCall> for IERC721Calls {
+        fn from(value: SafeTransferFromCall) -> Self {
+            Self::SafeTransferFrom(value)
+        }
+    }
+    impl ::core::convert::From<SafeTransferFromWithFromAndToAndDataCall>
+    for IERC721Calls {
+        fn from(value: SafeTransferFromWithFromAndToAndDataCall) -> Self {
+            Self::SafeTransferFromWithFromAndToAndData(value)
+        }
+    }
+    impl ::core::convert::From<SetApprovalForAllCall> for IERC721Calls {
+        fn from(value: SetApprovalForAllCall) -> Self {
+            Self::SetApprovalForAll(value)
+        }
+    }
+    impl ::core::convert::From<SupportsInterfaceCall> for IERC721Calls {
+        fn from(value: SupportsInterfaceCall) -> Self {
+            Self::SupportsInterface(value)
+        }
+    }
+    impl ::core::convert::From<TransferFromCall> for IERC721Calls {
+        fn from(value: TransferFromCall) -> Self {
+            Self::TransferFrom(value)
+        }
+    }
+    ///Container type for all return fields from the `balanceOf` function with signature `balanceOf(address)` and selector `0x70a08231`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct BalanceOfReturn(pub ::ethers::core::types::U256);
+    ///Container type for all return fields from the `getApproved` function with signature `getApproved(uint256)` and selector `0x081812fc`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct GetApprovedReturn(pub ::ethers::core::types::Address);
+    ///Container type for all return fields from the `isApprovedForAll` function with signature `isApprovedForAll(address,address)` and selector `0xe985e9c5`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct IsApprovedForAllReturn(pub bool);
+    ///Container type for all return fields from the `ownerOf` function with signature `ownerOf(uint256)` and selector `0x6352211e`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct OwnerOfReturn(pub ::ethers::core::types::Address);
+    ///Container type for all return fields from the `supportsInterface` function with signature `supportsInterface(bytes4)` and selector `0x01ffc9a7`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct SupportsInterfaceReturn(pub bool);
+}
+pub use ierc721_enumerable::*;
+/// This module was auto-generated with ethers-rs Abigen.
+/// More information at: <https://github.com/gakonst/ethers-rs>
+#[allow(
+    clippy::enum_variant_names,
+    clippy::too_many_arguments,
+    clippy::upper_case_acronyms,
+    clippy::type_complexity,
+    dead_code,
+    non_camel_case_types,
+)]
+pub mod ierc721_enumerable {
+    #[allow(deprecated)]
+    fn __abi() -> ::ethers::core::abi::Abi {
+        ::ethers::core::abi::ethabi::Contract {
+            constructor: ::core::option::Option::None,
+            functions: ::core::convert::From::from([
+                (
+                    ::std::borrow::ToOwned::to_owned("approve"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("approve"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_approved"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::Payable,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("balanceOf"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("balanceOf"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_owner"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("getApproved"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("getApproved"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("isApprovedForAll"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("isApprovedForAll"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_owner"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_operator"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bool,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bool"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("ownerOf"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("ownerOf"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("safeTransferFrom"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("safeTransferFrom"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_from"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_to"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::Payable,
+                        },
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("safeTransferFrom"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_from"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_to"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("data"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bytes,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bytes"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::Payable,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("setApprovalForAll"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("setApprovalForAll"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_operator"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_approved"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bool,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bool"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::NonPayable,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("supportsInterface"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("supportsInterface"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("interfaceID"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::FixedBytes(
+                                        4usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bytes4"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bool,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bool"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("tokenByIndex"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("tokenByIndex"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_index"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("tokenOfOwnerByIndex"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned(
+                                "tokenOfOwnerByIndex",
+                            ),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_owner"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_index"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("totalSupply"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("totalSupply"),
+                            inputs: ::std::vec![],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("transferFrom"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("transferFrom"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_from"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_to"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::Payable,
+                        },
+                    ],
+                ),
+            ]),
+            events: ::core::convert::From::from([
+                (
+                    ::std::borrow::ToOwned::to_owned("Approval"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Event {
+                            name: ::std::borrow::ToOwned::to_owned("Approval"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_owner"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_approved"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    indexed: true,
+                                },
+                            ],
+                            anonymous: false,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("ApprovalForAll"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Event {
+                            name: ::std::borrow::ToOwned::to_owned("ApprovalForAll"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_owner"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_operator"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_approved"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bool,
+                                    indexed: false,
+                                },
+                            ],
+                            anonymous: false,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("Transfer"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Event {
+                            name: ::std::borrow::ToOwned::to_owned("Transfer"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_from"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_to"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    indexed: true,
+                                },
+                            ],
+                            anonymous: false,
+                        },
+                    ],
+                ),
+            ]),
+            errors: ::std::collections::BTreeMap::new(),
+            receive: false,
+            fallback: false,
+        }
+    }
+    ///The parsed JSON ABI of the contract.
+    pub static IERC721ENUMERABLE_ABI: ::ethers::contract::Lazy<
+        ::ethers::core::abi::Abi,
+    > = ::ethers::contract::Lazy::new(__abi);
+    pub struct IERC721Enumerable<M>(::ethers::contract::Contract<M>);
+    impl<M> ::core::clone::Clone for IERC721Enumerable<M> {
+        fn clone(&self) -> Self {
+            Self(::core::clone::Clone::clone(&self.0))
+        }
+    }
+    impl<M> ::core::ops::Deref for IERC721Enumerable<M> {
+        type Target = ::ethers::contract::Contract<M>;
+        fn deref(&self) -> &Self::Target {
+            &self.0
+        }
+    }
+    impl<M> ::core::ops::DerefMut for IERC721Enumerable<M> {
+        fn deref_mut(&mut self) -> &mut Self::Target {
+            &mut self.0
+        }
+    }
+    impl<M> ::core::fmt::Debug for IERC721Enumerable<M> {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            f.debug_tuple(::core::stringify!(IERC721Enumerable))
+                .field(&self.address())
+                .finish()
+        }
+    }
+    impl<M: ::ethers::providers::Middleware> IERC721Enumerable<M> {
+        /// Creates a new contract instance with the specified `ethers` client at
+        /// `address`. The contract derefs to a `ethers::Contract` object.
+        pub fn new<T: Into<::ethers::core::types::Address>>(
+            address: T,
+            client: ::std::sync::Arc<M>,
+        ) -> Self {
+            Self(
+                ::ethers::contract::Contract::new(
+                    address.into(),
+                    IERC721ENUMERABLE_ABI.clone(),
+                    client,
+                ),
+            )
+        }
+        ///Calls the contract's `approve` (0x095ea7b3) function
+        pub fn approve(
+            &self,
+            approved: ::ethers::core::types::Address,
+            token_id: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([9, 94, 167, 179], (approved, token_id))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `balanceOf` (0x70a08231) function
+        pub fn balance_of(
+            &self,
+            owner: ::ethers::core::types::Address,
+        ) -> ::ethers::contract::builders::ContractCall<M, ::ethers::core::types::U256> {
+            self.0
+                .method_hash([112, 160, 130, 49], owner)
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `getApproved` (0x081812fc) function
+        pub fn get_approved(
+            &self,
+            token_id: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<
+            M,
+            ::ethers::core::types::Address,
+        > {
+            self.0
+                .method_hash([8, 24, 18, 252], token_id)
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `isApprovedForAll` (0xe985e9c5) function
+        pub fn is_approved_for_all(
+            &self,
+            owner: ::ethers::core::types::Address,
+            operator: ::ethers::core::types::Address,
+        ) -> ::ethers::contract::builders::ContractCall<M, bool> {
+            self.0
+                .method_hash([233, 133, 233, 197], (owner, operator))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `ownerOf` (0x6352211e) function
+        pub fn owner_of(
+            &self,
+            token_id: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<
+            M,
+            ::ethers::core::types::Address,
+        > {
+            self.0
+                .method_hash([99, 82, 33, 30], token_id)
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `safeTransferFrom` (0x42842e0e) function
+        pub fn safe_transfer_from(
+            &self,
+            from: ::ethers::core::types::Address,
+            to: ::ethers::core::types::Address,
+            token_id: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([66, 132, 46, 14], (from, to, token_id))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `safeTransferFrom` (0xb88d4fde) function
+        pub fn safe_transfer_from_with_from_and_to_and_data(
+            &self,
+            from: ::ethers::core::types::Address,
+            to: ::ethers::core::types::Address,
+            token_id: ::ethers::core::types::U256,
+            data: ::ethers::core::types::Bytes,
+        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([184, 141, 79, 222], (from, to, token_id, data))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `setApprovalForAll` (0xa22cb465) function
+        pub fn set_approval_for_all(
+            &self,
+            operator: ::ethers::core::types::Address,
+            approved: bool,
+        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([162, 44, 180, 101], (operator, approved))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `supportsInterface` (0x01ffc9a7) function
+        pub fn supports_interface(
+            &self,
+            interface_id: [u8; 4],
+        ) -> ::ethers::contract::builders::ContractCall<M, bool> {
+            self.0
+                .method_hash([1, 255, 201, 167], interface_id)
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `tokenByIndex` (0x4f6ccce7) function
+        pub fn token_by_index(
+            &self,
+            index: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<M, ::ethers::core::types::U256> {
+            self.0
+                .method_hash([79, 108, 204, 231], index)
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `tokenOfOwnerByIndex` (0x2f745c59) function
+        pub fn token_of_owner_by_index(
+            &self,
+            owner: ::ethers::core::types::Address,
+            index: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<M, ::ethers::core::types::U256> {
+            self.0
+                .method_hash([47, 116, 92, 89], (owner, index))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `totalSupply` (0x18160ddd) function
+        pub fn total_supply(
+            &self,
+        ) -> ::ethers::contract::builders::ContractCall<M, ::ethers::core::types::U256> {
+            self.0
+                .method_hash([24, 22, 13, 221], ())
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `transferFrom` (0x23b872dd) function
+        pub fn transfer_from(
+            &self,
+            from: ::ethers::core::types::Address,
+            to: ::ethers::core::types::Address,
+            token_id: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([35, 184, 114, 221], (from, to, token_id))
+                .expect("method not found (this should never happen)")
+        }
+        ///Gets the contract's `Approval` event
+        pub fn approval_filter(
+            &self,
+        ) -> ::ethers::contract::builders::Event<
+            ::std::sync::Arc<M>,
+            M,
+            ApprovalFilter,
+        > {
+            self.0.event()
+        }
+        ///Gets the contract's `ApprovalForAll` event
+        pub fn approval_for_all_filter(
+            &self,
+        ) -> ::ethers::contract::builders::Event<
+            ::std::sync::Arc<M>,
+            M,
+            ApprovalForAllFilter,
+        > {
+            self.0.event()
+        }
+        ///Gets the contract's `Transfer` event
+        pub fn transfer_filter(
+            &self,
+        ) -> ::ethers::contract::builders::Event<
+            ::std::sync::Arc<M>,
+            M,
+            TransferFilter,
+        > {
+            self.0.event()
+        }
+        /// Returns an `Event` builder for all the events of this contract.
+        pub fn events(
+            &self,
+        ) -> ::ethers::contract::builders::Event<
+            ::std::sync::Arc<M>,
+            M,
+            IERC721EnumerableEvents,
+        > {
+            self.0.event_with_filter(::core::default::Default::default())
+        }
+    }
+    impl<M: ::ethers::providers::Middleware> From<::ethers::contract::Contract<M>>
+    for IERC721Enumerable<M> {
+        fn from(contract: ::ethers::contract::Contract<M>) -> Self {
+            Self::new(contract.address(), contract.client())
+        }
+    }
+    #[derive(
+        Clone,
+        ::ethers::contract::EthEvent,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethevent(name = "Approval", abi = "Approval(address,address,uint256)")]
+    pub struct ApprovalFilter {
+        #[ethevent(indexed)]
+        pub owner: ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub approved: ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub token_id: ::ethers::core::types::U256,
+    }
+    #[derive(
+        Clone,
+        ::ethers::contract::EthEvent,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethevent(name = "ApprovalForAll", abi = "ApprovalForAll(address,address,bool)")]
+    pub struct ApprovalForAllFilter {
+        #[ethevent(indexed)]
+        pub owner: ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub operator: ::ethers::core::types::Address,
+        pub approved: bool,
+    }
+    #[derive(
+        Clone,
+        ::ethers::contract::EthEvent,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethevent(name = "Transfer", abi = "Transfer(address,address,uint256)")]
+    pub struct TransferFilter {
+        #[ethevent(indexed)]
+        pub from: ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub to: ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all of the contract's events
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        serde::Serialize,
+        serde::Deserialize,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub enum IERC721EnumerableEvents {
+        ApprovalFilter(ApprovalFilter),
+        ApprovalForAllFilter(ApprovalForAllFilter),
+        TransferFilter(TransferFilter),
+    }
+    impl ::ethers::contract::EthLogDecode for IERC721EnumerableEvents {
+        fn decode_log(
+            log: &::ethers::core::abi::RawLog,
+        ) -> ::core::result::Result<Self, ::ethers::core::abi::Error> {
+            if let Ok(decoded) = ApprovalFilter::decode_log(log) {
+                return Ok(IERC721EnumerableEvents::ApprovalFilter(decoded));
+            }
+            if let Ok(decoded) = ApprovalForAllFilter::decode_log(log) {
+                return Ok(IERC721EnumerableEvents::ApprovalForAllFilter(decoded));
+            }
+            if let Ok(decoded) = TransferFilter::decode_log(log) {
+                return Ok(IERC721EnumerableEvents::TransferFilter(decoded));
+            }
+            Err(::ethers::core::abi::Error::InvalidData)
+        }
+    }
+    impl ::core::fmt::Display for IERC721EnumerableEvents {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            match self {
+                Self::ApprovalFilter(element) => ::core::fmt::Display::fmt(element, f),
+                Self::ApprovalForAllFilter(element) => {
+                    ::core::fmt::Display::fmt(element, f)
+                }
+                Self::TransferFilter(element) => ::core::fmt::Display::fmt(element, f),
+            }
+        }
+    }
+    impl ::core::convert::From<ApprovalFilter> for IERC721EnumerableEvents {
+        fn from(value: ApprovalFilter) -> Self {
+            Self::ApprovalFilter(value)
+        }
+    }
+    impl ::core::convert::From<ApprovalForAllFilter> for IERC721EnumerableEvents {
+        fn from(value: ApprovalForAllFilter) -> Self {
+            Self::ApprovalForAllFilter(value)
+        }
+    }
+    impl ::core::convert::From<TransferFilter> for IERC721EnumerableEvents {
+        fn from(value: TransferFilter) -> Self {
+            Self::TransferFilter(value)
+        }
+    }
+    ///Container type for all input parameters for the `approve` function with signature `approve(address,uint256)` and selector `0x095ea7b3`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "approve", abi = "approve(address,uint256)")]
+    pub struct ApproveCall {
+        pub approved: ::ethers::core::types::Address,
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all input parameters for the `balanceOf` function with signature `balanceOf(address)` and selector `0x70a08231`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "balanceOf", abi = "balanceOf(address)")]
+    pub struct BalanceOfCall {
+        pub owner: ::ethers::core::types::Address,
+    }
+    ///Container type for all input parameters for the `getApproved` function with signature `getApproved(uint256)` and selector `0x081812fc`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "getApproved", abi = "getApproved(uint256)")]
+    pub struct GetApprovedCall {
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all input parameters for the `isApprovedForAll` function with signature `isApprovedForAll(address,address)` and selector `0xe985e9c5`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "isApprovedForAll", abi = "isApprovedForAll(address,address)")]
+    pub struct IsApprovedForAllCall {
+        pub owner: ::ethers::core::types::Address,
+        pub operator: ::ethers::core::types::Address,
+    }
+    ///Container type for all input parameters for the `ownerOf` function with signature `ownerOf(uint256)` and selector `0x6352211e`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "ownerOf", abi = "ownerOf(uint256)")]
+    pub struct OwnerOfCall {
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all input parameters for the `safeTransferFrom` function with signature `safeTransferFrom(address,address,uint256)` and selector `0x42842e0e`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(
+        name = "safeTransferFrom",
+        abi = "safeTransferFrom(address,address,uint256)"
+    )]
+    pub struct SafeTransferFromCall {
+        pub from: ::ethers::core::types::Address,
+        pub to: ::ethers::core::types::Address,
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all input parameters for the `safeTransferFrom` function with signature `safeTransferFrom(address,address,uint256,bytes)` and selector `0xb88d4fde`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(
+        name = "safeTransferFrom",
+        abi = "safeTransferFrom(address,address,uint256,bytes)"
+    )]
+    pub struct SafeTransferFromWithFromAndToAndDataCall {
+        pub from: ::ethers::core::types::Address,
+        pub to: ::ethers::core::types::Address,
+        pub token_id: ::ethers::core::types::U256,
+        pub data: ::ethers::core::types::Bytes,
+    }
+    ///Container type for all input parameters for the `setApprovalForAll` function with signature `setApprovalForAll(address,bool)` and selector `0xa22cb465`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "setApprovalForAll", abi = "setApprovalForAll(address,bool)")]
+    pub struct SetApprovalForAllCall {
+        pub operator: ::ethers::core::types::Address,
+        pub approved: bool,
+    }
+    ///Container type for all input parameters for the `supportsInterface` function with signature `supportsInterface(bytes4)` and selector `0x01ffc9a7`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "supportsInterface", abi = "supportsInterface(bytes4)")]
+    pub struct SupportsInterfaceCall {
+        pub interface_id: [u8; 4],
+    }
+    ///Container type for all input parameters for the `tokenByIndex` function with signature `tokenByIndex(uint256)` and selector `0x4f6ccce7`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "tokenByIndex", abi = "tokenByIndex(uint256)")]
+    pub struct TokenByIndexCall {
+        pub index: ::ethers::core::types::U256,
+    }
+    ///Container type for all input parameters for the `tokenOfOwnerByIndex` function with signature `tokenOfOwnerByIndex(address,uint256)` and selector `0x2f745c59`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(
+        name = "tokenOfOwnerByIndex",
+        abi = "tokenOfOwnerByIndex(address,uint256)"
+    )]
+    pub struct TokenOfOwnerByIndexCall {
+        pub owner: ::ethers::core::types::Address,
+        pub index: ::ethers::core::types::U256,
+    }
+    ///Container type for all input parameters for the `totalSupply` function with signature `totalSupply()` and selector `0x18160ddd`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "totalSupply", abi = "totalSupply()")]
+    pub struct TotalSupplyCall;
+    ///Container type for all input parameters for the `transferFrom` function with signature `transferFrom(address,address,uint256)` and selector `0x23b872dd`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "transferFrom", abi = "transferFrom(address,address,uint256)")]
+    pub struct TransferFromCall {
+        pub from: ::ethers::core::types::Address,
+        pub to: ::ethers::core::types::Address,
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all of the contract's call
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        serde::Serialize,
+        serde::Deserialize,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub enum IERC721EnumerableCalls {
+        Approve(ApproveCall),
+        BalanceOf(BalanceOfCall),
+        GetApproved(GetApprovedCall),
+        IsApprovedForAll(IsApprovedForAllCall),
+        OwnerOf(OwnerOfCall),
+        SafeTransferFrom(SafeTransferFromCall),
+        SafeTransferFromWithFromAndToAndData(SafeTransferFromWithFromAndToAndDataCall),
+        SetApprovalForAll(SetApprovalForAllCall),
+        SupportsInterface(SupportsInterfaceCall),
+        TokenByIndex(TokenByIndexCall),
+        TokenOfOwnerByIndex(TokenOfOwnerByIndexCall),
+        TotalSupply(TotalSupplyCall),
+        TransferFrom(TransferFromCall),
+    }
+    impl ::ethers::core::abi::AbiDecode for IERC721EnumerableCalls {
+        fn decode(
+            data: impl AsRef<[u8]>,
+        ) -> ::core::result::Result<Self, ::ethers::core::abi::AbiError> {
+            let data = data.as_ref();
+            if let Ok(decoded) = <ApproveCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::Approve(decoded));
+            }
+            if let Ok(decoded) = <BalanceOfCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::BalanceOf(decoded));
+            }
+            if let Ok(decoded) = <GetApprovedCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::GetApproved(decoded));
+            }
+            if let Ok(decoded) = <IsApprovedForAllCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::IsApprovedForAll(decoded));
+            }
+            if let Ok(decoded) = <OwnerOfCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::OwnerOf(decoded));
+            }
+            if let Ok(decoded) = <SafeTransferFromCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::SafeTransferFrom(decoded));
+            }
+            if let Ok(decoded) = <SafeTransferFromWithFromAndToAndDataCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::SafeTransferFromWithFromAndToAndData(decoded));
+            }
+            if let Ok(decoded) = <SetApprovalForAllCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::SetApprovalForAll(decoded));
+            }
+            if let Ok(decoded) = <SupportsInterfaceCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::SupportsInterface(decoded));
+            }
+            if let Ok(decoded) = <TokenByIndexCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::TokenByIndex(decoded));
+            }
+            if let Ok(decoded) = <TokenOfOwnerByIndexCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::TokenOfOwnerByIndex(decoded));
+            }
+            if let Ok(decoded) = <TotalSupplyCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::TotalSupply(decoded));
+            }
+            if let Ok(decoded) = <TransferFromCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::TransferFrom(decoded));
+            }
+            Err(::ethers::core::abi::Error::InvalidData.into())
+        }
+    }
+    impl ::ethers::core::abi::AbiEncode for IERC721EnumerableCalls {
+        fn encode(self) -> Vec<u8> {
+            match self {
+                Self::Approve(element) => ::ethers::core::abi::AbiEncode::encode(element),
+                Self::BalanceOf(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::GetApproved(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::IsApprovedForAll(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::OwnerOf(element) => ::ethers::core::abi::AbiEncode::encode(element),
+                Self::SafeTransferFrom(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::SafeTransferFromWithFromAndToAndData(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::SetApprovalForAll(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::SupportsInterface(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::TokenByIndex(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::TokenOfOwnerByIndex(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::TotalSupply(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::TransferFrom(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+            }
+        }
+    }
+    impl ::core::fmt::Display for IERC721EnumerableCalls {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            match self {
+                Self::Approve(element) => ::core::fmt::Display::fmt(element, f),
+                Self::BalanceOf(element) => ::core::fmt::Display::fmt(element, f),
+                Self::GetApproved(element) => ::core::fmt::Display::fmt(element, f),
+                Self::IsApprovedForAll(element) => ::core::fmt::Display::fmt(element, f),
+                Self::OwnerOf(element) => ::core::fmt::Display::fmt(element, f),
+                Self::SafeTransferFrom(element) => ::core::fmt::Display::fmt(element, f),
+                Self::SafeTransferFromWithFromAndToAndData(element) => {
+                    ::core::fmt::Display::fmt(element, f)
+                }
+                Self::SetApprovalForAll(element) => ::core::fmt::Display::fmt(element, f),
+                Self::SupportsInterface(element) => ::core::fmt::Display::fmt(element, f),
+                Self::TokenByIndex(element) => ::core::fmt::Display::fmt(element, f),
+                Self::TokenOfOwnerByIndex(element) => {
+                    ::core::fmt::Display::fmt(element, f)
+                }
+                Self::TotalSupply(element) => ::core::fmt::Display::fmt(element, f),
+                Self::TransferFrom(element) => ::core::fmt::Display::fmt(element, f),
+            }
+        }
+    }
+    impl ::core::convert::From<ApproveCall> for IERC721EnumerableCalls {
+        fn from(value: ApproveCall) -> Self {
+            Self::Approve(value)
+        }
+    }
+    impl ::core::convert::From<BalanceOfCall> for IERC721EnumerableCalls {
+        fn from(value: BalanceOfCall) -> Self {
+            Self::BalanceOf(value)
+        }
+    }
+    impl ::core::convert::From<GetApprovedCall> for IERC721EnumerableCalls {
+        fn from(value: GetApprovedCall) -> Self {
+            Self::GetApproved(value)
+        }
+    }
+    impl ::core::convert::From<IsApprovedForAllCall> for IERC721EnumerableCalls {
+        fn from(value: IsApprovedForAllCall) -> Self {
+            Self::IsApprovedForAll(value)
+        }
+    }
+    impl ::core::convert::From<OwnerOfCall> for IERC721EnumerableCalls {
+        fn from(value: OwnerOfCall) -> Self {
+            Self::OwnerOf(value)
+        }
+    }
+    impl ::core::convert::From<SafeTransferFromCall> for IERC721EnumerableCalls {
+        fn from(value: SafeTransferFromCall) -> Self {
+            Self::SafeTransferFrom(value)
+        }
+    }
+    impl ::core::convert::From<SafeTransferFromWithFromAndToAndDataCall>
+    for IERC721EnumerableCalls {
+        fn from(value: SafeTransferFromWithFromAndToAndDataCall) -> Self {
+            Self::SafeTransferFromWithFromAndToAndData(value)
+        }
+    }
+    impl ::core::convert::From<SetApprovalForAllCall> for IERC721EnumerableCalls {
+        fn from(value: SetApprovalForAllCall) -> Self {
+            Self::SetApprovalForAll(value)
+        }
+    }
+    impl ::core::convert::From<SupportsInterfaceCall> for IERC721EnumerableCalls {
+        fn from(value: SupportsInterfaceCall) -> Self {
+            Self::SupportsInterface(value)
+        }
+    }
+    impl ::core::convert::From<TokenByIndexCall> for IERC721EnumerableCalls {
+        fn from(value: TokenByIndexCall) -> Self {
+            Self::TokenByIndex(value)
+        }
+    }
+    impl ::core::convert::From<TokenOfOwnerByIndexCall> for IERC721EnumerableCalls {
+        fn from(value: TokenOfOwnerByIndexCall) -> Self {
+            Self::TokenOfOwnerByIndex(value)
+        }
+    }
+    impl ::core::convert::From<TotalSupplyCall> for IERC721EnumerableCalls {
+        fn from(value: TotalSupplyCall) -> Self {
+            Self::TotalSupply(value)
+        }
+    }
+    impl ::core::convert::From<TransferFromCall> for IERC721EnumerableCalls {
+        fn from(value: TransferFromCall) -> Self {
+            Self::TransferFrom(value)
+        }
+    }
+    ///Container type for all return fields from the `balanceOf` function with signature `balanceOf(address)` and selector `0x70a08231`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct BalanceOfReturn(pub ::ethers::core::types::U256);
+    ///Container type for all return fields from the `getApproved` function with signature `getApproved(uint256)` and selector `0x081812fc`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct GetApprovedReturn(pub ::ethers::core::types::Address);
+    ///Container type for all return fields from the `isApprovedForAll` function with signature `isApprovedForAll(address,address)` and selector `0xe985e9c5`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct IsApprovedForAllReturn(pub bool);
+    ///Container type for all return fields from the `ownerOf` function with signature `ownerOf(uint256)` and selector `0x6352211e`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct OwnerOfReturn(pub ::ethers::core::types::Address);
+    ///Container type for all return fields from the `supportsInterface` function with signature `supportsInterface(bytes4)` and selector `0x01ffc9a7`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct SupportsInterfaceReturn(pub bool);
+    ///Container type for all return fields from the `tokenByIndex` function with signature `tokenByIndex(uint256)` and selector `0x4f6ccce7`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct TokenByIndexReturn(pub ::ethers::core::types::U256);
+    ///Container type for all return fields from the `tokenOfOwnerByIndex` function with signature `tokenOfOwnerByIndex(address,uint256)` and selector `0x2f745c59`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct TokenOfOwnerByIndexReturn(pub ::ethers::core::types::U256);
+    ///Container type for all return fields from the `totalSupply` function with signature `totalSupply()` and selector `0x18160ddd`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct TotalSupplyReturn(pub ::ethers::core::types::U256);
+}
+pub use ierc721_metadata::*;
+/// This module was auto-generated with ethers-rs Abigen.
+/// More information at: <https://github.com/gakonst/ethers-rs>
+#[allow(
+    clippy::enum_variant_names,
+    clippy::too_many_arguments,
+    clippy::upper_case_acronyms,
+    clippy::type_complexity,
+    dead_code,
+    non_camel_case_types,
+)]
+pub mod ierc721_metadata {
+    #[allow(deprecated)]
+    fn __abi() -> ::ethers::core::abi::Abi {
+        ::ethers::core::abi::ethabi::Contract {
+            constructor: ::core::option::Option::None,
+            functions: ::core::convert::From::from([
+                (
+                    ::std::borrow::ToOwned::to_owned("approve"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("approve"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_approved"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::Payable,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("balanceOf"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("balanceOf"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_owner"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("getApproved"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("getApproved"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("isApprovedForAll"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("isApprovedForAll"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_owner"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_operator"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bool,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bool"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("name"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("name"),
+                            inputs: ::std::vec![],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_name"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::String,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("string"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("ownerOf"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("ownerOf"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("safeTransferFrom"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("safeTransferFrom"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_from"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_to"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::Payable,
+                        },
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("safeTransferFrom"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_from"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_to"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("data"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bytes,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bytes"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::Payable,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("setApprovalForAll"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("setApprovalForAll"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_operator"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_approved"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bool,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bool"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::NonPayable,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("supportsInterface"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("supportsInterface"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("interfaceID"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::FixedBytes(
+                                        4usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bytes4"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bool,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bool"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("symbol"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("symbol"),
+                            inputs: ::std::vec![],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_symbol"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::String,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("string"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("tokenURI"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("tokenURI"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::String,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("string"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("transferFrom"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("transferFrom"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_from"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_to"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("address"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("uint256"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::Payable,
+                        },
+                    ],
+                ),
+            ]),
+            events: ::core::convert::From::from([
+                (
+                    ::std::borrow::ToOwned::to_owned("Approval"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Event {
+                            name: ::std::borrow::ToOwned::to_owned("Approval"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_owner"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_approved"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    indexed: true,
+                                },
+                            ],
+                            anonymous: false,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("ApprovalForAll"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Event {
+                            name: ::std::borrow::ToOwned::to_owned("ApprovalForAll"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_owner"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_operator"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_approved"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bool,
+                                    indexed: false,
+                                },
+                            ],
+                            anonymous: false,
+                        },
+                    ],
+                ),
+                (
+                    ::std::borrow::ToOwned::to_owned("Transfer"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Event {
+                            name: ::std::borrow::ToOwned::to_owned("Transfer"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_from"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_to"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Address,
+                                    indexed: true,
+                                },
+                                ::ethers::core::abi::ethabi::EventParam {
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Uint(
+                                        256usize,
+                                    ),
+                                    indexed: true,
+                                },
+                            ],
+                            anonymous: false,
+                        },
+                    ],
+                ),
+            ]),
+            errors: ::std::collections::BTreeMap::new(),
+            receive: false,
+            fallback: false,
+        }
+    }
+    ///The parsed JSON ABI of the contract.
+    pub static IERC721METADATA_ABI: ::ethers::contract::Lazy<::ethers::core::abi::Abi> = ::ethers::contract::Lazy::new(
+        __abi,
+    );
+    pub struct IERC721Metadata<M>(::ethers::contract::Contract<M>);
+    impl<M> ::core::clone::Clone for IERC721Metadata<M> {
+        fn clone(&self) -> Self {
+            Self(::core::clone::Clone::clone(&self.0))
+        }
+    }
+    impl<M> ::core::ops::Deref for IERC721Metadata<M> {
+        type Target = ::ethers::contract::Contract<M>;
+        fn deref(&self) -> &Self::Target {
+            &self.0
+        }
+    }
+    impl<M> ::core::ops::DerefMut for IERC721Metadata<M> {
+        fn deref_mut(&mut self) -> &mut Self::Target {
+            &mut self.0
+        }
+    }
+    impl<M> ::core::fmt::Debug for IERC721Metadata<M> {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            f.debug_tuple(::core::stringify!(IERC721Metadata))
+                .field(&self.address())
+                .finish()
+        }
+    }
+    impl<M: ::ethers::providers::Middleware> IERC721Metadata<M> {
+        /// Creates a new contract instance with the specified `ethers` client at
+        /// `address`. The contract derefs to a `ethers::Contract` object.
+        pub fn new<T: Into<::ethers::core::types::Address>>(
+            address: T,
+            client: ::std::sync::Arc<M>,
+        ) -> Self {
+            Self(
+                ::ethers::contract::Contract::new(
+                    address.into(),
+                    IERC721METADATA_ABI.clone(),
+                    client,
+                ),
+            )
+        }
+        ///Calls the contract's `approve` (0x095ea7b3) function
+        pub fn approve(
+            &self,
+            approved: ::ethers::core::types::Address,
+            token_id: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([9, 94, 167, 179], (approved, token_id))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `balanceOf` (0x70a08231) function
+        pub fn balance_of(
+            &self,
+            owner: ::ethers::core::types::Address,
+        ) -> ::ethers::contract::builders::ContractCall<M, ::ethers::core::types::U256> {
+            self.0
+                .method_hash([112, 160, 130, 49], owner)
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `getApproved` (0x081812fc) function
+        pub fn get_approved(
+            &self,
+            token_id: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<
+            M,
+            ::ethers::core::types::Address,
+        > {
+            self.0
+                .method_hash([8, 24, 18, 252], token_id)
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `isApprovedForAll` (0xe985e9c5) function
+        pub fn is_approved_for_all(
+            &self,
+            owner: ::ethers::core::types::Address,
+            operator: ::ethers::core::types::Address,
+        ) -> ::ethers::contract::builders::ContractCall<M, bool> {
+            self.0
+                .method_hash([233, 133, 233, 197], (owner, operator))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `name` (0x06fdde03) function
+        pub fn name(
+            &self,
+        ) -> ::ethers::contract::builders::ContractCall<M, ::std::string::String> {
+            self.0
+                .method_hash([6, 253, 222, 3], ())
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `ownerOf` (0x6352211e) function
+        pub fn owner_of(
+            &self,
+            token_id: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<
+            M,
+            ::ethers::core::types::Address,
+        > {
+            self.0
+                .method_hash([99, 82, 33, 30], token_id)
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `safeTransferFrom` (0x42842e0e) function
+        pub fn safe_transfer_from(
+            &self,
+            from: ::ethers::core::types::Address,
+            to: ::ethers::core::types::Address,
+            token_id: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([66, 132, 46, 14], (from, to, token_id))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `safeTransferFrom` (0xb88d4fde) function
+        pub fn safe_transfer_from_with_from_and_to_and_data(
+            &self,
+            from: ::ethers::core::types::Address,
+            to: ::ethers::core::types::Address,
+            token_id: ::ethers::core::types::U256,
+            data: ::ethers::core::types::Bytes,
+        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([184, 141, 79, 222], (from, to, token_id, data))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `setApprovalForAll` (0xa22cb465) function
+        pub fn set_approval_for_all(
+            &self,
+            operator: ::ethers::core::types::Address,
+            approved: bool,
+        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([162, 44, 180, 101], (operator, approved))
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `supportsInterface` (0x01ffc9a7) function
+        pub fn supports_interface(
+            &self,
+            interface_id: [u8; 4],
+        ) -> ::ethers::contract::builders::ContractCall<M, bool> {
+            self.0
+                .method_hash([1, 255, 201, 167], interface_id)
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `symbol` (0x95d89b41) function
+        pub fn symbol(
+            &self,
+        ) -> ::ethers::contract::builders::ContractCall<M, ::std::string::String> {
+            self.0
+                .method_hash([149, 216, 155, 65], ())
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `tokenURI` (0xc87b56dd) function
+        pub fn token_uri(
+            &self,
+            token_id: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<M, ::std::string::String> {
+            self.0
+                .method_hash([200, 123, 86, 221], token_id)
+                .expect("method not found (this should never happen)")
+        }
+        ///Calls the contract's `transferFrom` (0x23b872dd) function
+        pub fn transfer_from(
+            &self,
+            from: ::ethers::core::types::Address,
+            to: ::ethers::core::types::Address,
+            token_id: ::ethers::core::types::U256,
+        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([35, 184, 114, 221], (from, to, token_id))
+                .expect("method not found (this should never happen)")
+        }
+        ///Gets the contract's `Approval` event
+        pub fn approval_filter(
+            &self,
+        ) -> ::ethers::contract::builders::Event<
+            ::std::sync::Arc<M>,
+            M,
+            ApprovalFilter,
+        > {
+            self.0.event()
+        }
+        ///Gets the contract's `ApprovalForAll` event
+        pub fn approval_for_all_filter(
+            &self,
+        ) -> ::ethers::contract::builders::Event<
+            ::std::sync::Arc<M>,
+            M,
+            ApprovalForAllFilter,
+        > {
+            self.0.event()
+        }
+        ///Gets the contract's `Transfer` event
+        pub fn transfer_filter(
+            &self,
+        ) -> ::ethers::contract::builders::Event<
+            ::std::sync::Arc<M>,
+            M,
+            TransferFilter,
+        > {
+            self.0.event()
+        }
+        /// Returns an `Event` builder for all the events of this contract.
+        pub fn events(
+            &self,
+        ) -> ::ethers::contract::builders::Event<
+            ::std::sync::Arc<M>,
+            M,
+            IERC721MetadataEvents,
+        > {
+            self.0.event_with_filter(::core::default::Default::default())
+        }
+    }
+    impl<M: ::ethers::providers::Middleware> From<::ethers::contract::Contract<M>>
+    for IERC721Metadata<M> {
+        fn from(contract: ::ethers::contract::Contract<M>) -> Self {
+            Self::new(contract.address(), contract.client())
+        }
+    }
+    #[derive(
+        Clone,
+        ::ethers::contract::EthEvent,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethevent(name = "Approval", abi = "Approval(address,address,uint256)")]
+    pub struct ApprovalFilter {
+        #[ethevent(indexed)]
+        pub owner: ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub approved: ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub token_id: ::ethers::core::types::U256,
+    }
+    #[derive(
+        Clone,
+        ::ethers::contract::EthEvent,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethevent(name = "ApprovalForAll", abi = "ApprovalForAll(address,address,bool)")]
+    pub struct ApprovalForAllFilter {
+        #[ethevent(indexed)]
+        pub owner: ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub operator: ::ethers::core::types::Address,
+        pub approved: bool,
+    }
+    #[derive(
+        Clone,
+        ::ethers::contract::EthEvent,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethevent(name = "Transfer", abi = "Transfer(address,address,uint256)")]
+    pub struct TransferFilter {
+        #[ethevent(indexed)]
+        pub from: ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub to: ::ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all of the contract's events
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        serde::Serialize,
+        serde::Deserialize,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub enum IERC721MetadataEvents {
+        ApprovalFilter(ApprovalFilter),
+        ApprovalForAllFilter(ApprovalForAllFilter),
+        TransferFilter(TransferFilter),
+    }
+    impl ::ethers::contract::EthLogDecode for IERC721MetadataEvents {
+        fn decode_log(
+            log: &::ethers::core::abi::RawLog,
+        ) -> ::core::result::Result<Self, ::ethers::core::abi::Error> {
+            if let Ok(decoded) = ApprovalFilter::decode_log(log) {
+                return Ok(IERC721MetadataEvents::ApprovalFilter(decoded));
+            }
+            if let Ok(decoded) = ApprovalForAllFilter::decode_log(log) {
+                return Ok(IERC721MetadataEvents::ApprovalForAllFilter(decoded));
+            }
+            if let Ok(decoded) = TransferFilter::decode_log(log) {
+                return Ok(IERC721MetadataEvents::TransferFilter(decoded));
+            }
+            Err(::ethers::core::abi::Error::InvalidData)
+        }
+    }
+    impl ::core::fmt::Display for IERC721MetadataEvents {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            match self {
+                Self::ApprovalFilter(element) => ::core::fmt::Display::fmt(element, f),
+                Self::ApprovalForAllFilter(element) => {
+                    ::core::fmt::Display::fmt(element, f)
+                }
+                Self::TransferFilter(element) => ::core::fmt::Display::fmt(element, f),
+            }
+        }
+    }
+    impl ::core::convert::From<ApprovalFilter> for IERC721MetadataEvents {
+        fn from(value: ApprovalFilter) -> Self {
+            Self::ApprovalFilter(value)
+        }
+    }
+    impl ::core::convert::From<ApprovalForAllFilter> for IERC721MetadataEvents {
+        fn from(value: ApprovalForAllFilter) -> Self {
+            Self::ApprovalForAllFilter(value)
+        }
+    }
+    impl ::core::convert::From<TransferFilter> for IERC721MetadataEvents {
+        fn from(value: TransferFilter) -> Self {
+            Self::TransferFilter(value)
+        }
+    }
+    ///Container type for all input parameters for the `approve` function with signature `approve(address,uint256)` and selector `0x095ea7b3`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "approve", abi = "approve(address,uint256)")]
+    pub struct ApproveCall {
+        pub approved: ::ethers::core::types::Address,
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all input parameters for the `balanceOf` function with signature `balanceOf(address)` and selector `0x70a08231`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "balanceOf", abi = "balanceOf(address)")]
+    pub struct BalanceOfCall {
+        pub owner: ::ethers::core::types::Address,
+    }
+    ///Container type for all input parameters for the `getApproved` function with signature `getApproved(uint256)` and selector `0x081812fc`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "getApproved", abi = "getApproved(uint256)")]
+    pub struct GetApprovedCall {
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all input parameters for the `isApprovedForAll` function with signature `isApprovedForAll(address,address)` and selector `0xe985e9c5`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "isApprovedForAll", abi = "isApprovedForAll(address,address)")]
+    pub struct IsApprovedForAllCall {
+        pub owner: ::ethers::core::types::Address,
+        pub operator: ::ethers::core::types::Address,
+    }
+    ///Container type for all input parameters for the `name` function with signature `name()` and selector `0x06fdde03`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "name", abi = "name()")]
+    pub struct NameCall;
+    ///Container type for all input parameters for the `ownerOf` function with signature `ownerOf(uint256)` and selector `0x6352211e`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "ownerOf", abi = "ownerOf(uint256)")]
+    pub struct OwnerOfCall {
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all input parameters for the `safeTransferFrom` function with signature `safeTransferFrom(address,address,uint256)` and selector `0x42842e0e`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(
+        name = "safeTransferFrom",
+        abi = "safeTransferFrom(address,address,uint256)"
+    )]
+    pub struct SafeTransferFromCall {
+        pub from: ::ethers::core::types::Address,
+        pub to: ::ethers::core::types::Address,
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all input parameters for the `safeTransferFrom` function with signature `safeTransferFrom(address,address,uint256,bytes)` and selector `0xb88d4fde`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(
+        name = "safeTransferFrom",
+        abi = "safeTransferFrom(address,address,uint256,bytes)"
+    )]
+    pub struct SafeTransferFromWithFromAndToAndDataCall {
+        pub from: ::ethers::core::types::Address,
+        pub to: ::ethers::core::types::Address,
+        pub token_id: ::ethers::core::types::U256,
+        pub data: ::ethers::core::types::Bytes,
+    }
+    ///Container type for all input parameters for the `setApprovalForAll` function with signature `setApprovalForAll(address,bool)` and selector `0xa22cb465`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "setApprovalForAll", abi = "setApprovalForAll(address,bool)")]
+    pub struct SetApprovalForAllCall {
+        pub operator: ::ethers::core::types::Address,
+        pub approved: bool,
+    }
+    ///Container type for all input parameters for the `supportsInterface` function with signature `supportsInterface(bytes4)` and selector `0x01ffc9a7`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "supportsInterface", abi = "supportsInterface(bytes4)")]
+    pub struct SupportsInterfaceCall {
+        pub interface_id: [u8; 4],
+    }
+    ///Container type for all input parameters for the `symbol` function with signature `symbol()` and selector `0x95d89b41`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "symbol", abi = "symbol()")]
+    pub struct SymbolCall;
+    ///Container type for all input parameters for the `tokenURI` function with signature `tokenURI(uint256)` and selector `0xc87b56dd`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "tokenURI", abi = "tokenURI(uint256)")]
+    pub struct TokenURICall {
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all input parameters for the `transferFrom` function with signature `transferFrom(address,address,uint256)` and selector `0x23b872dd`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "transferFrom", abi = "transferFrom(address,address,uint256)")]
+    pub struct TransferFromCall {
+        pub from: ::ethers::core::types::Address,
+        pub to: ::ethers::core::types::Address,
+        pub token_id: ::ethers::core::types::U256,
+    }
+    ///Container type for all of the contract's call
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        serde::Serialize,
+        serde::Deserialize,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub enum IERC721MetadataCalls {
+        Approve(ApproveCall),
+        BalanceOf(BalanceOfCall),
+        GetApproved(GetApprovedCall),
+        IsApprovedForAll(IsApprovedForAllCall),
+        Name(NameCall),
+        OwnerOf(OwnerOfCall),
+        SafeTransferFrom(SafeTransferFromCall),
+        SafeTransferFromWithFromAndToAndData(SafeTransferFromWithFromAndToAndDataCall),
+        SetApprovalForAll(SetApprovalForAllCall),
+        SupportsInterface(SupportsInterfaceCall),
+        Symbol(SymbolCall),
+        TokenURI(TokenURICall),
+        TransferFrom(TransferFromCall),
+    }
+    impl ::ethers::core::abi::AbiDecode for IERC721MetadataCalls {
+        fn decode(
+            data: impl AsRef<[u8]>,
+        ) -> ::core::result::Result<Self, ::ethers::core::abi::AbiError> {
+            let data = data.as_ref();
+            if let Ok(decoded) = <ApproveCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::Approve(decoded));
+            }
+            if let Ok(decoded) = <BalanceOfCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::BalanceOf(decoded));
+            }
+            if let Ok(decoded) = <GetApprovedCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::GetApproved(decoded));
+            }
+            if let Ok(decoded) = <IsApprovedForAllCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::IsApprovedForAll(decoded));
+            }
+            if let Ok(decoded) = <NameCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::Name(decoded));
+            }
+            if let Ok(decoded) = <OwnerOfCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::OwnerOf(decoded));
+            }
+            if let Ok(decoded) = <SafeTransferFromCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::SafeTransferFrom(decoded));
+            }
+            if let Ok(decoded) = <SafeTransferFromWithFromAndToAndDataCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::SafeTransferFromWithFromAndToAndData(decoded));
+            }
+            if let Ok(decoded) = <SetApprovalForAllCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::SetApprovalForAll(decoded));
+            }
+            if let Ok(decoded) = <SupportsInterfaceCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::SupportsInterface(decoded));
+            }
+            if let Ok(decoded) = <SymbolCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::Symbol(decoded));
+            }
+            if let Ok(decoded) = <TokenURICall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::TokenURI(decoded));
+            }
+            if let Ok(decoded) = <TransferFromCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
+                return Ok(Self::TransferFrom(decoded));
+            }
+            Err(::ethers::core::abi::Error::InvalidData.into())
+        }
+    }
+    impl ::ethers::core::abi::AbiEncode for IERC721MetadataCalls {
+        fn encode(self) -> Vec<u8> {
+            match self {
+                Self::Approve(element) => ::ethers::core::abi::AbiEncode::encode(element),
+                Self::BalanceOf(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::GetApproved(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::IsApprovedForAll(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::Name(element) => ::ethers::core::abi::AbiEncode::encode(element),
+                Self::OwnerOf(element) => ::ethers::core::abi::AbiEncode::encode(element),
+                Self::SafeTransferFrom(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::SafeTransferFromWithFromAndToAndData(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::SetApprovalForAll(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::SupportsInterface(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::Symbol(element) => ::ethers::core::abi::AbiEncode::encode(element),
+                Self::TokenURI(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+                Self::TransferFrom(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
+            }
+        }
+    }
+    impl ::core::fmt::Display for IERC721MetadataCalls {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            match self {
+                Self::Approve(element) => ::core::fmt::Display::fmt(element, f),
+                Self::BalanceOf(element) => ::core::fmt::Display::fmt(element, f),
+                Self::GetApproved(element) => ::core::fmt::Display::fmt(element, f),
+                Self::IsApprovedForAll(element) => ::core::fmt::Display::fmt(element, f),
+                Self::Name(element) => ::core::fmt::Display::fmt(element, f),
+                Self::OwnerOf(element) => ::core::fmt::Display::fmt(element, f),
+                Self::SafeTransferFrom(element) => ::core::fmt::Display::fmt(element, f),
+                Self::SafeTransferFromWithFromAndToAndData(element) => {
+                    ::core::fmt::Display::fmt(element, f)
+                }
+                Self::SetApprovalForAll(element) => ::core::fmt::Display::fmt(element, f),
+                Self::SupportsInterface(element) => ::core::fmt::Display::fmt(element, f),
+                Self::Symbol(element) => ::core::fmt::Display::fmt(element, f),
+                Self::TokenURI(element) => ::core::fmt::Display::fmt(element, f),
+                Self::TransferFrom(element) => ::core::fmt::Display::fmt(element, f),
+            }
+        }
+    }
+    impl ::core::convert::From<ApproveCall> for IERC721MetadataCalls {
+        fn from(value: ApproveCall) -> Self {
+            Self::Approve(value)
+        }
+    }
+    impl ::core::convert::From<BalanceOfCall> for IERC721MetadataCalls {
+        fn from(value: BalanceOfCall) -> Self {
+            Self::BalanceOf(value)
+        }
+    }
+    impl ::core::convert::From<GetApprovedCall> for IERC721MetadataCalls {
+        fn from(value: GetApprovedCall) -> Self {
+            Self::GetApproved(value)
+        }
+    }
+    impl ::core::convert::From<IsApprovedForAllCall> for IERC721MetadataCalls {
+        fn from(value: IsApprovedForAllCall) -> Self {
+            Self::IsApprovedForAll(value)
+        }
+    }
+    impl ::core::convert::From<NameCall> for IERC721MetadataCalls {
+        fn from(value: NameCall) -> Self {
+            Self::Name(value)
+        }
+    }
+    impl ::core::convert::From<OwnerOfCall> for IERC721MetadataCalls {
+        fn from(value: OwnerOfCall) -> Self {
+            Self::OwnerOf(value)
+        }
+    }
+    impl ::core::convert::From<SafeTransferFromCall> for IERC721MetadataCalls {
+        fn from(value: SafeTransferFromCall) -> Self {
+            Self::SafeTransferFrom(value)
+        }
+    }
+    impl ::core::convert::From<SafeTransferFromWithFromAndToAndDataCall>
+    for IERC721MetadataCalls {
+        fn from(value: SafeTransferFromWithFromAndToAndDataCall) -> Self {
+            Self::SafeTransferFromWithFromAndToAndData(value)
+        }
+    }
+    impl ::core::convert::From<SetApprovalForAllCall> for IERC721MetadataCalls {
+        fn from(value: SetApprovalForAllCall) -> Self {
+            Self::SetApprovalForAll(value)
+        }
+    }
+    impl ::core::convert::From<SupportsInterfaceCall> for IERC721MetadataCalls {
+        fn from(value: SupportsInterfaceCall) -> Self {
+            Self::SupportsInterface(value)
+        }
+    }
+    impl ::core::convert::From<SymbolCall> for IERC721MetadataCalls {
+        fn from(value: SymbolCall) -> Self {
+            Self::Symbol(value)
+        }
+    }
+    impl ::core::convert::From<TokenURICall> for IERC721MetadataCalls {
+        fn from(value: TokenURICall) -> Self {
+            Self::TokenURI(value)
+        }
+    }
+    impl ::core::convert::From<TransferFromCall> for IERC721MetadataCalls {
+        fn from(value: TransferFromCall) -> Self {
+            Self::TransferFrom(value)
+        }
+    }
+    ///Container type for all return fields from the `balanceOf` function with signature `balanceOf(address)` and selector `0x70a08231`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct BalanceOfReturn(pub ::ethers::core::types::U256);
+    ///Container type for all return fields from the `getApproved` function with signature `getApproved(uint256)` and selector `0x081812fc`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct GetApprovedReturn(pub ::ethers::core::types::Address);
+    ///Container type for all return fields from the `isApprovedForAll` function with signature `isApprovedForAll(address,address)` and selector `0xe985e9c5`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct IsApprovedForAllReturn(pub bool);
+    ///Container type for all return fields from the `name` function with signature `name()` and selector `0x06fdde03`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct NameReturn {
+        pub name: ::std::string::String,
+    }
+    ///Container type for all return fields from the `ownerOf` function with signature `ownerOf(uint256)` and selector `0x6352211e`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct OwnerOfReturn(pub ::ethers::core::types::Address);
+    ///Container type for all return fields from the `supportsInterface` function with signature `supportsInterface(bytes4)` and selector `0x01ffc9a7`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct SupportsInterfaceReturn(pub bool);
+    ///Container type for all return fields from the `symbol` function with signature `symbol()` and selector `0x95d89b41`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct SymbolReturn {
+        pub symbol: ::std::string::String,
+    }
+    ///Container type for all return fields from the `tokenURI` function with signature `tokenURI(uint256)` and selector `0xc87b56dd`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct TokenURIReturn(pub ::std::string::String);
+}
 pub use ierc721_token_receiver::*;
 /// This module was auto-generated with ethers-rs Abigen.
 /// More information at: <https://github.com/gakonst/ethers-rs>
@@ -2874,14 +8080,14 @@ pub mod mock_erc20 {
                             name: ::std::borrow::ToOwned::to_owned("allowance"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::string::String::new(),
+                                    name: ::std::borrow::ToOwned::to_owned("owner"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("address"),
                                     ),
                                 },
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::string::String::new(),
+                                    name: ::std::borrow::ToOwned::to_owned("spender"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("address"),
@@ -2948,7 +8154,7 @@ pub mod mock_erc20 {
                             name: ::std::borrow::ToOwned::to_owned("balanceOf"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::string::String::new(),
+                                    name: ::std::borrow::ToOwned::to_owned("owner"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("address"),
@@ -2998,21 +8204,21 @@ pub mod mock_erc20 {
                             name: ::std::borrow::ToOwned::to_owned("initialize"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("_name"),
+                                    name: ::std::borrow::ToOwned::to_owned("name_"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::String,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("string"),
                                     ),
                                 },
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("_symbol"),
+                                    name: ::std::borrow::ToOwned::to_owned("symbol_"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::String,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("string"),
                                     ),
                                 },
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("_decimals"),
+                                    name: ::std::borrow::ToOwned::to_owned("decimals_"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Uint(8usize),
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("uint8"),
@@ -3287,7 +8493,7 @@ pub mod mock_erc20 {
                                     indexed: true,
                                 },
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("amount"),
+                                    name: ::std::borrow::ToOwned::to_owned("value"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Uint(
                                         256usize,
                                     ),
@@ -3315,7 +8521,7 @@ pub mod mock_erc20 {
                                     indexed: true,
                                 },
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("amount"),
+                                    name: ::std::borrow::ToOwned::to_owned("value"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Uint(
                                         256usize,
                                     ),
@@ -3337,13 +8543,13 @@ pub mod mock_erc20 {
         __abi,
     );
     #[rustfmt::skip]
-    const __BYTECODE: &[u8] = b"`\x80`@R4\x80\x15a\0\x10W`\0\x80\xFD[Pa\x0Ej\x80a\0 `\09`\0\xF3\xFE`\x80`@R4\x80\x15a\0\x10W`\0\x80\xFD[P`\x046\x10a\0\xCFW`\x005`\xE0\x1C\x80c6D\xE5\x15\x11a\0\x8CW\x80c\x95\xD8\x9BA\x11a\0fW\x80c\x95\xD8\x9BA\x14a\x01\xBBW\x80c\xA9\x05\x9C\xBB\x14a\x01\xC3W\x80c\xD5\x05\xAC\xCF\x14a\x01\xD6W\x80c\xDDb\xED>\x14a\x01\xE9W`\0\x80\xFD[\x80c6D\xE5\x15\x14a\x01sW\x80cp\xA0\x821\x14a\x01{W\x80c~\xCE\xBE\0\x14a\x01\x9BW`\0\x80\xFD[\x80c\x06\xFD\xDE\x03\x14a\0\xD4W\x80c\t^\xA7\xB3\x14a\0\xF2W\x80c\x16$\xF6\xC6\x14a\x01\x15W\x80c\x18\x16\r\xDD\x14a\x01*W\x80c#\xB8r\xDD\x14a\x01AW\x80c1<\xE5g\x14a\x01TW[`\0\x80\xFD[a\0\xDCa\x02\x14V[`@Qa\0\xE9\x91\x90a\tmV[`@Q\x80\x91\x03\x90\xF3[a\x01\x05a\x01\x006`\x04a\t\xD8V[a\x02\xA2V[`@Q\x90\x15\x15\x81R` \x01a\0\xE9V[a\x01(a\x01#6`\x04a\n\xB6V[a\x03\x0FV[\0[a\x013`\x03T\x81V[`@Q\x90\x81R` \x01a\0\xE9V[a\x01\x05a\x01O6`\x04a\x0B*V[a\x03\xAEV[`\x02Ta\x01a\x90`\xFF\x16\x81V[`@Q`\xFF\x90\x91\x16\x81R` \x01a\0\xE9V[a\x013a\x04\xC3V[a\x013a\x01\x896`\x04a\x0BfV[`\x04` R`\0\x90\x81R`@\x90 T\x81V[a\x013a\x01\xA96`\x04a\x0BfV[`\x08` R`\0\x90\x81R`@\x90 T\x81V[a\0\xDCa\x04\xE9V[a\x01\x05a\x01\xD16`\x04a\t\xD8V[a\x04\xF6V[a\x01(a\x01\xE46`\x04a\x0B\x81V[a\x05\x8DV[a\x013a\x01\xF76`\x04a\x0B\xEBV[`\x05` \x90\x81R`\0\x92\x83R`@\x80\x84 \x90\x91R\x90\x82R\x90 T\x81V[`\0\x80Ta\x02!\x90a\x0C\x1EV[\x80`\x1F\x01` \x80\x91\x04\x02` \x01`@Q\x90\x81\x01`@R\x80\x92\x91\x90\x81\x81R` \x01\x82\x80Ta\x02M\x90a\x0C\x1EV[\x80\x15a\x02\x9AW\x80`\x1F\x10a\x02oWa\x01\0\x80\x83T\x04\x02\x83R\x91` \x01\x91a\x02\x9AV[\x82\x01\x91\x90`\0R` `\0 \x90[\x81T\x81R\x90`\x01\x01\x90` \x01\x80\x83\x11a\x02}W\x82\x90\x03`\x1F\x16\x82\x01\x91[PPPPP\x81V[3`\0\x81\x81R`\x05` \x90\x81R`@\x80\x83 `\x01`\x01`\xA0\x1B\x03\x87\x16\x80\x85R\x92R\x80\x83 \x85\x90UQ\x91\x92\x90\x91\x7F\x8C[\xE1\xE5\xEB\xEC}[\xD1OqB}\x1E\x84\xF3\xDD\x03\x14\xC0\xF7\xB2)\x1E[ \n\xC8\xC7\xC3\xB9%\x90a\x02\xFD\x90\x86\x81R` \x01\x90V[`@Q\x80\x91\x03\x90\xA3P`\x01[\x92\x91PPV[`\tT`\xFF\x16\x15a\x03]W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x13`$\x82\x01Rr\x10S\x14\x91PQ\x16W\xD2S\x92U\x12PS\x12V\x91Q`j\x1B`D\x82\x01R`d\x01[`@Q\x80\x91\x03\x90\xFD[`\0a\x03i\x84\x82a\x0C\xA9V[P`\x01a\x03v\x83\x82a\x0C\xA9V[P`\x02\x80T`\xFF\x19\x16`\xFF\x83\x16\x17\x90Ua\x03\x8Ea\x07\xEBV[`\x06Ua\x03\x99a\x08\x04V[`\x07UPP`\t\x80T`\xFF\x19\x16`\x01\x17\x90UPV[`\x01`\x01`\xA0\x1B\x03\x83\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 3\x84R\x90\x91R\x81 T`\0\x19\x81\x14a\x04\nWa\x03\xE5\x81\x84a\x08\xA7V[`\x01`\x01`\xA0\x1B\x03\x86\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 3\x84R\x90\x91R\x90 U[`\x01`\x01`\xA0\x1B\x03\x85\x16`\0\x90\x81R`\x04` R`@\x90 Ta\x04-\x90\x84a\x08\xA7V[`\x01`\x01`\xA0\x1B\x03\x80\x87\x16`\0\x90\x81R`\x04` R`@\x80\x82 \x93\x90\x93U\x90\x86\x16\x81R Ta\x04\\\x90\x84a\t\nV[`\x01`\x01`\xA0\x1B\x03\x80\x86\x16`\0\x81\x81R`\x04` R`@\x90\x81\x90 \x93\x90\x93U\x91Q\x90\x87\x16\x90\x7F\xDD\xF2R\xAD\x1B\xE2\xC8\x9Bi\xC2\xB0h\xFC7\x8D\xAA\x95+\xA7\xF1c\xC4\xA1\x16(\xF5ZM\xF5#\xB3\xEF\x90a\x04\xB0\x90\x87\x81R` \x01\x90V[`@Q\x80\x91\x03\x90\xA3P`\x01\x94\x93PPPPV[`\0`\x06Ta\x04\xD0a\x07\xEBV[\x14a\x04\xE2Wa\x04\xDDa\x08\x04V[\x90P\x90V[P`\x07T\x90V[`\x01\x80Ta\x02!\x90a\x0C\x1EV[3`\0\x90\x81R`\x04` R`@\x81 Ta\x05\x10\x90\x83a\x08\xA7V[3`\0\x90\x81R`\x04` R`@\x80\x82 \x92\x90\x92U`\x01`\x01`\xA0\x1B\x03\x85\x16\x81R Ta\x05<\x90\x83a\t\nV[`\x01`\x01`\xA0\x1B\x03\x84\x16`\0\x81\x81R`\x04` R`@\x90\x81\x90 \x92\x90\x92U\x90Q3\x90\x7F\xDD\xF2R\xAD\x1B\xE2\xC8\x9Bi\xC2\xB0h\xFC7\x8D\xAA\x95+\xA7\xF1c\xC4\xA1\x16(\xF5ZM\xF5#\xB3\xEF\x90a\x02\xFD\x90\x86\x81R` \x01\x90V[B\x84\x10\x15a\x05\xDDW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x17`$\x82\x01R\x7FPERMIT_DEADLINE_EXPIRED\0\0\0\0\0\0\0\0\0`D\x82\x01R`d\x01a\x03TV[`\0`\x01a\x05\xE9a\x04\xC3V[`\x01`\x01`\xA0\x1B\x03\x8A\x16`\0\x90\x81R`\x08` R`@\x81 \x80T\x7Fnq\xED\xAE\x12\xB1\xB9\x7FM\x1F`7\x0F\xEF\x10\x10_\xA2\xFA\xAE\x01&\x11J\x16\x9Cd\x84]a&\xC9\x92\x8D\x92\x8D\x92\x8D\x92\x90\x91\x90a\x067\x83a\r\x7FV[\x90\x91UP`@\x80Q` \x81\x01\x96\x90\x96R`\x01`\x01`\xA0\x1B\x03\x94\x85\x16\x90\x86\x01R\x92\x90\x91\x16``\x84\x01R`\x80\x83\x01R`\xA0\x82\x01R`\xC0\x81\x01\x88\x90R`\xE0\x01`@Q` \x81\x83\x03\x03\x81R\x90`@R\x80Q\x90` \x01 `@Q` \x01a\x06\xB0\x92\x91\x90a\x19\x01`\xF0\x1B\x81R`\x02\x81\x01\x92\x90\x92R`\"\x82\x01R`B\x01\x90V[`@\x80Q`\x1F\x19\x81\x84\x03\x01\x81R\x82\x82R\x80Q` \x91\x82\x01 `\0\x84R\x90\x83\x01\x80\x83RR`\xFF\x87\x16\x90\x82\x01R``\x81\x01\x85\x90R`\x80\x81\x01\x84\x90R`\xA0\x01` `@Q` \x81\x03\x90\x80\x84\x03\x90\x85Z\xFA\x15\x80\x15a\x07\x0EW=`\0\x80>=`\0\xFD[PP`@Q`\x1F\x19\x01Q\x91PP`\x01`\x01`\xA0\x1B\x03\x81\x16\x15\x80\x15\x90a\x07DWP\x87`\x01`\x01`\xA0\x1B\x03\x16\x81`\x01`\x01`\xA0\x1B\x03\x16\x14[a\x07\x81W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x0E`$\x82\x01Rm$\xA7+ \xA6$\xA2/\xA9\xA4\xA3\xA7\"\xA9`\x91\x1B`D\x82\x01R`d\x01a\x03TV[`\x01`\x01`\xA0\x1B\x03\x81\x81\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 \x8B\x85\x16\x80\x85R\x90\x83R\x92\x81\x90 \x8A\x90UQ\x89\x81R\x91\x92\x8B\x16\x91\x7F\x8C[\xE1\xE5\xEB\xEC}[\xD1OqB}\x1E\x84\xF3\xDD\x03\x14\xC0\xF7\xB2)\x1E[ \n\xC8\xC7\xC3\xB9%\x91\x01`@Q\x80\x91\x03\x90\xA3PPPPPPPPV[`\0a\ti\x80a\x07\xFDc\xFF\xFF\xFF\xFF\x82\x16V[\x92PPP\x90V[`\0\x7F\x8Bs\xC3\xC6\x9B\xB8\xFE=Q.\xCCL\xF7Y\xCCy#\x9F{\x17\x9B\x0F\xFA\xCA\xA9\xA7]R+9@\x0F`\0`@Qa\x086\x91\x90a\r\x98V[`@Q\x80\x91\x03\x90 \x7F\xC8\x9E\xFD\xAAT\xC0\xF2\x0Cz\xDFa(\x82\xDF\tP\xF5\xA9Qc~\x03\x07\xCD\xCBLg/)\x8B\x8B\xC6a\x08ga\x07\xEBV[`@\x80Q` \x81\x01\x95\x90\x95R\x84\x01\x92\x90\x92R``\x83\x01R`\x80\x82\x01R0`\xA0\x82\x01R`\xC0\x01`@Q` \x81\x83\x03\x03\x81R\x90`@R\x80Q\x90` \x01 \x90P\x90V[`\0\x81\x83\x10\x15a\x08\xF9W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x1C`$\x82\x01R\x7FERC20: subtraction underflow\0\0\0\0`D\x82\x01R`d\x01a\x03TV[a\t\x03\x82\x84a\x0E\x0EV[\x93\x92PPPV[`\0\x80a\t\x17\x83\x85a\x0E!V[\x90P\x83\x81\x10\x15a\t\x03W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x18`$\x82\x01R\x7FERC20: addition overflow\0\0\0\0\0\0\0\0`D\x82\x01R`d\x01a\x03TV[F\x90V[`\0` \x80\x83R\x83Q\x80` \x85\x01R`\0[\x81\x81\x10\x15a\t\x9BW\x85\x81\x01\x83\x01Q\x85\x82\x01`@\x01R\x82\x01a\t\x7FV[P`\0`@\x82\x86\x01\x01R`@`\x1F\x19`\x1F\x83\x01\x16\x85\x01\x01\x92PPP\x92\x91PPV[\x805`\x01`\x01`\xA0\x1B\x03\x81\x16\x81\x14a\t\xD3W`\0\x80\xFD[\x91\x90PV[`\0\x80`@\x83\x85\x03\x12\x15a\t\xEBW`\0\x80\xFD[a\t\xF4\x83a\t\xBCV[\x94` \x93\x90\x93\x015\x93PPPV[cNH{q`\xE0\x1B`\0R`A`\x04R`$`\0\xFD[`\0\x82`\x1F\x83\x01\x12a\n)W`\0\x80\xFD[\x815g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x82\x11\x15a\nDWa\nDa\n\x02V[`@Q`\x1F\x83\x01`\x1F\x19\x90\x81\x16`?\x01\x16\x81\x01\x90\x82\x82\x11\x81\x83\x10\x17\x15a\nlWa\nla\n\x02V[\x81`@R\x83\x81R\x86` \x85\x88\x01\x01\x11\x15a\n\x85W`\0\x80\xFD[\x83` \x87\x01` \x83\x017`\0` \x85\x83\x01\x01R\x80\x94PPPPP\x92\x91PPV[\x805`\xFF\x81\x16\x81\x14a\t\xD3W`\0\x80\xFD[`\0\x80`\0``\x84\x86\x03\x12\x15a\n\xCBW`\0\x80\xFD[\x835g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x82\x11\x15a\n\xE3W`\0\x80\xFD[a\n\xEF\x87\x83\x88\x01a\n\x18V[\x94P` \x86\x015\x91P\x80\x82\x11\x15a\x0B\x05W`\0\x80\xFD[Pa\x0B\x12\x86\x82\x87\x01a\n\x18V[\x92PPa\x0B!`@\x85\x01a\n\xA5V[\x90P\x92P\x92P\x92V[`\0\x80`\0``\x84\x86\x03\x12\x15a\x0B?W`\0\x80\xFD[a\x0BH\x84a\t\xBCV[\x92Pa\x0BV` \x85\x01a\t\xBCV[\x91P`@\x84\x015\x90P\x92P\x92P\x92V[`\0` \x82\x84\x03\x12\x15a\x0BxW`\0\x80\xFD[a\t\x03\x82a\t\xBCV[`\0\x80`\0\x80`\0\x80`\0`\xE0\x88\x8A\x03\x12\x15a\x0B\x9CW`\0\x80\xFD[a\x0B\xA5\x88a\t\xBCV[\x96Pa\x0B\xB3` \x89\x01a\t\xBCV[\x95P`@\x88\x015\x94P``\x88\x015\x93Pa\x0B\xCF`\x80\x89\x01a\n\xA5V[\x92P`\xA0\x88\x015\x91P`\xC0\x88\x015\x90P\x92\x95\x98\x91\x94\x97P\x92\x95PV[`\0\x80`@\x83\x85\x03\x12\x15a\x0B\xFEW`\0\x80\xFD[a\x0C\x07\x83a\t\xBCV[\x91Pa\x0C\x15` \x84\x01a\t\xBCV[\x90P\x92P\x92\x90PV[`\x01\x81\x81\x1C\x90\x82\x16\x80a\x0C2W`\x7F\x82\x16\x91P[` \x82\x10\x81\x03a\x0CRWcNH{q`\xE0\x1B`\0R`\"`\x04R`$`\0\xFD[P\x91\x90PV[`\x1F\x82\x11\x15a\x0C\xA4W`\0\x81`\0R` `\0 `\x1F\x85\x01`\x05\x1C\x81\x01` \x86\x10\x15a\x0C\x81WP\x80[`\x1F\x85\x01`\x05\x1C\x82\x01\x91P[\x81\x81\x10\x15a\x0C\xA0W\x82\x81U`\x01\x01a\x0C\x8DV[PPP[PPPV[\x81Qg\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x81\x11\x15a\x0C\xC3Wa\x0C\xC3a\n\x02V[a\x0C\xD7\x81a\x0C\xD1\x84Ta\x0C\x1EV[\x84a\x0CXV[` \x80`\x1F\x83\x11`\x01\x81\x14a\r\x0CW`\0\x84\x15a\x0C\xF4WP\x85\x83\x01Q[`\0\x19`\x03\x86\x90\x1B\x1C\x19\x16`\x01\x85\x90\x1B\x17\x85Ua\x0C\xA0V[`\0\x85\x81R` \x81 `\x1F\x19\x86\x16\x91[\x82\x81\x10\x15a\r;W\x88\x86\x01Q\x82U\x94\x84\x01\x94`\x01\x90\x91\x01\x90\x84\x01a\r\x1CV[P\x85\x82\x10\x15a\rYW\x87\x85\x01Q`\0\x19`\x03\x88\x90\x1B`\xF8\x16\x1C\x19\x16\x81U[PPPPP`\x01\x90\x81\x1B\x01\x90UPV[cNH{q`\xE0\x1B`\0R`\x11`\x04R`$`\0\xFD[`\0`\x01\x82\x01a\r\x91Wa\r\x91a\riV[P`\x01\x01\x90V[`\0\x80\x83Ta\r\xA6\x81a\x0C\x1EV[`\x01\x82\x81\x16\x80\x15a\r\xBEW`\x01\x81\x14a\r\xD3Wa\x0E\x02V[`\xFF\x19\x84\x16\x87R\x82\x15\x15\x83\x02\x87\x01\x94Pa\x0E\x02V[\x87`\0R` \x80`\0 `\0[\x85\x81\x10\x15a\r\xF9W\x81T\x8A\x82\x01R\x90\x84\x01\x90\x82\x01a\r\xE0V[PPP\x82\x87\x01\x94P[P\x92\x96\x95PPPPPPV[\x81\x81\x03\x81\x81\x11\x15a\x03\tWa\x03\ta\riV[\x80\x82\x01\x80\x82\x11\x15a\x03\tWa\x03\ta\riV\xFE\xA2dipfsX\"\x12 \x98*X\xF1\xBA\xB3gX%\xD4\xB0\x80\x1A_\x92\xF3\xC3\xCEl\xB3-}\xD8\x8F,\x01;\xC8\xA6\xEE\xF1KdsolcC\0\x08\x16\x003";
+    const __BYTECODE: &[u8] = b"`\x80`@R4\x80\x15a\0\x10W`\0\x80\xFD[Pa\x0Ex\x80a\0 `\09`\0\xF3\xFE`\x80`@R4\x80\x15a\0\x10W`\0\x80\xFD[P`\x046\x10a\0\xCFW`\x005`\xE0\x1C\x80c6D\xE5\x15\x11a\0\x8CW\x80c\x95\xD8\x9BA\x11a\0fW\x80c\x95\xD8\x9BA\x14a\x01\xB5W\x80c\xA9\x05\x9C\xBB\x14a\x01\xBDW\x80c\xD5\x05\xAC\xCF\x14a\x01\xD0W\x80c\xDDb\xED>\x14a\x01\xE3W`\0\x80\xFD[\x80c6D\xE5\x15\x14a\x01dW\x80cp\xA0\x821\x14a\x01lW\x80c~\xCE\xBE\0\x14a\x01\x95W`\0\x80\xFD[\x80c\x06\xFD\xDE\x03\x14a\0\xD4W\x80c\t^\xA7\xB3\x14a\0\xF2W\x80c\x16$\xF6\xC6\x14a\x01\x15W\x80c\x18\x16\r\xDD\x14a\x01*W\x80c#\xB8r\xDD\x14a\x01<W\x80c1<\xE5g\x14a\x01OW[`\0\x80\xFD[a\0\xDCa\x02\x1CV[`@Qa\0\xE9\x91\x90a\t{V[`@Q\x80\x91\x03\x90\xF3[a\x01\x05a\x01\x006`\x04a\t\xE6V[a\x02\xAEV[`@Q\x90\x15\x15\x81R` \x01a\0\xE9V[a\x01(a\x01#6`\x04a\n\xC4V[a\x03\x1BV[\0[`\x03T[`@Q\x90\x81R` \x01a\0\xE9V[a\x01\x05a\x01J6`\x04a\x0B8V[a\x03\xBAV[`\x02T`@Q`\xFF\x90\x91\x16\x81R` \x01a\0\xE9V[a\x01.a\x04\xCFV[a\x01.a\x01z6`\x04a\x0BtV[`\x01`\x01`\xA0\x1B\x03\x16`\0\x90\x81R`\x04` R`@\x90 T\x90V[a\x01.a\x01\xA36`\x04a\x0BtV[`\x08` R`\0\x90\x81R`@\x90 T\x81V[a\0\xDCa\x04\xF5V[a\x01\x05a\x01\xCB6`\x04a\t\xE6V[a\x05\x04V[a\x01(a\x01\xDE6`\x04a\x0B\x8FV[a\x05\x9BV[a\x01.a\x01\xF16`\x04a\x0B\xF9V[`\x01`\x01`\xA0\x1B\x03\x91\x82\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 \x93\x90\x94\x16\x82R\x91\x90\x91R T\x90V[```\0\x80Ta\x02+\x90a\x0C,V[\x80`\x1F\x01` \x80\x91\x04\x02` \x01`@Q\x90\x81\x01`@R\x80\x92\x91\x90\x81\x81R` \x01\x82\x80Ta\x02W\x90a\x0C,V[\x80\x15a\x02\xA4W\x80`\x1F\x10a\x02yWa\x01\0\x80\x83T\x04\x02\x83R\x91` \x01\x91a\x02\xA4V[\x82\x01\x91\x90`\0R` `\0 \x90[\x81T\x81R\x90`\x01\x01\x90` \x01\x80\x83\x11a\x02\x87W\x82\x90\x03`\x1F\x16\x82\x01\x91[PPPPP\x90P\x90V[3`\0\x81\x81R`\x05` \x90\x81R`@\x80\x83 `\x01`\x01`\xA0\x1B\x03\x87\x16\x80\x85R\x92R\x80\x83 \x85\x90UQ\x91\x92\x90\x91\x7F\x8C[\xE1\xE5\xEB\xEC}[\xD1OqB}\x1E\x84\xF3\xDD\x03\x14\xC0\xF7\xB2)\x1E[ \n\xC8\xC7\xC3\xB9%\x90a\x03\t\x90\x86\x81R` \x01\x90V[`@Q\x80\x91\x03\x90\xA3P`\x01[\x92\x91PPV[`\tT`\xFF\x16\x15a\x03iW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x13`$\x82\x01Rr\x10S\x14\x91PQ\x16W\xD2S\x92U\x12PS\x12V\x91Q`j\x1B`D\x82\x01R`d\x01[`@Q\x80\x91\x03\x90\xFD[`\0a\x03u\x84\x82a\x0C\xB7V[P`\x01a\x03\x82\x83\x82a\x0C\xB7V[P`\x02\x80T`\xFF\x19\x16`\xFF\x83\x16\x17\x90Ua\x03\x9Aa\x07\xF9V[`\x06Ua\x03\xA5a\x08\x12V[`\x07UPP`\t\x80T`\xFF\x19\x16`\x01\x17\x90UPV[`\x01`\x01`\xA0\x1B\x03\x83\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 3\x84R\x90\x91R\x81 T`\0\x19\x81\x14a\x04\x16Wa\x03\xF1\x81\x84a\x08\xB5V[`\x01`\x01`\xA0\x1B\x03\x86\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 3\x84R\x90\x91R\x90 U[`\x01`\x01`\xA0\x1B\x03\x85\x16`\0\x90\x81R`\x04` R`@\x90 Ta\x049\x90\x84a\x08\xB5V[`\x01`\x01`\xA0\x1B\x03\x80\x87\x16`\0\x90\x81R`\x04` R`@\x80\x82 \x93\x90\x93U\x90\x86\x16\x81R Ta\x04h\x90\x84a\t\x18V[`\x01`\x01`\xA0\x1B\x03\x80\x86\x16`\0\x81\x81R`\x04` R`@\x90\x81\x90 \x93\x90\x93U\x91Q\x90\x87\x16\x90\x7F\xDD\xF2R\xAD\x1B\xE2\xC8\x9Bi\xC2\xB0h\xFC7\x8D\xAA\x95+\xA7\xF1c\xC4\xA1\x16(\xF5ZM\xF5#\xB3\xEF\x90a\x04\xBC\x90\x87\x81R` \x01\x90V[`@Q\x80\x91\x03\x90\xA3P`\x01\x94\x93PPPPV[`\0`\x06Ta\x04\xDCa\x07\xF9V[\x14a\x04\xEEWa\x04\xE9a\x08\x12V[\x90P\x90V[P`\x07T\x90V[```\x01\x80Ta\x02+\x90a\x0C,V[3`\0\x90\x81R`\x04` R`@\x81 Ta\x05\x1E\x90\x83a\x08\xB5V[3`\0\x90\x81R`\x04` R`@\x80\x82 \x92\x90\x92U`\x01`\x01`\xA0\x1B\x03\x85\x16\x81R Ta\x05J\x90\x83a\t\x18V[`\x01`\x01`\xA0\x1B\x03\x84\x16`\0\x81\x81R`\x04` R`@\x90\x81\x90 \x92\x90\x92U\x90Q3\x90\x7F\xDD\xF2R\xAD\x1B\xE2\xC8\x9Bi\xC2\xB0h\xFC7\x8D\xAA\x95+\xA7\xF1c\xC4\xA1\x16(\xF5ZM\xF5#\xB3\xEF\x90a\x03\t\x90\x86\x81R` \x01\x90V[B\x84\x10\x15a\x05\xEBW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x17`$\x82\x01R\x7FPERMIT_DEADLINE_EXPIRED\0\0\0\0\0\0\0\0\0`D\x82\x01R`d\x01a\x03`V[`\0`\x01a\x05\xF7a\x04\xCFV[`\x01`\x01`\xA0\x1B\x03\x8A\x16`\0\x90\x81R`\x08` R`@\x81 \x80T\x7Fnq\xED\xAE\x12\xB1\xB9\x7FM\x1F`7\x0F\xEF\x10\x10_\xA2\xFA\xAE\x01&\x11J\x16\x9Cd\x84]a&\xC9\x92\x8D\x92\x8D\x92\x8D\x92\x90\x91\x90a\x06E\x83a\r\x8DV[\x90\x91UP`@\x80Q` \x81\x01\x96\x90\x96R`\x01`\x01`\xA0\x1B\x03\x94\x85\x16\x90\x86\x01R\x92\x90\x91\x16``\x84\x01R`\x80\x83\x01R`\xA0\x82\x01R`\xC0\x81\x01\x88\x90R`\xE0\x01`@Q` \x81\x83\x03\x03\x81R\x90`@R\x80Q\x90` \x01 `@Q` \x01a\x06\xBE\x92\x91\x90a\x19\x01`\xF0\x1B\x81R`\x02\x81\x01\x92\x90\x92R`\"\x82\x01R`B\x01\x90V[`@\x80Q`\x1F\x19\x81\x84\x03\x01\x81R\x82\x82R\x80Q` \x91\x82\x01 `\0\x84R\x90\x83\x01\x80\x83RR`\xFF\x87\x16\x90\x82\x01R``\x81\x01\x85\x90R`\x80\x81\x01\x84\x90R`\xA0\x01` `@Q` \x81\x03\x90\x80\x84\x03\x90\x85Z\xFA\x15\x80\x15a\x07\x1CW=`\0\x80>=`\0\xFD[PP`@Q`\x1F\x19\x01Q\x91PP`\x01`\x01`\xA0\x1B\x03\x81\x16\x15\x80\x15\x90a\x07RWP\x87`\x01`\x01`\xA0\x1B\x03\x16\x81`\x01`\x01`\xA0\x1B\x03\x16\x14[a\x07\x8FW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x0E`$\x82\x01Rm$\xA7+ \xA6$\xA2/\xA9\xA4\xA3\xA7\"\xA9`\x91\x1B`D\x82\x01R`d\x01a\x03`V[`\x01`\x01`\xA0\x1B\x03\x81\x81\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 \x8B\x85\x16\x80\x85R\x90\x83R\x92\x81\x90 \x8A\x90UQ\x89\x81R\x91\x92\x8B\x16\x91\x7F\x8C[\xE1\xE5\xEB\xEC}[\xD1OqB}\x1E\x84\xF3\xDD\x03\x14\xC0\xF7\xB2)\x1E[ \n\xC8\xC7\xC3\xB9%\x91\x01`@Q\x80\x91\x03\x90\xA3PPPPPPPPV[`\0a\tw\x80a\x08\x0Bc\xFF\xFF\xFF\xFF\x82\x16V[\x92PPP\x90V[`\0\x7F\x8Bs\xC3\xC6\x9B\xB8\xFE=Q.\xCCL\xF7Y\xCCy#\x9F{\x17\x9B\x0F\xFA\xCA\xA9\xA7]R+9@\x0F`\0`@Qa\x08D\x91\x90a\r\xA6V[`@Q\x80\x91\x03\x90 \x7F\xC8\x9E\xFD\xAAT\xC0\xF2\x0Cz\xDFa(\x82\xDF\tP\xF5\xA9Qc~\x03\x07\xCD\xCBLg/)\x8B\x8B\xC6a\x08ua\x07\xF9V[`@\x80Q` \x81\x01\x95\x90\x95R\x84\x01\x92\x90\x92R``\x83\x01R`\x80\x82\x01R0`\xA0\x82\x01R`\xC0\x01`@Q` \x81\x83\x03\x03\x81R\x90`@R\x80Q\x90` \x01 \x90P\x90V[`\0\x81\x83\x10\x15a\t\x07W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x1C`$\x82\x01R\x7FERC20: subtraction underflow\0\0\0\0`D\x82\x01R`d\x01a\x03`V[a\t\x11\x82\x84a\x0E\x1CV[\x93\x92PPPV[`\0\x80a\t%\x83\x85a\x0E/V[\x90P\x83\x81\x10\x15a\t\x11W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x18`$\x82\x01R\x7FERC20: addition overflow\0\0\0\0\0\0\0\0`D\x82\x01R`d\x01a\x03`V[F\x90V[`\0` \x80\x83R\x83Q\x80` \x85\x01R`\0[\x81\x81\x10\x15a\t\xA9W\x85\x81\x01\x83\x01Q\x85\x82\x01`@\x01R\x82\x01a\t\x8DV[P`\0`@\x82\x86\x01\x01R`@`\x1F\x19`\x1F\x83\x01\x16\x85\x01\x01\x92PPP\x92\x91PPV[\x805`\x01`\x01`\xA0\x1B\x03\x81\x16\x81\x14a\t\xE1W`\0\x80\xFD[\x91\x90PV[`\0\x80`@\x83\x85\x03\x12\x15a\t\xF9W`\0\x80\xFD[a\n\x02\x83a\t\xCAV[\x94` \x93\x90\x93\x015\x93PPPV[cNH{q`\xE0\x1B`\0R`A`\x04R`$`\0\xFD[`\0\x82`\x1F\x83\x01\x12a\n7W`\0\x80\xFD[\x815g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x82\x11\x15a\nRWa\nRa\n\x10V[`@Q`\x1F\x83\x01`\x1F\x19\x90\x81\x16`?\x01\x16\x81\x01\x90\x82\x82\x11\x81\x83\x10\x17\x15a\nzWa\nza\n\x10V[\x81`@R\x83\x81R\x86` \x85\x88\x01\x01\x11\x15a\n\x93W`\0\x80\xFD[\x83` \x87\x01` \x83\x017`\0` \x85\x83\x01\x01R\x80\x94PPPPP\x92\x91PPV[\x805`\xFF\x81\x16\x81\x14a\t\xE1W`\0\x80\xFD[`\0\x80`\0``\x84\x86\x03\x12\x15a\n\xD9W`\0\x80\xFD[\x835g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x82\x11\x15a\n\xF1W`\0\x80\xFD[a\n\xFD\x87\x83\x88\x01a\n&V[\x94P` \x86\x015\x91P\x80\x82\x11\x15a\x0B\x13W`\0\x80\xFD[Pa\x0B \x86\x82\x87\x01a\n&V[\x92PPa\x0B/`@\x85\x01a\n\xB3V[\x90P\x92P\x92P\x92V[`\0\x80`\0``\x84\x86\x03\x12\x15a\x0BMW`\0\x80\xFD[a\x0BV\x84a\t\xCAV[\x92Pa\x0Bd` \x85\x01a\t\xCAV[\x91P`@\x84\x015\x90P\x92P\x92P\x92V[`\0` \x82\x84\x03\x12\x15a\x0B\x86W`\0\x80\xFD[a\t\x11\x82a\t\xCAV[`\0\x80`\0\x80`\0\x80`\0`\xE0\x88\x8A\x03\x12\x15a\x0B\xAAW`\0\x80\xFD[a\x0B\xB3\x88a\t\xCAV[\x96Pa\x0B\xC1` \x89\x01a\t\xCAV[\x95P`@\x88\x015\x94P``\x88\x015\x93Pa\x0B\xDD`\x80\x89\x01a\n\xB3V[\x92P`\xA0\x88\x015\x91P`\xC0\x88\x015\x90P\x92\x95\x98\x91\x94\x97P\x92\x95PV[`\0\x80`@\x83\x85\x03\x12\x15a\x0C\x0CW`\0\x80\xFD[a\x0C\x15\x83a\t\xCAV[\x91Pa\x0C#` \x84\x01a\t\xCAV[\x90P\x92P\x92\x90PV[`\x01\x81\x81\x1C\x90\x82\x16\x80a\x0C@W`\x7F\x82\x16\x91P[` \x82\x10\x81\x03a\x0C`WcNH{q`\xE0\x1B`\0R`\"`\x04R`$`\0\xFD[P\x91\x90PV[`\x1F\x82\x11\x15a\x0C\xB2W`\0\x81`\0R` `\0 `\x1F\x85\x01`\x05\x1C\x81\x01` \x86\x10\x15a\x0C\x8FWP\x80[`\x1F\x85\x01`\x05\x1C\x82\x01\x91P[\x81\x81\x10\x15a\x0C\xAEW\x82\x81U`\x01\x01a\x0C\x9BV[PPP[PPPV[\x81Qg\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x81\x11\x15a\x0C\xD1Wa\x0C\xD1a\n\x10V[a\x0C\xE5\x81a\x0C\xDF\x84Ta\x0C,V[\x84a\x0CfV[` \x80`\x1F\x83\x11`\x01\x81\x14a\r\x1AW`\0\x84\x15a\r\x02WP\x85\x83\x01Q[`\0\x19`\x03\x86\x90\x1B\x1C\x19\x16`\x01\x85\x90\x1B\x17\x85Ua\x0C\xAEV[`\0\x85\x81R` \x81 `\x1F\x19\x86\x16\x91[\x82\x81\x10\x15a\rIW\x88\x86\x01Q\x82U\x94\x84\x01\x94`\x01\x90\x91\x01\x90\x84\x01a\r*V[P\x85\x82\x10\x15a\rgW\x87\x85\x01Q`\0\x19`\x03\x88\x90\x1B`\xF8\x16\x1C\x19\x16\x81U[PPPPP`\x01\x90\x81\x1B\x01\x90UPV[cNH{q`\xE0\x1B`\0R`\x11`\x04R`$`\0\xFD[`\0`\x01\x82\x01a\r\x9FWa\r\x9Fa\rwV[P`\x01\x01\x90V[`\0\x80\x83Ta\r\xB4\x81a\x0C,V[`\x01\x82\x81\x16\x80\x15a\r\xCCW`\x01\x81\x14a\r\xE1Wa\x0E\x10V[`\xFF\x19\x84\x16\x87R\x82\x15\x15\x83\x02\x87\x01\x94Pa\x0E\x10V[\x87`\0R` \x80`\0 `\0[\x85\x81\x10\x15a\x0E\x07W\x81T\x8A\x82\x01R\x90\x84\x01\x90\x82\x01a\r\xEEV[PPP\x82\x87\x01\x94P[P\x92\x96\x95PPPPPPV[\x81\x81\x03\x81\x81\x11\x15a\x03\x15Wa\x03\x15a\rwV[\x80\x82\x01\x80\x82\x11\x15a\x03\x15Wa\x03\x15a\rwV\xFE\xA2dipfsX\"\x12 \x90\xBD\xD3\xB5\xB92\xF3\"\xFF\xE5\xCB\xF37\xD9\xBER\x0B\xF4`\x80\xC1\xA0\x96\x15\x1B\x12\xFB\xC7\xCD\x0F_`dsolcC\0\x08\x16\x003";
     /// The bytecode of the contract.
     pub static MOCKERC20_BYTECODE: ::ethers::core::types::Bytes = ::ethers::core::types::Bytes::from_static(
         __BYTECODE,
     );
     #[rustfmt::skip]
-    const __DEPLOYED_BYTECODE: &[u8] = b"`\x80`@R4\x80\x15a\0\x10W`\0\x80\xFD[P`\x046\x10a\0\xCFW`\x005`\xE0\x1C\x80c6D\xE5\x15\x11a\0\x8CW\x80c\x95\xD8\x9BA\x11a\0fW\x80c\x95\xD8\x9BA\x14a\x01\xBBW\x80c\xA9\x05\x9C\xBB\x14a\x01\xC3W\x80c\xD5\x05\xAC\xCF\x14a\x01\xD6W\x80c\xDDb\xED>\x14a\x01\xE9W`\0\x80\xFD[\x80c6D\xE5\x15\x14a\x01sW\x80cp\xA0\x821\x14a\x01{W\x80c~\xCE\xBE\0\x14a\x01\x9BW`\0\x80\xFD[\x80c\x06\xFD\xDE\x03\x14a\0\xD4W\x80c\t^\xA7\xB3\x14a\0\xF2W\x80c\x16$\xF6\xC6\x14a\x01\x15W\x80c\x18\x16\r\xDD\x14a\x01*W\x80c#\xB8r\xDD\x14a\x01AW\x80c1<\xE5g\x14a\x01TW[`\0\x80\xFD[a\0\xDCa\x02\x14V[`@Qa\0\xE9\x91\x90a\tmV[`@Q\x80\x91\x03\x90\xF3[a\x01\x05a\x01\x006`\x04a\t\xD8V[a\x02\xA2V[`@Q\x90\x15\x15\x81R` \x01a\0\xE9V[a\x01(a\x01#6`\x04a\n\xB6V[a\x03\x0FV[\0[a\x013`\x03T\x81V[`@Q\x90\x81R` \x01a\0\xE9V[a\x01\x05a\x01O6`\x04a\x0B*V[a\x03\xAEV[`\x02Ta\x01a\x90`\xFF\x16\x81V[`@Q`\xFF\x90\x91\x16\x81R` \x01a\0\xE9V[a\x013a\x04\xC3V[a\x013a\x01\x896`\x04a\x0BfV[`\x04` R`\0\x90\x81R`@\x90 T\x81V[a\x013a\x01\xA96`\x04a\x0BfV[`\x08` R`\0\x90\x81R`@\x90 T\x81V[a\0\xDCa\x04\xE9V[a\x01\x05a\x01\xD16`\x04a\t\xD8V[a\x04\xF6V[a\x01(a\x01\xE46`\x04a\x0B\x81V[a\x05\x8DV[a\x013a\x01\xF76`\x04a\x0B\xEBV[`\x05` \x90\x81R`\0\x92\x83R`@\x80\x84 \x90\x91R\x90\x82R\x90 T\x81V[`\0\x80Ta\x02!\x90a\x0C\x1EV[\x80`\x1F\x01` \x80\x91\x04\x02` \x01`@Q\x90\x81\x01`@R\x80\x92\x91\x90\x81\x81R` \x01\x82\x80Ta\x02M\x90a\x0C\x1EV[\x80\x15a\x02\x9AW\x80`\x1F\x10a\x02oWa\x01\0\x80\x83T\x04\x02\x83R\x91` \x01\x91a\x02\x9AV[\x82\x01\x91\x90`\0R` `\0 \x90[\x81T\x81R\x90`\x01\x01\x90` \x01\x80\x83\x11a\x02}W\x82\x90\x03`\x1F\x16\x82\x01\x91[PPPPP\x81V[3`\0\x81\x81R`\x05` \x90\x81R`@\x80\x83 `\x01`\x01`\xA0\x1B\x03\x87\x16\x80\x85R\x92R\x80\x83 \x85\x90UQ\x91\x92\x90\x91\x7F\x8C[\xE1\xE5\xEB\xEC}[\xD1OqB}\x1E\x84\xF3\xDD\x03\x14\xC0\xF7\xB2)\x1E[ \n\xC8\xC7\xC3\xB9%\x90a\x02\xFD\x90\x86\x81R` \x01\x90V[`@Q\x80\x91\x03\x90\xA3P`\x01[\x92\x91PPV[`\tT`\xFF\x16\x15a\x03]W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x13`$\x82\x01Rr\x10S\x14\x91PQ\x16W\xD2S\x92U\x12PS\x12V\x91Q`j\x1B`D\x82\x01R`d\x01[`@Q\x80\x91\x03\x90\xFD[`\0a\x03i\x84\x82a\x0C\xA9V[P`\x01a\x03v\x83\x82a\x0C\xA9V[P`\x02\x80T`\xFF\x19\x16`\xFF\x83\x16\x17\x90Ua\x03\x8Ea\x07\xEBV[`\x06Ua\x03\x99a\x08\x04V[`\x07UPP`\t\x80T`\xFF\x19\x16`\x01\x17\x90UPV[`\x01`\x01`\xA0\x1B\x03\x83\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 3\x84R\x90\x91R\x81 T`\0\x19\x81\x14a\x04\nWa\x03\xE5\x81\x84a\x08\xA7V[`\x01`\x01`\xA0\x1B\x03\x86\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 3\x84R\x90\x91R\x90 U[`\x01`\x01`\xA0\x1B\x03\x85\x16`\0\x90\x81R`\x04` R`@\x90 Ta\x04-\x90\x84a\x08\xA7V[`\x01`\x01`\xA0\x1B\x03\x80\x87\x16`\0\x90\x81R`\x04` R`@\x80\x82 \x93\x90\x93U\x90\x86\x16\x81R Ta\x04\\\x90\x84a\t\nV[`\x01`\x01`\xA0\x1B\x03\x80\x86\x16`\0\x81\x81R`\x04` R`@\x90\x81\x90 \x93\x90\x93U\x91Q\x90\x87\x16\x90\x7F\xDD\xF2R\xAD\x1B\xE2\xC8\x9Bi\xC2\xB0h\xFC7\x8D\xAA\x95+\xA7\xF1c\xC4\xA1\x16(\xF5ZM\xF5#\xB3\xEF\x90a\x04\xB0\x90\x87\x81R` \x01\x90V[`@Q\x80\x91\x03\x90\xA3P`\x01\x94\x93PPPPV[`\0`\x06Ta\x04\xD0a\x07\xEBV[\x14a\x04\xE2Wa\x04\xDDa\x08\x04V[\x90P\x90V[P`\x07T\x90V[`\x01\x80Ta\x02!\x90a\x0C\x1EV[3`\0\x90\x81R`\x04` R`@\x81 Ta\x05\x10\x90\x83a\x08\xA7V[3`\0\x90\x81R`\x04` R`@\x80\x82 \x92\x90\x92U`\x01`\x01`\xA0\x1B\x03\x85\x16\x81R Ta\x05<\x90\x83a\t\nV[`\x01`\x01`\xA0\x1B\x03\x84\x16`\0\x81\x81R`\x04` R`@\x90\x81\x90 \x92\x90\x92U\x90Q3\x90\x7F\xDD\xF2R\xAD\x1B\xE2\xC8\x9Bi\xC2\xB0h\xFC7\x8D\xAA\x95+\xA7\xF1c\xC4\xA1\x16(\xF5ZM\xF5#\xB3\xEF\x90a\x02\xFD\x90\x86\x81R` \x01\x90V[B\x84\x10\x15a\x05\xDDW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x17`$\x82\x01R\x7FPERMIT_DEADLINE_EXPIRED\0\0\0\0\0\0\0\0\0`D\x82\x01R`d\x01a\x03TV[`\0`\x01a\x05\xE9a\x04\xC3V[`\x01`\x01`\xA0\x1B\x03\x8A\x16`\0\x90\x81R`\x08` R`@\x81 \x80T\x7Fnq\xED\xAE\x12\xB1\xB9\x7FM\x1F`7\x0F\xEF\x10\x10_\xA2\xFA\xAE\x01&\x11J\x16\x9Cd\x84]a&\xC9\x92\x8D\x92\x8D\x92\x8D\x92\x90\x91\x90a\x067\x83a\r\x7FV[\x90\x91UP`@\x80Q` \x81\x01\x96\x90\x96R`\x01`\x01`\xA0\x1B\x03\x94\x85\x16\x90\x86\x01R\x92\x90\x91\x16``\x84\x01R`\x80\x83\x01R`\xA0\x82\x01R`\xC0\x81\x01\x88\x90R`\xE0\x01`@Q` \x81\x83\x03\x03\x81R\x90`@R\x80Q\x90` \x01 `@Q` \x01a\x06\xB0\x92\x91\x90a\x19\x01`\xF0\x1B\x81R`\x02\x81\x01\x92\x90\x92R`\"\x82\x01R`B\x01\x90V[`@\x80Q`\x1F\x19\x81\x84\x03\x01\x81R\x82\x82R\x80Q` \x91\x82\x01 `\0\x84R\x90\x83\x01\x80\x83RR`\xFF\x87\x16\x90\x82\x01R``\x81\x01\x85\x90R`\x80\x81\x01\x84\x90R`\xA0\x01` `@Q` \x81\x03\x90\x80\x84\x03\x90\x85Z\xFA\x15\x80\x15a\x07\x0EW=`\0\x80>=`\0\xFD[PP`@Q`\x1F\x19\x01Q\x91PP`\x01`\x01`\xA0\x1B\x03\x81\x16\x15\x80\x15\x90a\x07DWP\x87`\x01`\x01`\xA0\x1B\x03\x16\x81`\x01`\x01`\xA0\x1B\x03\x16\x14[a\x07\x81W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x0E`$\x82\x01Rm$\xA7+ \xA6$\xA2/\xA9\xA4\xA3\xA7\"\xA9`\x91\x1B`D\x82\x01R`d\x01a\x03TV[`\x01`\x01`\xA0\x1B\x03\x81\x81\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 \x8B\x85\x16\x80\x85R\x90\x83R\x92\x81\x90 \x8A\x90UQ\x89\x81R\x91\x92\x8B\x16\x91\x7F\x8C[\xE1\xE5\xEB\xEC}[\xD1OqB}\x1E\x84\xF3\xDD\x03\x14\xC0\xF7\xB2)\x1E[ \n\xC8\xC7\xC3\xB9%\x91\x01`@Q\x80\x91\x03\x90\xA3PPPPPPPPV[`\0a\ti\x80a\x07\xFDc\xFF\xFF\xFF\xFF\x82\x16V[\x92PPP\x90V[`\0\x7F\x8Bs\xC3\xC6\x9B\xB8\xFE=Q.\xCCL\xF7Y\xCCy#\x9F{\x17\x9B\x0F\xFA\xCA\xA9\xA7]R+9@\x0F`\0`@Qa\x086\x91\x90a\r\x98V[`@Q\x80\x91\x03\x90 \x7F\xC8\x9E\xFD\xAAT\xC0\xF2\x0Cz\xDFa(\x82\xDF\tP\xF5\xA9Qc~\x03\x07\xCD\xCBLg/)\x8B\x8B\xC6a\x08ga\x07\xEBV[`@\x80Q` \x81\x01\x95\x90\x95R\x84\x01\x92\x90\x92R``\x83\x01R`\x80\x82\x01R0`\xA0\x82\x01R`\xC0\x01`@Q` \x81\x83\x03\x03\x81R\x90`@R\x80Q\x90` \x01 \x90P\x90V[`\0\x81\x83\x10\x15a\x08\xF9W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x1C`$\x82\x01R\x7FERC20: subtraction underflow\0\0\0\0`D\x82\x01R`d\x01a\x03TV[a\t\x03\x82\x84a\x0E\x0EV[\x93\x92PPPV[`\0\x80a\t\x17\x83\x85a\x0E!V[\x90P\x83\x81\x10\x15a\t\x03W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x18`$\x82\x01R\x7FERC20: addition overflow\0\0\0\0\0\0\0\0`D\x82\x01R`d\x01a\x03TV[F\x90V[`\0` \x80\x83R\x83Q\x80` \x85\x01R`\0[\x81\x81\x10\x15a\t\x9BW\x85\x81\x01\x83\x01Q\x85\x82\x01`@\x01R\x82\x01a\t\x7FV[P`\0`@\x82\x86\x01\x01R`@`\x1F\x19`\x1F\x83\x01\x16\x85\x01\x01\x92PPP\x92\x91PPV[\x805`\x01`\x01`\xA0\x1B\x03\x81\x16\x81\x14a\t\xD3W`\0\x80\xFD[\x91\x90PV[`\0\x80`@\x83\x85\x03\x12\x15a\t\xEBW`\0\x80\xFD[a\t\xF4\x83a\t\xBCV[\x94` \x93\x90\x93\x015\x93PPPV[cNH{q`\xE0\x1B`\0R`A`\x04R`$`\0\xFD[`\0\x82`\x1F\x83\x01\x12a\n)W`\0\x80\xFD[\x815g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x82\x11\x15a\nDWa\nDa\n\x02V[`@Q`\x1F\x83\x01`\x1F\x19\x90\x81\x16`?\x01\x16\x81\x01\x90\x82\x82\x11\x81\x83\x10\x17\x15a\nlWa\nla\n\x02V[\x81`@R\x83\x81R\x86` \x85\x88\x01\x01\x11\x15a\n\x85W`\0\x80\xFD[\x83` \x87\x01` \x83\x017`\0` \x85\x83\x01\x01R\x80\x94PPPPP\x92\x91PPV[\x805`\xFF\x81\x16\x81\x14a\t\xD3W`\0\x80\xFD[`\0\x80`\0``\x84\x86\x03\x12\x15a\n\xCBW`\0\x80\xFD[\x835g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x82\x11\x15a\n\xE3W`\0\x80\xFD[a\n\xEF\x87\x83\x88\x01a\n\x18V[\x94P` \x86\x015\x91P\x80\x82\x11\x15a\x0B\x05W`\0\x80\xFD[Pa\x0B\x12\x86\x82\x87\x01a\n\x18V[\x92PPa\x0B!`@\x85\x01a\n\xA5V[\x90P\x92P\x92P\x92V[`\0\x80`\0``\x84\x86\x03\x12\x15a\x0B?W`\0\x80\xFD[a\x0BH\x84a\t\xBCV[\x92Pa\x0BV` \x85\x01a\t\xBCV[\x91P`@\x84\x015\x90P\x92P\x92P\x92V[`\0` \x82\x84\x03\x12\x15a\x0BxW`\0\x80\xFD[a\t\x03\x82a\t\xBCV[`\0\x80`\0\x80`\0\x80`\0`\xE0\x88\x8A\x03\x12\x15a\x0B\x9CW`\0\x80\xFD[a\x0B\xA5\x88a\t\xBCV[\x96Pa\x0B\xB3` \x89\x01a\t\xBCV[\x95P`@\x88\x015\x94P``\x88\x015\x93Pa\x0B\xCF`\x80\x89\x01a\n\xA5V[\x92P`\xA0\x88\x015\x91P`\xC0\x88\x015\x90P\x92\x95\x98\x91\x94\x97P\x92\x95PV[`\0\x80`@\x83\x85\x03\x12\x15a\x0B\xFEW`\0\x80\xFD[a\x0C\x07\x83a\t\xBCV[\x91Pa\x0C\x15` \x84\x01a\t\xBCV[\x90P\x92P\x92\x90PV[`\x01\x81\x81\x1C\x90\x82\x16\x80a\x0C2W`\x7F\x82\x16\x91P[` \x82\x10\x81\x03a\x0CRWcNH{q`\xE0\x1B`\0R`\"`\x04R`$`\0\xFD[P\x91\x90PV[`\x1F\x82\x11\x15a\x0C\xA4W`\0\x81`\0R` `\0 `\x1F\x85\x01`\x05\x1C\x81\x01` \x86\x10\x15a\x0C\x81WP\x80[`\x1F\x85\x01`\x05\x1C\x82\x01\x91P[\x81\x81\x10\x15a\x0C\xA0W\x82\x81U`\x01\x01a\x0C\x8DV[PPP[PPPV[\x81Qg\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x81\x11\x15a\x0C\xC3Wa\x0C\xC3a\n\x02V[a\x0C\xD7\x81a\x0C\xD1\x84Ta\x0C\x1EV[\x84a\x0CXV[` \x80`\x1F\x83\x11`\x01\x81\x14a\r\x0CW`\0\x84\x15a\x0C\xF4WP\x85\x83\x01Q[`\0\x19`\x03\x86\x90\x1B\x1C\x19\x16`\x01\x85\x90\x1B\x17\x85Ua\x0C\xA0V[`\0\x85\x81R` \x81 `\x1F\x19\x86\x16\x91[\x82\x81\x10\x15a\r;W\x88\x86\x01Q\x82U\x94\x84\x01\x94`\x01\x90\x91\x01\x90\x84\x01a\r\x1CV[P\x85\x82\x10\x15a\rYW\x87\x85\x01Q`\0\x19`\x03\x88\x90\x1B`\xF8\x16\x1C\x19\x16\x81U[PPPPP`\x01\x90\x81\x1B\x01\x90UPV[cNH{q`\xE0\x1B`\0R`\x11`\x04R`$`\0\xFD[`\0`\x01\x82\x01a\r\x91Wa\r\x91a\riV[P`\x01\x01\x90V[`\0\x80\x83Ta\r\xA6\x81a\x0C\x1EV[`\x01\x82\x81\x16\x80\x15a\r\xBEW`\x01\x81\x14a\r\xD3Wa\x0E\x02V[`\xFF\x19\x84\x16\x87R\x82\x15\x15\x83\x02\x87\x01\x94Pa\x0E\x02V[\x87`\0R` \x80`\0 `\0[\x85\x81\x10\x15a\r\xF9W\x81T\x8A\x82\x01R\x90\x84\x01\x90\x82\x01a\r\xE0V[PPP\x82\x87\x01\x94P[P\x92\x96\x95PPPPPPV[\x81\x81\x03\x81\x81\x11\x15a\x03\tWa\x03\ta\riV[\x80\x82\x01\x80\x82\x11\x15a\x03\tWa\x03\ta\riV\xFE\xA2dipfsX\"\x12 \x98*X\xF1\xBA\xB3gX%\xD4\xB0\x80\x1A_\x92\xF3\xC3\xCEl\xB3-}\xD8\x8F,\x01;\xC8\xA6\xEE\xF1KdsolcC\0\x08\x16\x003";
+    const __DEPLOYED_BYTECODE: &[u8] = b"`\x80`@R4\x80\x15a\0\x10W`\0\x80\xFD[P`\x046\x10a\0\xCFW`\x005`\xE0\x1C\x80c6D\xE5\x15\x11a\0\x8CW\x80c\x95\xD8\x9BA\x11a\0fW\x80c\x95\xD8\x9BA\x14a\x01\xB5W\x80c\xA9\x05\x9C\xBB\x14a\x01\xBDW\x80c\xD5\x05\xAC\xCF\x14a\x01\xD0W\x80c\xDDb\xED>\x14a\x01\xE3W`\0\x80\xFD[\x80c6D\xE5\x15\x14a\x01dW\x80cp\xA0\x821\x14a\x01lW\x80c~\xCE\xBE\0\x14a\x01\x95W`\0\x80\xFD[\x80c\x06\xFD\xDE\x03\x14a\0\xD4W\x80c\t^\xA7\xB3\x14a\0\xF2W\x80c\x16$\xF6\xC6\x14a\x01\x15W\x80c\x18\x16\r\xDD\x14a\x01*W\x80c#\xB8r\xDD\x14a\x01<W\x80c1<\xE5g\x14a\x01OW[`\0\x80\xFD[a\0\xDCa\x02\x1CV[`@Qa\0\xE9\x91\x90a\t{V[`@Q\x80\x91\x03\x90\xF3[a\x01\x05a\x01\x006`\x04a\t\xE6V[a\x02\xAEV[`@Q\x90\x15\x15\x81R` \x01a\0\xE9V[a\x01(a\x01#6`\x04a\n\xC4V[a\x03\x1BV[\0[`\x03T[`@Q\x90\x81R` \x01a\0\xE9V[a\x01\x05a\x01J6`\x04a\x0B8V[a\x03\xBAV[`\x02T`@Q`\xFF\x90\x91\x16\x81R` \x01a\0\xE9V[a\x01.a\x04\xCFV[a\x01.a\x01z6`\x04a\x0BtV[`\x01`\x01`\xA0\x1B\x03\x16`\0\x90\x81R`\x04` R`@\x90 T\x90V[a\x01.a\x01\xA36`\x04a\x0BtV[`\x08` R`\0\x90\x81R`@\x90 T\x81V[a\0\xDCa\x04\xF5V[a\x01\x05a\x01\xCB6`\x04a\t\xE6V[a\x05\x04V[a\x01(a\x01\xDE6`\x04a\x0B\x8FV[a\x05\x9BV[a\x01.a\x01\xF16`\x04a\x0B\xF9V[`\x01`\x01`\xA0\x1B\x03\x91\x82\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 \x93\x90\x94\x16\x82R\x91\x90\x91R T\x90V[```\0\x80Ta\x02+\x90a\x0C,V[\x80`\x1F\x01` \x80\x91\x04\x02` \x01`@Q\x90\x81\x01`@R\x80\x92\x91\x90\x81\x81R` \x01\x82\x80Ta\x02W\x90a\x0C,V[\x80\x15a\x02\xA4W\x80`\x1F\x10a\x02yWa\x01\0\x80\x83T\x04\x02\x83R\x91` \x01\x91a\x02\xA4V[\x82\x01\x91\x90`\0R` `\0 \x90[\x81T\x81R\x90`\x01\x01\x90` \x01\x80\x83\x11a\x02\x87W\x82\x90\x03`\x1F\x16\x82\x01\x91[PPPPP\x90P\x90V[3`\0\x81\x81R`\x05` \x90\x81R`@\x80\x83 `\x01`\x01`\xA0\x1B\x03\x87\x16\x80\x85R\x92R\x80\x83 \x85\x90UQ\x91\x92\x90\x91\x7F\x8C[\xE1\xE5\xEB\xEC}[\xD1OqB}\x1E\x84\xF3\xDD\x03\x14\xC0\xF7\xB2)\x1E[ \n\xC8\xC7\xC3\xB9%\x90a\x03\t\x90\x86\x81R` \x01\x90V[`@Q\x80\x91\x03\x90\xA3P`\x01[\x92\x91PPV[`\tT`\xFF\x16\x15a\x03iW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x13`$\x82\x01Rr\x10S\x14\x91PQ\x16W\xD2S\x92U\x12PS\x12V\x91Q`j\x1B`D\x82\x01R`d\x01[`@Q\x80\x91\x03\x90\xFD[`\0a\x03u\x84\x82a\x0C\xB7V[P`\x01a\x03\x82\x83\x82a\x0C\xB7V[P`\x02\x80T`\xFF\x19\x16`\xFF\x83\x16\x17\x90Ua\x03\x9Aa\x07\xF9V[`\x06Ua\x03\xA5a\x08\x12V[`\x07UPP`\t\x80T`\xFF\x19\x16`\x01\x17\x90UPV[`\x01`\x01`\xA0\x1B\x03\x83\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 3\x84R\x90\x91R\x81 T`\0\x19\x81\x14a\x04\x16Wa\x03\xF1\x81\x84a\x08\xB5V[`\x01`\x01`\xA0\x1B\x03\x86\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 3\x84R\x90\x91R\x90 U[`\x01`\x01`\xA0\x1B\x03\x85\x16`\0\x90\x81R`\x04` R`@\x90 Ta\x049\x90\x84a\x08\xB5V[`\x01`\x01`\xA0\x1B\x03\x80\x87\x16`\0\x90\x81R`\x04` R`@\x80\x82 \x93\x90\x93U\x90\x86\x16\x81R Ta\x04h\x90\x84a\t\x18V[`\x01`\x01`\xA0\x1B\x03\x80\x86\x16`\0\x81\x81R`\x04` R`@\x90\x81\x90 \x93\x90\x93U\x91Q\x90\x87\x16\x90\x7F\xDD\xF2R\xAD\x1B\xE2\xC8\x9Bi\xC2\xB0h\xFC7\x8D\xAA\x95+\xA7\xF1c\xC4\xA1\x16(\xF5ZM\xF5#\xB3\xEF\x90a\x04\xBC\x90\x87\x81R` \x01\x90V[`@Q\x80\x91\x03\x90\xA3P`\x01\x94\x93PPPPV[`\0`\x06Ta\x04\xDCa\x07\xF9V[\x14a\x04\xEEWa\x04\xE9a\x08\x12V[\x90P\x90V[P`\x07T\x90V[```\x01\x80Ta\x02+\x90a\x0C,V[3`\0\x90\x81R`\x04` R`@\x81 Ta\x05\x1E\x90\x83a\x08\xB5V[3`\0\x90\x81R`\x04` R`@\x80\x82 \x92\x90\x92U`\x01`\x01`\xA0\x1B\x03\x85\x16\x81R Ta\x05J\x90\x83a\t\x18V[`\x01`\x01`\xA0\x1B\x03\x84\x16`\0\x81\x81R`\x04` R`@\x90\x81\x90 \x92\x90\x92U\x90Q3\x90\x7F\xDD\xF2R\xAD\x1B\xE2\xC8\x9Bi\xC2\xB0h\xFC7\x8D\xAA\x95+\xA7\xF1c\xC4\xA1\x16(\xF5ZM\xF5#\xB3\xEF\x90a\x03\t\x90\x86\x81R` \x01\x90V[B\x84\x10\x15a\x05\xEBW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x17`$\x82\x01R\x7FPERMIT_DEADLINE_EXPIRED\0\0\0\0\0\0\0\0\0`D\x82\x01R`d\x01a\x03`V[`\0`\x01a\x05\xF7a\x04\xCFV[`\x01`\x01`\xA0\x1B\x03\x8A\x16`\0\x90\x81R`\x08` R`@\x81 \x80T\x7Fnq\xED\xAE\x12\xB1\xB9\x7FM\x1F`7\x0F\xEF\x10\x10_\xA2\xFA\xAE\x01&\x11J\x16\x9Cd\x84]a&\xC9\x92\x8D\x92\x8D\x92\x8D\x92\x90\x91\x90a\x06E\x83a\r\x8DV[\x90\x91UP`@\x80Q` \x81\x01\x96\x90\x96R`\x01`\x01`\xA0\x1B\x03\x94\x85\x16\x90\x86\x01R\x92\x90\x91\x16``\x84\x01R`\x80\x83\x01R`\xA0\x82\x01R`\xC0\x81\x01\x88\x90R`\xE0\x01`@Q` \x81\x83\x03\x03\x81R\x90`@R\x80Q\x90` \x01 `@Q` \x01a\x06\xBE\x92\x91\x90a\x19\x01`\xF0\x1B\x81R`\x02\x81\x01\x92\x90\x92R`\"\x82\x01R`B\x01\x90V[`@\x80Q`\x1F\x19\x81\x84\x03\x01\x81R\x82\x82R\x80Q` \x91\x82\x01 `\0\x84R\x90\x83\x01\x80\x83RR`\xFF\x87\x16\x90\x82\x01R``\x81\x01\x85\x90R`\x80\x81\x01\x84\x90R`\xA0\x01` `@Q` \x81\x03\x90\x80\x84\x03\x90\x85Z\xFA\x15\x80\x15a\x07\x1CW=`\0\x80>=`\0\xFD[PP`@Q`\x1F\x19\x01Q\x91PP`\x01`\x01`\xA0\x1B\x03\x81\x16\x15\x80\x15\x90a\x07RWP\x87`\x01`\x01`\xA0\x1B\x03\x16\x81`\x01`\x01`\xA0\x1B\x03\x16\x14[a\x07\x8FW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x0E`$\x82\x01Rm$\xA7+ \xA6$\xA2/\xA9\xA4\xA3\xA7\"\xA9`\x91\x1B`D\x82\x01R`d\x01a\x03`V[`\x01`\x01`\xA0\x1B\x03\x81\x81\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 \x8B\x85\x16\x80\x85R\x90\x83R\x92\x81\x90 \x8A\x90UQ\x89\x81R\x91\x92\x8B\x16\x91\x7F\x8C[\xE1\xE5\xEB\xEC}[\xD1OqB}\x1E\x84\xF3\xDD\x03\x14\xC0\xF7\xB2)\x1E[ \n\xC8\xC7\xC3\xB9%\x91\x01`@Q\x80\x91\x03\x90\xA3PPPPPPPPV[`\0a\tw\x80a\x08\x0Bc\xFF\xFF\xFF\xFF\x82\x16V[\x92PPP\x90V[`\0\x7F\x8Bs\xC3\xC6\x9B\xB8\xFE=Q.\xCCL\xF7Y\xCCy#\x9F{\x17\x9B\x0F\xFA\xCA\xA9\xA7]R+9@\x0F`\0`@Qa\x08D\x91\x90a\r\xA6V[`@Q\x80\x91\x03\x90 \x7F\xC8\x9E\xFD\xAAT\xC0\xF2\x0Cz\xDFa(\x82\xDF\tP\xF5\xA9Qc~\x03\x07\xCD\xCBLg/)\x8B\x8B\xC6a\x08ua\x07\xF9V[`@\x80Q` \x81\x01\x95\x90\x95R\x84\x01\x92\x90\x92R``\x83\x01R`\x80\x82\x01R0`\xA0\x82\x01R`\xC0\x01`@Q` \x81\x83\x03\x03\x81R\x90`@R\x80Q\x90` \x01 \x90P\x90V[`\0\x81\x83\x10\x15a\t\x07W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x1C`$\x82\x01R\x7FERC20: subtraction underflow\0\0\0\0`D\x82\x01R`d\x01a\x03`V[a\t\x11\x82\x84a\x0E\x1CV[\x93\x92PPPV[`\0\x80a\t%\x83\x85a\x0E/V[\x90P\x83\x81\x10\x15a\t\x11W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x18`$\x82\x01R\x7FERC20: addition overflow\0\0\0\0\0\0\0\0`D\x82\x01R`d\x01a\x03`V[F\x90V[`\0` \x80\x83R\x83Q\x80` \x85\x01R`\0[\x81\x81\x10\x15a\t\xA9W\x85\x81\x01\x83\x01Q\x85\x82\x01`@\x01R\x82\x01a\t\x8DV[P`\0`@\x82\x86\x01\x01R`@`\x1F\x19`\x1F\x83\x01\x16\x85\x01\x01\x92PPP\x92\x91PPV[\x805`\x01`\x01`\xA0\x1B\x03\x81\x16\x81\x14a\t\xE1W`\0\x80\xFD[\x91\x90PV[`\0\x80`@\x83\x85\x03\x12\x15a\t\xF9W`\0\x80\xFD[a\n\x02\x83a\t\xCAV[\x94` \x93\x90\x93\x015\x93PPPV[cNH{q`\xE0\x1B`\0R`A`\x04R`$`\0\xFD[`\0\x82`\x1F\x83\x01\x12a\n7W`\0\x80\xFD[\x815g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x82\x11\x15a\nRWa\nRa\n\x10V[`@Q`\x1F\x83\x01`\x1F\x19\x90\x81\x16`?\x01\x16\x81\x01\x90\x82\x82\x11\x81\x83\x10\x17\x15a\nzWa\nza\n\x10V[\x81`@R\x83\x81R\x86` \x85\x88\x01\x01\x11\x15a\n\x93W`\0\x80\xFD[\x83` \x87\x01` \x83\x017`\0` \x85\x83\x01\x01R\x80\x94PPPPP\x92\x91PPV[\x805`\xFF\x81\x16\x81\x14a\t\xE1W`\0\x80\xFD[`\0\x80`\0``\x84\x86\x03\x12\x15a\n\xD9W`\0\x80\xFD[\x835g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x82\x11\x15a\n\xF1W`\0\x80\xFD[a\n\xFD\x87\x83\x88\x01a\n&V[\x94P` \x86\x015\x91P\x80\x82\x11\x15a\x0B\x13W`\0\x80\xFD[Pa\x0B \x86\x82\x87\x01a\n&V[\x92PPa\x0B/`@\x85\x01a\n\xB3V[\x90P\x92P\x92P\x92V[`\0\x80`\0``\x84\x86\x03\x12\x15a\x0BMW`\0\x80\xFD[a\x0BV\x84a\t\xCAV[\x92Pa\x0Bd` \x85\x01a\t\xCAV[\x91P`@\x84\x015\x90P\x92P\x92P\x92V[`\0` \x82\x84\x03\x12\x15a\x0B\x86W`\0\x80\xFD[a\t\x11\x82a\t\xCAV[`\0\x80`\0\x80`\0\x80`\0`\xE0\x88\x8A\x03\x12\x15a\x0B\xAAW`\0\x80\xFD[a\x0B\xB3\x88a\t\xCAV[\x96Pa\x0B\xC1` \x89\x01a\t\xCAV[\x95P`@\x88\x015\x94P``\x88\x015\x93Pa\x0B\xDD`\x80\x89\x01a\n\xB3V[\x92P`\xA0\x88\x015\x91P`\xC0\x88\x015\x90P\x92\x95\x98\x91\x94\x97P\x92\x95PV[`\0\x80`@\x83\x85\x03\x12\x15a\x0C\x0CW`\0\x80\xFD[a\x0C\x15\x83a\t\xCAV[\x91Pa\x0C#` \x84\x01a\t\xCAV[\x90P\x92P\x92\x90PV[`\x01\x81\x81\x1C\x90\x82\x16\x80a\x0C@W`\x7F\x82\x16\x91P[` \x82\x10\x81\x03a\x0C`WcNH{q`\xE0\x1B`\0R`\"`\x04R`$`\0\xFD[P\x91\x90PV[`\x1F\x82\x11\x15a\x0C\xB2W`\0\x81`\0R` `\0 `\x1F\x85\x01`\x05\x1C\x81\x01` \x86\x10\x15a\x0C\x8FWP\x80[`\x1F\x85\x01`\x05\x1C\x82\x01\x91P[\x81\x81\x10\x15a\x0C\xAEW\x82\x81U`\x01\x01a\x0C\x9BV[PPP[PPPV[\x81Qg\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x81\x11\x15a\x0C\xD1Wa\x0C\xD1a\n\x10V[a\x0C\xE5\x81a\x0C\xDF\x84Ta\x0C,V[\x84a\x0CfV[` \x80`\x1F\x83\x11`\x01\x81\x14a\r\x1AW`\0\x84\x15a\r\x02WP\x85\x83\x01Q[`\0\x19`\x03\x86\x90\x1B\x1C\x19\x16`\x01\x85\x90\x1B\x17\x85Ua\x0C\xAEV[`\0\x85\x81R` \x81 `\x1F\x19\x86\x16\x91[\x82\x81\x10\x15a\rIW\x88\x86\x01Q\x82U\x94\x84\x01\x94`\x01\x90\x91\x01\x90\x84\x01a\r*V[P\x85\x82\x10\x15a\rgW\x87\x85\x01Q`\0\x19`\x03\x88\x90\x1B`\xF8\x16\x1C\x19\x16\x81U[PPPPP`\x01\x90\x81\x1B\x01\x90UPV[cNH{q`\xE0\x1B`\0R`\x11`\x04R`$`\0\xFD[`\0`\x01\x82\x01a\r\x9FWa\r\x9Fa\rwV[P`\x01\x01\x90V[`\0\x80\x83Ta\r\xB4\x81a\x0C,V[`\x01\x82\x81\x16\x80\x15a\r\xCCW`\x01\x81\x14a\r\xE1Wa\x0E\x10V[`\xFF\x19\x84\x16\x87R\x82\x15\x15\x83\x02\x87\x01\x94Pa\x0E\x10V[\x87`\0R` \x80`\0 `\0[\x85\x81\x10\x15a\x0E\x07W\x81T\x8A\x82\x01R\x90\x84\x01\x90\x82\x01a\r\xEEV[PPP\x82\x87\x01\x94P[P\x92\x96\x95PPPPPPV[\x81\x81\x03\x81\x81\x11\x15a\x03\x15Wa\x03\x15a\rwV[\x80\x82\x01\x80\x82\x11\x15a\x03\x15Wa\x03\x15a\rwV\xFE\xA2dipfsX\"\x12 \x90\xBD\xD3\xB5\xB92\xF3\"\xFF\xE5\xCB\xF37\xD9\xBER\x0B\xF4`\x80\xC1\xA0\x96\x15\x1B\x12\xFB\xC7\xCD\x0F_`dsolcC\0\x08\x16\x003";
     /// The deployed bytecode of the contract.
     pub static MOCKERC20_DEPLOYED_BYTECODE: ::ethers::core::types::Bytes = ::ethers::core::types::Bytes::from_static(
         __DEPLOYED_BYTECODE,
@@ -3435,11 +8641,11 @@ pub mod mock_erc20 {
         ///Calls the contract's `allowance` (0xdd62ed3e) function
         pub fn allowance(
             &self,
-            p0: ::ethers::core::types::Address,
-            p1: ::ethers::core::types::Address,
+            owner: ::ethers::core::types::Address,
+            spender: ::ethers::core::types::Address,
         ) -> ::ethers::contract::builders::ContractCall<M, ::ethers::core::types::U256> {
             self.0
-                .method_hash([221, 98, 237, 62], (p0, p1))
+                .method_hash([221, 98, 237, 62], (owner, spender))
                 .expect("method not found (this should never happen)")
         }
         ///Calls the contract's `approve` (0x095ea7b3) function
@@ -3455,10 +8661,10 @@ pub mod mock_erc20 {
         ///Calls the contract's `balanceOf` (0x70a08231) function
         pub fn balance_of(
             &self,
-            p0: ::ethers::core::types::Address,
+            owner: ::ethers::core::types::Address,
         ) -> ::ethers::contract::builders::ContractCall<M, ::ethers::core::types::U256> {
             self.0
-                .method_hash([112, 160, 130, 49], p0)
+                .method_hash([112, 160, 130, 49], owner)
                 .expect("method not found (this should never happen)")
         }
         ///Calls the contract's `decimals` (0x313ce567) function
@@ -3605,7 +8811,7 @@ pub mod mock_erc20 {
         pub owner: ::ethers::core::types::Address,
         #[ethevent(indexed)]
         pub spender: ::ethers::core::types::Address,
-        pub amount: ::ethers::core::types::U256,
+        pub value: ::ethers::core::types::U256,
     }
     #[derive(
         Clone,
@@ -3625,7 +8831,7 @@ pub mod mock_erc20 {
         pub from: ::ethers::core::types::Address,
         #[ethevent(indexed)]
         pub to: ::ethers::core::types::Address,
-        pub amount: ::ethers::core::types::U256,
+        pub value: ::ethers::core::types::U256,
     }
     ///Container type for all of the contract's events
     #[derive(
@@ -3702,10 +8908,10 @@ pub mod mock_erc20 {
         Hash
     )]
     #[ethcall(name = "allowance", abi = "allowance(address,address)")]
-    pub struct AllowanceCall(
-        pub ::ethers::core::types::Address,
-        pub ::ethers::core::types::Address,
-    );
+    pub struct AllowanceCall {
+        pub owner: ::ethers::core::types::Address,
+        pub spender: ::ethers::core::types::Address,
+    }
     ///Container type for all input parameters for the `approve` function with signature `approve(address,uint256)` and selector `0x095ea7b3`
     #[derive(
         Clone,
@@ -3738,7 +8944,9 @@ pub mod mock_erc20 {
         Hash
     )]
     #[ethcall(name = "balanceOf", abi = "balanceOf(address)")]
-    pub struct BalanceOfCall(pub ::ethers::core::types::Address);
+    pub struct BalanceOfCall {
+        pub owner: ::ethers::core::types::Address,
+    }
     ///Container type for all input parameters for the `decimals` function with signature `decimals()` and selector `0x313ce567`
     #[derive(
         Clone,
@@ -4311,7 +9519,7 @@ pub mod mock_erc721 {
                             ],
                             outputs: ::std::vec![],
                             constant: ::core::option::Option::None,
-                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::NonPayable,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::Payable,
                         },
                     ],
                 ),
@@ -4352,7 +9560,7 @@ pub mod mock_erc721 {
                             name: ::std::borrow::ToOwned::to_owned("getApproved"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::string::String::new(),
+                                    name: ::std::borrow::ToOwned::to_owned("id"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Uint(
                                         256usize,
                                     ),
@@ -4382,14 +9590,14 @@ pub mod mock_erc721 {
                             name: ::std::borrow::ToOwned::to_owned("initialize"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("_name"),
+                                    name: ::std::borrow::ToOwned::to_owned("name_"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::String,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("string"),
                                     ),
                                 },
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("_symbol"),
+                                    name: ::std::borrow::ToOwned::to_owned("symbol_"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::String,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("string"),
@@ -4409,14 +9617,14 @@ pub mod mock_erc721 {
                             name: ::std::borrow::ToOwned::to_owned("isApprovedForAll"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::string::String::new(),
+                                    name: ::std::borrow::ToOwned::to_owned("owner"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("address"),
                                     ),
                                 },
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::string::String::new(),
+                                    name: ::std::borrow::ToOwned::to_owned("operator"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("address"),
@@ -4519,7 +9727,7 @@ pub mod mock_erc721 {
                             ],
                             outputs: ::std::vec![],
                             constant: ::core::option::Option::None,
-                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::NonPayable,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::Payable,
                         },
                         ::ethers::core::abi::ethabi::Function {
                             name: ::std::borrow::ToOwned::to_owned("safeTransferFrom"),
@@ -4557,7 +9765,7 @@ pub mod mock_erc721 {
                             ],
                             outputs: ::std::vec![],
                             constant: ::core::option::Option::None,
-                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::NonPayable,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::Payable,
                         },
                     ],
                 ),
@@ -4614,7 +9822,7 @@ pub mod mock_erc721 {
                                 },
                             ],
                             constant: ::core::option::Option::None,
-                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::Pure,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
                         },
                     ],
                 ),
@@ -4700,7 +9908,7 @@ pub mod mock_erc721 {
                             ],
                             outputs: ::std::vec![],
                             constant: ::core::option::Option::None,
-                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::NonPayable,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::Payable,
                         },
                     ],
                 ),
@@ -4713,17 +9921,17 @@ pub mod mock_erc721 {
                             name: ::std::borrow::ToOwned::to_owned("Approval"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("owner"),
+                                    name: ::std::borrow::ToOwned::to_owned("_owner"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     indexed: true,
                                 },
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("spender"),
+                                    name: ::std::borrow::ToOwned::to_owned("_approved"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     indexed: true,
                                 },
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("id"),
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Uint(
                                         256usize,
                                     ),
@@ -4741,17 +9949,17 @@ pub mod mock_erc721 {
                             name: ::std::borrow::ToOwned::to_owned("ApprovalForAll"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("owner"),
+                                    name: ::std::borrow::ToOwned::to_owned("_owner"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     indexed: true,
                                 },
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("operator"),
+                                    name: ::std::borrow::ToOwned::to_owned("_operator"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     indexed: true,
                                 },
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("approved"),
+                                    name: ::std::borrow::ToOwned::to_owned("_approved"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Bool,
                                     indexed: false,
                                 },
@@ -4767,17 +9975,17 @@ pub mod mock_erc721 {
                             name: ::std::borrow::ToOwned::to_owned("Transfer"),
                             inputs: ::std::vec![
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("from"),
+                                    name: ::std::borrow::ToOwned::to_owned("_from"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     indexed: true,
                                 },
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("to"),
+                                    name: ::std::borrow::ToOwned::to_owned("_to"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Address,
                                     indexed: true,
                                 },
                                 ::ethers::core::abi::ethabi::EventParam {
-                                    name: ::std::borrow::ToOwned::to_owned("id"),
+                                    name: ::std::borrow::ToOwned::to_owned("_tokenId"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Uint(
                                         256usize,
                                     ),
@@ -4799,13 +10007,13 @@ pub mod mock_erc721 {
         __abi,
     );
     #[rustfmt::skip]
-    const __BYTECODE: &[u8] = b"`\x80`@R4\x80\x15a\0\x10W`\0\x80\xFD[Pa\x0E\xF3\x80a\0 `\09`\0\xF3\xFE`\x80`@R4\x80\x15a\0\x10W`\0\x80\xFD[P`\x046\x10a\0\xEAW`\x005`\xE0\x1C\x80ccR!\x1E\x11a\0\x8CW\x80c\xA2,\xB4e\x11a\0fW\x80c\xA2,\xB4e\x14a\x01\xF7W\x80c\xB8\x8DO\xDE\x14a\x02\nW\x80c\xC8{V\xDD\x14a\x02\x1DW\x80c\xE9\x85\xE9\xC5\x14a\x021W`\0\x80\xFD[\x80ccR!\x1E\x14a\x01\xBBW\x80cp\xA0\x821\x14a\x01\xCEW\x80c\x95\xD8\x9BA\x14a\x01\xEFW`\0\x80\xFD[\x80c\t^\xA7\xB3\x11a\0\xC8W\x80c\t^\xA7\xB3\x14a\x01mW\x80c#\xB8r\xDD\x14a\x01\x82W\x80cB\x84.\x0E\x14a\x01\x95W\x80cL\xD8\x8Bv\x14a\x01\xA8W`\0\x80\xFD[\x80c\x01\xFF\xC9\xA7\x14a\0\xEFW\x80c\x06\xFD\xDE\x03\x14a\x01\x17W\x80c\x08\x18\x12\xFC\x14a\x01,W[`\0\x80\xFD[a\x01\x02a\0\xFD6`\x04a\t\xAAV[a\x02_V[`@Q\x90\x15\x15\x81R` \x01[`@Q\x80\x91\x03\x90\xF3[a\x01\x1Fa\x02\xB1V[`@Qa\x01\x0E\x91\x90a\n\x14V[a\x01Ua\x01:6`\x04a\n'V[`\x04` R`\0\x90\x81R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x16\x81V[`@Q`\x01`\x01`\xA0\x1B\x03\x90\x91\x16\x81R` \x01a\x01\x0EV[a\x01\x80a\x01{6`\x04a\nWV[a\x03?V[\0[a\x01\x80a\x01\x906`\x04a\n\x81V[a\x04&V[a\x01\x80a\x01\xA36`\x04a\n\x81V[a\x06\x1FV[a\x01\x80a\x01\xB66`\x04a\x0BiV[a\x07\x0EV[a\x01Ua\x01\xC96`\x04a\n'V[a\x07\x82V[a\x01\xE1a\x01\xDC6`\x04a\x0B\xCDV[a\x07\xD9V[`@Q\x90\x81R` \x01a\x01\x0EV[a\x01\x1Fa\x08<V[a\x01\x80a\x02\x056`\x04a\x0B\xE8V[a\x08IV[a\x01\x80a\x02\x186`\x04a\x0C$V[a\x08\xB5V[a\x01\x1Fa\x02+6`\x04a\n'V[P``\x90V[a\x01\x02a\x02?6`\x04a\x0C\xA0V[`\x05` \x90\x81R`\0\x92\x83R`@\x80\x84 \x90\x91R\x90\x82R\x90 T`\xFF\x16\x81V[`\0c\x01\xFF\xC9\xA7`\xE0\x1B`\x01`\x01`\xE0\x1B\x03\x19\x83\x16\x14\x80a\x02\x90WPc\x80\xACX\xCD`\xE0\x1B`\x01`\x01`\xE0\x1B\x03\x19\x83\x16\x14[\x80a\x02\xABWPc[^\x13\x9F`\xE0\x1B`\x01`\x01`\xE0\x1B\x03\x19\x83\x16\x14[\x92\x91PPV[`\0\x80Ta\x02\xBE\x90a\x0C\xD3V[\x80`\x1F\x01` \x80\x91\x04\x02` \x01`@Q\x90\x81\x01`@R\x80\x92\x91\x90\x81\x81R` \x01\x82\x80Ta\x02\xEA\x90a\x0C\xD3V[\x80\x15a\x037W\x80`\x1F\x10a\x03\x0CWa\x01\0\x80\x83T\x04\x02\x83R\x91` \x01\x91a\x037V[\x82\x01\x91\x90`\0R` `\0 \x90[\x81T\x81R\x90`\x01\x01\x90` \x01\x80\x83\x11a\x03\x1AW\x82\x90\x03`\x1F\x16\x82\x01\x91[PPPPP\x81V[`\0\x81\x81R`\x02` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x163\x81\x14\x80a\x03\x88WP`\x01`\x01`\xA0\x1B\x03\x81\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 3\x84R\x90\x91R\x90 T`\xFF\x16[a\x03\xCAW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x0E`$\x82\x01Rm\x13\x93\xD5\x17\xD0UU\x12\x13\xD4\x92V\x91Q`\x92\x1B`D\x82\x01R`d\x01[`@Q\x80\x91\x03\x90\xFD[`\0\x82\x81R`\x04` R`@\x80\x82 \x80T`\x01`\x01`\xA0\x1B\x03\x19\x16`\x01`\x01`\xA0\x1B\x03\x87\x81\x16\x91\x82\x17\x90\x92U\x91Q\x85\x93\x91\x85\x16\x91\x7F\x8C[\xE1\xE5\xEB\xEC}[\xD1OqB}\x1E\x84\xF3\xDD\x03\x14\xC0\xF7\xB2)\x1E[ \n\xC8\xC7\xC3\xB9%\x91\xA4PPPV[`\0\x81\x81R`\x02` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x84\x81\x16\x91\x16\x14a\x04|W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\n`$\x82\x01RiWRONG_FROM`\xB0\x1B`D\x82\x01R`d\x01a\x03\xC1V[`\x01`\x01`\xA0\x1B\x03\x82\x16a\x04\xC6W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x11`$\x82\x01Rp\x12S\x95\x90S\x12Q\x17\xD4\x91P\xD2T\x12QS\x95`z\x1B`D\x82\x01R`d\x01a\x03\xC1V[3`\x01`\x01`\xA0\x1B\x03\x84\x16\x14\x80a\x05\0WP`\x01`\x01`\xA0\x1B\x03\x83\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 3\x84R\x90\x91R\x90 T`\xFF\x16[\x80a\x05!WP`\0\x81\x81R`\x04` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x163\x14[a\x05^W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x0E`$\x82\x01Rm\x13\x93\xD5\x17\xD0UU\x12\x13\xD4\x92V\x91Q`\x92\x1B`D\x82\x01R`d\x01a\x03\xC1V[`\x01`\x01`\xA0\x1B\x03\x83\x16`\0\x90\x81R`\x03` R`@\x81 \x80T\x91a\x05\x82\x83a\r#V[\x90\x91UPP`\x01`\x01`\xA0\x1B\x03\x82\x16`\0\x90\x81R`\x03` R`@\x81 \x80T\x91a\x05\xAB\x83a\r:V[\x90\x91UPP`\0\x81\x81R`\x02` \x90\x81R`@\x80\x83 \x80T`\x01`\x01`\xA0\x1B\x03\x80\x88\x16`\x01`\x01`\xA0\x1B\x03\x19\x92\x83\x16\x81\x17\x90\x93U`\x04\x90\x94R\x82\x85 \x80T\x90\x91\x16\x90U\x90Q\x84\x93\x91\x92\x87\x16\x91\x7F\xDD\xF2R\xAD\x1B\xE2\xC8\x9Bi\xC2\xB0h\xFC7\x8D\xAA\x95+\xA7\xF1c\xC4\xA1\x16(\xF5ZM\xF5#\xB3\xEF\x91\xA4PPPV[a\x06*\x83\x83\x83a\x04&V[\x81;\x15\x80a\x06\xCAWP`@Qc\n\x85\xBD\x01`\xE1\x1B\x80\x82R3`\x04\x83\x01R`\x01`\x01`\xA0\x1B\x03\x85\x81\x16`$\x84\x01R`D\x83\x01\x84\x90R`\x80`d\x84\x01R`\0`\x84\x84\x01R\x90\x91\x90\x84\x16\x90c\x15\x0Bz\x02\x90`\xA4\x01` `@Q\x80\x83\x03\x81`\0\x87Z\xF1\x15\x80\x15a\x06\x9AW=`\0\x80>=`\0\xFD[PPPP`@Q=`\x1F\x19`\x1F\x82\x01\x16\x82\x01\x80`@RP\x81\x01\x90a\x06\xBE\x91\x90a\rSV[`\x01`\x01`\xE0\x1B\x03\x19\x16\x14[a\x07\tW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x10`$\x82\x01Ro\x15S\x94\xD0Q\x91W\xD4\x91P\xD2T\x12QS\x95`\x82\x1B`D\x82\x01R`d\x01a\x03\xC1V[PPPV[`\x06T`\xFF\x16\x15a\x07WW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x13`$\x82\x01Rr\x10S\x14\x91PQ\x16W\xD2S\x92U\x12PS\x12V\x91Q`j\x1B`D\x82\x01R`d\x01a\x03\xC1V[`\0a\x07c\x83\x82a\r\xC0V[P`\x01a\x07p\x82\x82a\r\xC0V[PP`\x06\x80T`\xFF\x19\x16`\x01\x17\x90UPV[`\0\x81\x81R`\x02` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x16\x80a\x07\xD4W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\n`$\x82\x01Ri\x13\x93\xD5\x17\xD3RS\x95\x11Q`\xB2\x1B`D\x82\x01R`d\x01a\x03\xC1V[\x91\x90PV[`\0`\x01`\x01`\xA0\x1B\x03\x82\x16a\x08 W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x0C`$\x82\x01RkZERO_ADDRESS`\xA0\x1B`D\x82\x01R`d\x01a\x03\xC1V[P`\x01`\x01`\xA0\x1B\x03\x16`\0\x90\x81R`\x03` R`@\x90 T\x90V[`\x01\x80Ta\x02\xBE\x90a\x0C\xD3V[3`\0\x81\x81R`\x05` \x90\x81R`@\x80\x83 `\x01`\x01`\xA0\x1B\x03\x87\x16\x80\x85R\x90\x83R\x92\x81\x90 \x80T`\xFF\x19\x16\x86\x15\x15\x90\x81\x17\x90\x91U\x90Q\x90\x81R\x91\x92\x91\x7F\x170~\xAB9\xABa\x07\xE8\x89\x98E\xAD=Y\xBD\x96S\xF2\0\xF2 \x92\x04\x89\xCA+Y7il1\x91\x01`@Q\x80\x91\x03\x90\xA3PPV[a\x08\xC0\x84\x84\x84a\x04&V[\x82;\x15\x80a\tLWP`@Qc\n\x85\xBD\x01`\xE1\x1B\x80\x82R\x90`\x01`\x01`\xA0\x1B\x03\x85\x16\x90c\x15\x0Bz\x02\x90a\x08\xFD\x903\x90\x89\x90\x88\x90\x88\x90`\x04\x01a\x0E\x80V[` `@Q\x80\x83\x03\x81`\0\x87Z\xF1\x15\x80\x15a\t\x1CW=`\0\x80>=`\0\xFD[PPPP`@Q=`\x1F\x19`\x1F\x82\x01\x16\x82\x01\x80`@RP\x81\x01\x90a\t@\x91\x90a\rSV[`\x01`\x01`\xE0\x1B\x03\x19\x16\x14[a\t\x8BW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x10`$\x82\x01Ro\x15S\x94\xD0Q\x91W\xD4\x91P\xD2T\x12QS\x95`\x82\x1B`D\x82\x01R`d\x01a\x03\xC1V[PPPPV[`\x01`\x01`\xE0\x1B\x03\x19\x81\x16\x81\x14a\t\xA7W`\0\x80\xFD[PV[`\0` \x82\x84\x03\x12\x15a\t\xBCW`\0\x80\xFD[\x815a\t\xC7\x81a\t\x91V[\x93\x92PPPV[`\0\x81Q\x80\x84R`\0[\x81\x81\x10\x15a\t\xF4W` \x81\x85\x01\x81\x01Q\x86\x83\x01\x82\x01R\x01a\t\xD8V[P`\0` \x82\x86\x01\x01R` `\x1F\x19`\x1F\x83\x01\x16\x85\x01\x01\x91PP\x92\x91PPV[` \x81R`\0a\t\xC7` \x83\x01\x84a\t\xCEV[`\0` \x82\x84\x03\x12\x15a\n9W`\0\x80\xFD[P5\x91\x90PV[\x805`\x01`\x01`\xA0\x1B\x03\x81\x16\x81\x14a\x07\xD4W`\0\x80\xFD[`\0\x80`@\x83\x85\x03\x12\x15a\njW`\0\x80\xFD[a\ns\x83a\n@V[\x94` \x93\x90\x93\x015\x93PPPV[`\0\x80`\0``\x84\x86\x03\x12\x15a\n\x96W`\0\x80\xFD[a\n\x9F\x84a\n@V[\x92Pa\n\xAD` \x85\x01a\n@V[\x91P`@\x84\x015\x90P\x92P\x92P\x92V[cNH{q`\xE0\x1B`\0R`A`\x04R`$`\0\xFD[`\0g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x84\x11\x15a\n\xEEWa\n\xEEa\n\xBDV[`@Q`\x1F\x85\x01`\x1F\x19\x90\x81\x16`?\x01\x16\x81\x01\x90\x82\x82\x11\x81\x83\x10\x17\x15a\x0B\x16Wa\x0B\x16a\n\xBDV[\x81`@R\x80\x93P\x85\x81R\x86\x86\x86\x01\x11\x15a\x0B/W`\0\x80\xFD[\x85\x85` \x83\x017`\0` \x87\x83\x01\x01RPPP\x93\x92PPPV[`\0\x82`\x1F\x83\x01\x12a\x0BZW`\0\x80\xFD[a\t\xC7\x83\x835` \x85\x01a\n\xD3V[`\0\x80`@\x83\x85\x03\x12\x15a\x0B|W`\0\x80\xFD[\x825g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x82\x11\x15a\x0B\x94W`\0\x80\xFD[a\x0B\xA0\x86\x83\x87\x01a\x0BIV[\x93P` \x85\x015\x91P\x80\x82\x11\x15a\x0B\xB6W`\0\x80\xFD[Pa\x0B\xC3\x85\x82\x86\x01a\x0BIV[\x91PP\x92P\x92\x90PV[`\0` \x82\x84\x03\x12\x15a\x0B\xDFW`\0\x80\xFD[a\t\xC7\x82a\n@V[`\0\x80`@\x83\x85\x03\x12\x15a\x0B\xFBW`\0\x80\xFD[a\x0C\x04\x83a\n@V[\x91P` \x83\x015\x80\x15\x15\x81\x14a\x0C\x19W`\0\x80\xFD[\x80\x91PP\x92P\x92\x90PV[`\0\x80`\0\x80`\x80\x85\x87\x03\x12\x15a\x0C:W`\0\x80\xFD[a\x0CC\x85a\n@V[\x93Pa\x0CQ` \x86\x01a\n@V[\x92P`@\x85\x015\x91P``\x85\x015g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x81\x11\x15a\x0CtW`\0\x80\xFD[\x85\x01`\x1F\x81\x01\x87\x13a\x0C\x85W`\0\x80\xFD[a\x0C\x94\x87\x825` \x84\x01a\n\xD3V[\x91PP\x92\x95\x91\x94P\x92PV[`\0\x80`@\x83\x85\x03\x12\x15a\x0C\xB3W`\0\x80\xFD[a\x0C\xBC\x83a\n@V[\x91Pa\x0C\xCA` \x84\x01a\n@V[\x90P\x92P\x92\x90PV[`\x01\x81\x81\x1C\x90\x82\x16\x80a\x0C\xE7W`\x7F\x82\x16\x91P[` \x82\x10\x81\x03a\r\x07WcNH{q`\xE0\x1B`\0R`\"`\x04R`$`\0\xFD[P\x91\x90PV[cNH{q`\xE0\x1B`\0R`\x11`\x04R`$`\0\xFD[`\0\x81a\r2Wa\r2a\r\rV[P`\0\x19\x01\x90V[`\0`\x01\x82\x01a\rLWa\rLa\r\rV[P`\x01\x01\x90V[`\0` \x82\x84\x03\x12\x15a\reW`\0\x80\xFD[\x81Qa\t\xC7\x81a\t\x91V[`\x1F\x82\x11\x15a\x07\tW`\0\x81`\0R` `\0 `\x1F\x85\x01`\x05\x1C\x81\x01` \x86\x10\x15a\r\x99WP\x80[`\x1F\x85\x01`\x05\x1C\x82\x01\x91P[\x81\x81\x10\x15a\r\xB8W\x82\x81U`\x01\x01a\r\xA5V[PPPPPPV[\x81Qg\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x81\x11\x15a\r\xDAWa\r\xDAa\n\xBDV[a\r\xEE\x81a\r\xE8\x84Ta\x0C\xD3V[\x84a\rpV[` \x80`\x1F\x83\x11`\x01\x81\x14a\x0E#W`\0\x84\x15a\x0E\x0BWP\x85\x83\x01Q[`\0\x19`\x03\x86\x90\x1B\x1C\x19\x16`\x01\x85\x90\x1B\x17\x85Ua\r\xB8V[`\0\x85\x81R` \x81 `\x1F\x19\x86\x16\x91[\x82\x81\x10\x15a\x0ERW\x88\x86\x01Q\x82U\x94\x84\x01\x94`\x01\x90\x91\x01\x90\x84\x01a\x0E3V[P\x85\x82\x10\x15a\x0EpW\x87\x85\x01Q`\0\x19`\x03\x88\x90\x1B`\xF8\x16\x1C\x19\x16\x81U[PPPPP`\x01\x90\x81\x1B\x01\x90UPV[`\x01`\x01`\xA0\x1B\x03\x85\x81\x16\x82R\x84\x16` \x82\x01R`@\x81\x01\x83\x90R`\x80``\x82\x01\x81\x90R`\0\x90a\x0E\xB3\x90\x83\x01\x84a\t\xCEV[\x96\x95PPPPPPV\xFE\xA2dipfsX\"\x12 &\x90@\xE3\x8A\xCFWY\xC7N*\x05(\x84\x12\x9B\\\xA9\x06<t\x0Bd\xC5\xBB\x05IW\xE0\x90\x9C6dsolcC\0\x08\x16\x003";
+    const __BYTECODE: &[u8] = b"`\x80`@R4\x80\x15a\0\x10W`\0\x80\xFD[Pa\x0F|\x80a\0 `\09`\0\xF3\xFE`\x80`@R`\x046\x10a\0\xDDW`\x005`\xE0\x1C\x80ccR!\x1E\x11a\0\x7FW\x80c\xA2,\xB4e\x11a\0YW\x80c\xA2,\xB4e\x14a\x02EW\x80c\xB8\x8DO\xDE\x14a\x02eW\x80c\xC8{V\xDD\x14a\x02xW\x80c\xE9\x85\xE9\xC5\x14a\x02\x99W`\0\x80\xFD[\x80ccR!\x1E\x14a\x01\xE2W\x80cp\xA0\x821\x14a\x02\x02W\x80c\x95\xD8\x9BA\x14a\x020W`\0\x80\xFD[\x80c\t^\xA7\xB3\x11a\0\xBBW\x80c\t^\xA7\xB3\x14a\x01\x87W\x80c#\xB8r\xDD\x14a\x01\x9CW\x80cB\x84.\x0E\x14a\x01\xAFW\x80cL\xD8\x8Bv\x14a\x01\xC2W`\0\x80\xFD[\x80c\x01\xFF\xC9\xA7\x14a\0\xE2W\x80c\x06\xFD\xDE\x03\x14a\x01\x17W\x80c\x08\x18\x12\xFC\x14a\x019W[`\0\x80\xFD[4\x80\x15a\0\xEEW`\0\x80\xFD[Pa\x01\x02a\0\xFD6`\x04a\n3V[a\x02\xE2V[`@Q\x90\x15\x15\x81R` \x01[`@Q\x80\x91\x03\x90\xF3[4\x80\x15a\x01#W`\0\x80\xFD[Pa\x01,a\x034V[`@Qa\x01\x0E\x91\x90a\n\x9DV[4\x80\x15a\x01EW`\0\x80\xFD[Pa\x01oa\x01T6`\x04a\n\xB0V[`\0\x90\x81R`\x04` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x16\x90V[`@Q`\x01`\x01`\xA0\x1B\x03\x90\x91\x16\x81R` \x01a\x01\x0EV[a\x01\x9Aa\x01\x956`\x04a\n\xE0V[a\x03\xC6V[\0[a\x01\x9Aa\x01\xAA6`\x04a\x0B\nV[a\x04\xADV[a\x01\x9Aa\x01\xBD6`\x04a\x0B\nV[a\x06\xA6V[4\x80\x15a\x01\xCEW`\0\x80\xFD[Pa\x01\x9Aa\x01\xDD6`\x04a\x0B\xF2V[a\x07\x95V[4\x80\x15a\x01\xEEW`\0\x80\xFD[Pa\x01oa\x01\xFD6`\x04a\n\xB0V[a\x08\tV[4\x80\x15a\x02\x0EW`\0\x80\xFD[Pa\x02\"a\x02\x1D6`\x04a\x0CVV[a\x08`V[`@Q\x90\x81R` \x01a\x01\x0EV[4\x80\x15a\x02<W`\0\x80\xFD[Pa\x01,a\x08\xC3V[4\x80\x15a\x02QW`\0\x80\xFD[Pa\x01\x9Aa\x02`6`\x04a\x0CqV[a\x08\xD2V[a\x01\x9Aa\x02s6`\x04a\x0C\xADV[a\t>V[4\x80\x15a\x02\x84W`\0\x80\xFD[Pa\x01,a\x02\x936`\x04a\n\xB0V[P``\x90V[4\x80\x15a\x02\xA5W`\0\x80\xFD[Pa\x01\x02a\x02\xB46`\x04a\r)V[`\x01`\x01`\xA0\x1B\x03\x91\x82\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 \x93\x90\x94\x16\x82R\x91\x90\x91R T`\xFF\x16\x90V[`\0c\x01\xFF\xC9\xA7`\xE0\x1B`\x01`\x01`\xE0\x1B\x03\x19\x83\x16\x14\x80a\x03\x13WPc\x80\xACX\xCD`\xE0\x1B`\x01`\x01`\xE0\x1B\x03\x19\x83\x16\x14[\x80a\x03.WPc[^\x13\x9F`\xE0\x1B`\x01`\x01`\xE0\x1B\x03\x19\x83\x16\x14[\x92\x91PPV[```\0\x80Ta\x03C\x90a\r\\V[\x80`\x1F\x01` \x80\x91\x04\x02` \x01`@Q\x90\x81\x01`@R\x80\x92\x91\x90\x81\x81R` \x01\x82\x80Ta\x03o\x90a\r\\V[\x80\x15a\x03\xBCW\x80`\x1F\x10a\x03\x91Wa\x01\0\x80\x83T\x04\x02\x83R\x91` \x01\x91a\x03\xBCV[\x82\x01\x91\x90`\0R` `\0 \x90[\x81T\x81R\x90`\x01\x01\x90` \x01\x80\x83\x11a\x03\x9FW\x82\x90\x03`\x1F\x16\x82\x01\x91[PPPPP\x90P\x90V[`\0\x81\x81R`\x02` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x163\x81\x14\x80a\x04\x0FWP`\x01`\x01`\xA0\x1B\x03\x81\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 3\x84R\x90\x91R\x90 T`\xFF\x16[a\x04QW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x0E`$\x82\x01Rm\x13\x93\xD5\x17\xD0UU\x12\x13\xD4\x92V\x91Q`\x92\x1B`D\x82\x01R`d\x01[`@Q\x80\x91\x03\x90\xFD[`\0\x82\x81R`\x04` R`@\x80\x82 \x80T`\x01`\x01`\xA0\x1B\x03\x19\x16`\x01`\x01`\xA0\x1B\x03\x87\x81\x16\x91\x82\x17\x90\x92U\x91Q\x85\x93\x91\x85\x16\x91\x7F\x8C[\xE1\xE5\xEB\xEC}[\xD1OqB}\x1E\x84\xF3\xDD\x03\x14\xC0\xF7\xB2)\x1E[ \n\xC8\xC7\xC3\xB9%\x91\xA4PPPV[`\0\x81\x81R`\x02` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x84\x81\x16\x91\x16\x14a\x05\x03W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\n`$\x82\x01RiWRONG_FROM`\xB0\x1B`D\x82\x01R`d\x01a\x04HV[`\x01`\x01`\xA0\x1B\x03\x82\x16a\x05MW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x11`$\x82\x01Rp\x12S\x95\x90S\x12Q\x17\xD4\x91P\xD2T\x12QS\x95`z\x1B`D\x82\x01R`d\x01a\x04HV[3`\x01`\x01`\xA0\x1B\x03\x84\x16\x14\x80a\x05\x87WP`\x01`\x01`\xA0\x1B\x03\x83\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 3\x84R\x90\x91R\x90 T`\xFF\x16[\x80a\x05\xA8WP`\0\x81\x81R`\x04` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x163\x14[a\x05\xE5W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x0E`$\x82\x01Rm\x13\x93\xD5\x17\xD0UU\x12\x13\xD4\x92V\x91Q`\x92\x1B`D\x82\x01R`d\x01a\x04HV[`\x01`\x01`\xA0\x1B\x03\x83\x16`\0\x90\x81R`\x03` R`@\x81 \x80T\x91a\x06\t\x83a\r\xACV[\x90\x91UPP`\x01`\x01`\xA0\x1B\x03\x82\x16`\0\x90\x81R`\x03` R`@\x81 \x80T\x91a\x062\x83a\r\xC3V[\x90\x91UPP`\0\x81\x81R`\x02` \x90\x81R`@\x80\x83 \x80T`\x01`\x01`\xA0\x1B\x03\x80\x88\x16`\x01`\x01`\xA0\x1B\x03\x19\x92\x83\x16\x81\x17\x90\x93U`\x04\x90\x94R\x82\x85 \x80T\x90\x91\x16\x90U\x90Q\x84\x93\x91\x92\x87\x16\x91\x7F\xDD\xF2R\xAD\x1B\xE2\xC8\x9Bi\xC2\xB0h\xFC7\x8D\xAA\x95+\xA7\xF1c\xC4\xA1\x16(\xF5ZM\xF5#\xB3\xEF\x91\xA4PPPV[a\x06\xB1\x83\x83\x83a\x04\xADV[\x81;\x15\x80a\x07QWP`@Qc\n\x85\xBD\x01`\xE1\x1B\x80\x82R3`\x04\x83\x01R`\x01`\x01`\xA0\x1B\x03\x85\x81\x16`$\x84\x01R`D\x83\x01\x84\x90R`\x80`d\x84\x01R`\0`\x84\x84\x01R\x90\x91\x90\x84\x16\x90c\x15\x0Bz\x02\x90`\xA4\x01` `@Q\x80\x83\x03\x81`\0\x87Z\xF1\x15\x80\x15a\x07!W=`\0\x80>=`\0\xFD[PPPP`@Q=`\x1F\x19`\x1F\x82\x01\x16\x82\x01\x80`@RP\x81\x01\x90a\x07E\x91\x90a\r\xDCV[`\x01`\x01`\xE0\x1B\x03\x19\x16\x14[a\x07\x90W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x10`$\x82\x01Ro\x15S\x94\xD0Q\x91W\xD4\x91P\xD2T\x12QS\x95`\x82\x1B`D\x82\x01R`d\x01a\x04HV[PPPV[`\x06T`\xFF\x16\x15a\x07\xDEW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x13`$\x82\x01Rr\x10S\x14\x91PQ\x16W\xD2S\x92U\x12PS\x12V\x91Q`j\x1B`D\x82\x01R`d\x01a\x04HV[`\0a\x07\xEA\x83\x82a\x0EIV[P`\x01a\x07\xF7\x82\x82a\x0EIV[PP`\x06\x80T`\xFF\x19\x16`\x01\x17\x90UPV[`\0\x81\x81R`\x02` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x16\x80a\x08[W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\n`$\x82\x01Ri\x13\x93\xD5\x17\xD3RS\x95\x11Q`\xB2\x1B`D\x82\x01R`d\x01a\x04HV[\x91\x90PV[`\0`\x01`\x01`\xA0\x1B\x03\x82\x16a\x08\xA7W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x0C`$\x82\x01RkZERO_ADDRESS`\xA0\x1B`D\x82\x01R`d\x01a\x04HV[P`\x01`\x01`\xA0\x1B\x03\x16`\0\x90\x81R`\x03` R`@\x90 T\x90V[```\x01\x80Ta\x03C\x90a\r\\V[3`\0\x81\x81R`\x05` \x90\x81R`@\x80\x83 `\x01`\x01`\xA0\x1B\x03\x87\x16\x80\x85R\x90\x83R\x92\x81\x90 \x80T`\xFF\x19\x16\x86\x15\x15\x90\x81\x17\x90\x91U\x90Q\x90\x81R\x91\x92\x91\x7F\x170~\xAB9\xABa\x07\xE8\x89\x98E\xAD=Y\xBD\x96S\xF2\0\xF2 \x92\x04\x89\xCA+Y7il1\x91\x01`@Q\x80\x91\x03\x90\xA3PPV[a\tI\x84\x84\x84a\x04\xADV[\x82;\x15\x80a\t\xD5WP`@Qc\n\x85\xBD\x01`\xE1\x1B\x80\x82R\x90`\x01`\x01`\xA0\x1B\x03\x85\x16\x90c\x15\x0Bz\x02\x90a\t\x86\x903\x90\x89\x90\x88\x90\x88\x90`\x04\x01a\x0F\tV[` `@Q\x80\x83\x03\x81`\0\x87Z\xF1\x15\x80\x15a\t\xA5W=`\0\x80>=`\0\xFD[PPPP`@Q=`\x1F\x19`\x1F\x82\x01\x16\x82\x01\x80`@RP\x81\x01\x90a\t\xC9\x91\x90a\r\xDCV[`\x01`\x01`\xE0\x1B\x03\x19\x16\x14[a\n\x14W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x10`$\x82\x01Ro\x15S\x94\xD0Q\x91W\xD4\x91P\xD2T\x12QS\x95`\x82\x1B`D\x82\x01R`d\x01a\x04HV[PPPPV[`\x01`\x01`\xE0\x1B\x03\x19\x81\x16\x81\x14a\n0W`\0\x80\xFD[PV[`\0` \x82\x84\x03\x12\x15a\nEW`\0\x80\xFD[\x815a\nP\x81a\n\x1AV[\x93\x92PPPV[`\0\x81Q\x80\x84R`\0[\x81\x81\x10\x15a\n}W` \x81\x85\x01\x81\x01Q\x86\x83\x01\x82\x01R\x01a\naV[P`\0` \x82\x86\x01\x01R` `\x1F\x19`\x1F\x83\x01\x16\x85\x01\x01\x91PP\x92\x91PPV[` \x81R`\0a\nP` \x83\x01\x84a\nWV[`\0` \x82\x84\x03\x12\x15a\n\xC2W`\0\x80\xFD[P5\x91\x90PV[\x805`\x01`\x01`\xA0\x1B\x03\x81\x16\x81\x14a\x08[W`\0\x80\xFD[`\0\x80`@\x83\x85\x03\x12\x15a\n\xF3W`\0\x80\xFD[a\n\xFC\x83a\n\xC9V[\x94` \x93\x90\x93\x015\x93PPPV[`\0\x80`\0``\x84\x86\x03\x12\x15a\x0B\x1FW`\0\x80\xFD[a\x0B(\x84a\n\xC9V[\x92Pa\x0B6` \x85\x01a\n\xC9V[\x91P`@\x84\x015\x90P\x92P\x92P\x92V[cNH{q`\xE0\x1B`\0R`A`\x04R`$`\0\xFD[`\0g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x84\x11\x15a\x0BwWa\x0Bwa\x0BFV[`@Q`\x1F\x85\x01`\x1F\x19\x90\x81\x16`?\x01\x16\x81\x01\x90\x82\x82\x11\x81\x83\x10\x17\x15a\x0B\x9FWa\x0B\x9Fa\x0BFV[\x81`@R\x80\x93P\x85\x81R\x86\x86\x86\x01\x11\x15a\x0B\xB8W`\0\x80\xFD[\x85\x85` \x83\x017`\0` \x87\x83\x01\x01RPPP\x93\x92PPPV[`\0\x82`\x1F\x83\x01\x12a\x0B\xE3W`\0\x80\xFD[a\nP\x83\x835` \x85\x01a\x0B\\V[`\0\x80`@\x83\x85\x03\x12\x15a\x0C\x05W`\0\x80\xFD[\x825g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x82\x11\x15a\x0C\x1DW`\0\x80\xFD[a\x0C)\x86\x83\x87\x01a\x0B\xD2V[\x93P` \x85\x015\x91P\x80\x82\x11\x15a\x0C?W`\0\x80\xFD[Pa\x0CL\x85\x82\x86\x01a\x0B\xD2V[\x91PP\x92P\x92\x90PV[`\0` \x82\x84\x03\x12\x15a\x0ChW`\0\x80\xFD[a\nP\x82a\n\xC9V[`\0\x80`@\x83\x85\x03\x12\x15a\x0C\x84W`\0\x80\xFD[a\x0C\x8D\x83a\n\xC9V[\x91P` \x83\x015\x80\x15\x15\x81\x14a\x0C\xA2W`\0\x80\xFD[\x80\x91PP\x92P\x92\x90PV[`\0\x80`\0\x80`\x80\x85\x87\x03\x12\x15a\x0C\xC3W`\0\x80\xFD[a\x0C\xCC\x85a\n\xC9V[\x93Pa\x0C\xDA` \x86\x01a\n\xC9V[\x92P`@\x85\x015\x91P``\x85\x015g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x81\x11\x15a\x0C\xFDW`\0\x80\xFD[\x85\x01`\x1F\x81\x01\x87\x13a\r\x0EW`\0\x80\xFD[a\r\x1D\x87\x825` \x84\x01a\x0B\\V[\x91PP\x92\x95\x91\x94P\x92PV[`\0\x80`@\x83\x85\x03\x12\x15a\r<W`\0\x80\xFD[a\rE\x83a\n\xC9V[\x91Pa\rS` \x84\x01a\n\xC9V[\x90P\x92P\x92\x90PV[`\x01\x81\x81\x1C\x90\x82\x16\x80a\rpW`\x7F\x82\x16\x91P[` \x82\x10\x81\x03a\r\x90WcNH{q`\xE0\x1B`\0R`\"`\x04R`$`\0\xFD[P\x91\x90PV[cNH{q`\xE0\x1B`\0R`\x11`\x04R`$`\0\xFD[`\0\x81a\r\xBBWa\r\xBBa\r\x96V[P`\0\x19\x01\x90V[`\0`\x01\x82\x01a\r\xD5Wa\r\xD5a\r\x96V[P`\x01\x01\x90V[`\0` \x82\x84\x03\x12\x15a\r\xEEW`\0\x80\xFD[\x81Qa\nP\x81a\n\x1AV[`\x1F\x82\x11\x15a\x07\x90W`\0\x81`\0R` `\0 `\x1F\x85\x01`\x05\x1C\x81\x01` \x86\x10\x15a\x0E\"WP\x80[`\x1F\x85\x01`\x05\x1C\x82\x01\x91P[\x81\x81\x10\x15a\x0EAW\x82\x81U`\x01\x01a\x0E.V[PPPPPPV[\x81Qg\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x81\x11\x15a\x0EcWa\x0Eca\x0BFV[a\x0Ew\x81a\x0Eq\x84Ta\r\\V[\x84a\r\xF9V[` \x80`\x1F\x83\x11`\x01\x81\x14a\x0E\xACW`\0\x84\x15a\x0E\x94WP\x85\x83\x01Q[`\0\x19`\x03\x86\x90\x1B\x1C\x19\x16`\x01\x85\x90\x1B\x17\x85Ua\x0EAV[`\0\x85\x81R` \x81 `\x1F\x19\x86\x16\x91[\x82\x81\x10\x15a\x0E\xDBW\x88\x86\x01Q\x82U\x94\x84\x01\x94`\x01\x90\x91\x01\x90\x84\x01a\x0E\xBCV[P\x85\x82\x10\x15a\x0E\xF9W\x87\x85\x01Q`\0\x19`\x03\x88\x90\x1B`\xF8\x16\x1C\x19\x16\x81U[PPPPP`\x01\x90\x81\x1B\x01\x90UPV[`\x01`\x01`\xA0\x1B\x03\x85\x81\x16\x82R\x84\x16` \x82\x01R`@\x81\x01\x83\x90R`\x80``\x82\x01\x81\x90R`\0\x90a\x0F<\x90\x83\x01\x84a\nWV[\x96\x95PPPPPPV\xFE\xA2dipfsX\"\x12 =r^\x93\xCC\xB9\xFD/\xE8\xDD\x01\x99F.e\xFBT\xB5\xC0K/\xD2~\x024kp\xDC\x88D\xCAmdsolcC\0\x08\x16\x003";
     /// The bytecode of the contract.
     pub static MOCKERC721_BYTECODE: ::ethers::core::types::Bytes = ::ethers::core::types::Bytes::from_static(
         __BYTECODE,
     );
     #[rustfmt::skip]
-    const __DEPLOYED_BYTECODE: &[u8] = b"`\x80`@R4\x80\x15a\0\x10W`\0\x80\xFD[P`\x046\x10a\0\xEAW`\x005`\xE0\x1C\x80ccR!\x1E\x11a\0\x8CW\x80c\xA2,\xB4e\x11a\0fW\x80c\xA2,\xB4e\x14a\x01\xF7W\x80c\xB8\x8DO\xDE\x14a\x02\nW\x80c\xC8{V\xDD\x14a\x02\x1DW\x80c\xE9\x85\xE9\xC5\x14a\x021W`\0\x80\xFD[\x80ccR!\x1E\x14a\x01\xBBW\x80cp\xA0\x821\x14a\x01\xCEW\x80c\x95\xD8\x9BA\x14a\x01\xEFW`\0\x80\xFD[\x80c\t^\xA7\xB3\x11a\0\xC8W\x80c\t^\xA7\xB3\x14a\x01mW\x80c#\xB8r\xDD\x14a\x01\x82W\x80cB\x84.\x0E\x14a\x01\x95W\x80cL\xD8\x8Bv\x14a\x01\xA8W`\0\x80\xFD[\x80c\x01\xFF\xC9\xA7\x14a\0\xEFW\x80c\x06\xFD\xDE\x03\x14a\x01\x17W\x80c\x08\x18\x12\xFC\x14a\x01,W[`\0\x80\xFD[a\x01\x02a\0\xFD6`\x04a\t\xAAV[a\x02_V[`@Q\x90\x15\x15\x81R` \x01[`@Q\x80\x91\x03\x90\xF3[a\x01\x1Fa\x02\xB1V[`@Qa\x01\x0E\x91\x90a\n\x14V[a\x01Ua\x01:6`\x04a\n'V[`\x04` R`\0\x90\x81R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x16\x81V[`@Q`\x01`\x01`\xA0\x1B\x03\x90\x91\x16\x81R` \x01a\x01\x0EV[a\x01\x80a\x01{6`\x04a\nWV[a\x03?V[\0[a\x01\x80a\x01\x906`\x04a\n\x81V[a\x04&V[a\x01\x80a\x01\xA36`\x04a\n\x81V[a\x06\x1FV[a\x01\x80a\x01\xB66`\x04a\x0BiV[a\x07\x0EV[a\x01Ua\x01\xC96`\x04a\n'V[a\x07\x82V[a\x01\xE1a\x01\xDC6`\x04a\x0B\xCDV[a\x07\xD9V[`@Q\x90\x81R` \x01a\x01\x0EV[a\x01\x1Fa\x08<V[a\x01\x80a\x02\x056`\x04a\x0B\xE8V[a\x08IV[a\x01\x80a\x02\x186`\x04a\x0C$V[a\x08\xB5V[a\x01\x1Fa\x02+6`\x04a\n'V[P``\x90V[a\x01\x02a\x02?6`\x04a\x0C\xA0V[`\x05` \x90\x81R`\0\x92\x83R`@\x80\x84 \x90\x91R\x90\x82R\x90 T`\xFF\x16\x81V[`\0c\x01\xFF\xC9\xA7`\xE0\x1B`\x01`\x01`\xE0\x1B\x03\x19\x83\x16\x14\x80a\x02\x90WPc\x80\xACX\xCD`\xE0\x1B`\x01`\x01`\xE0\x1B\x03\x19\x83\x16\x14[\x80a\x02\xABWPc[^\x13\x9F`\xE0\x1B`\x01`\x01`\xE0\x1B\x03\x19\x83\x16\x14[\x92\x91PPV[`\0\x80Ta\x02\xBE\x90a\x0C\xD3V[\x80`\x1F\x01` \x80\x91\x04\x02` \x01`@Q\x90\x81\x01`@R\x80\x92\x91\x90\x81\x81R` \x01\x82\x80Ta\x02\xEA\x90a\x0C\xD3V[\x80\x15a\x037W\x80`\x1F\x10a\x03\x0CWa\x01\0\x80\x83T\x04\x02\x83R\x91` \x01\x91a\x037V[\x82\x01\x91\x90`\0R` `\0 \x90[\x81T\x81R\x90`\x01\x01\x90` \x01\x80\x83\x11a\x03\x1AW\x82\x90\x03`\x1F\x16\x82\x01\x91[PPPPP\x81V[`\0\x81\x81R`\x02` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x163\x81\x14\x80a\x03\x88WP`\x01`\x01`\xA0\x1B\x03\x81\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 3\x84R\x90\x91R\x90 T`\xFF\x16[a\x03\xCAW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x0E`$\x82\x01Rm\x13\x93\xD5\x17\xD0UU\x12\x13\xD4\x92V\x91Q`\x92\x1B`D\x82\x01R`d\x01[`@Q\x80\x91\x03\x90\xFD[`\0\x82\x81R`\x04` R`@\x80\x82 \x80T`\x01`\x01`\xA0\x1B\x03\x19\x16`\x01`\x01`\xA0\x1B\x03\x87\x81\x16\x91\x82\x17\x90\x92U\x91Q\x85\x93\x91\x85\x16\x91\x7F\x8C[\xE1\xE5\xEB\xEC}[\xD1OqB}\x1E\x84\xF3\xDD\x03\x14\xC0\xF7\xB2)\x1E[ \n\xC8\xC7\xC3\xB9%\x91\xA4PPPV[`\0\x81\x81R`\x02` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x84\x81\x16\x91\x16\x14a\x04|W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\n`$\x82\x01RiWRONG_FROM`\xB0\x1B`D\x82\x01R`d\x01a\x03\xC1V[`\x01`\x01`\xA0\x1B\x03\x82\x16a\x04\xC6W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x11`$\x82\x01Rp\x12S\x95\x90S\x12Q\x17\xD4\x91P\xD2T\x12QS\x95`z\x1B`D\x82\x01R`d\x01a\x03\xC1V[3`\x01`\x01`\xA0\x1B\x03\x84\x16\x14\x80a\x05\0WP`\x01`\x01`\xA0\x1B\x03\x83\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 3\x84R\x90\x91R\x90 T`\xFF\x16[\x80a\x05!WP`\0\x81\x81R`\x04` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x163\x14[a\x05^W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x0E`$\x82\x01Rm\x13\x93\xD5\x17\xD0UU\x12\x13\xD4\x92V\x91Q`\x92\x1B`D\x82\x01R`d\x01a\x03\xC1V[`\x01`\x01`\xA0\x1B\x03\x83\x16`\0\x90\x81R`\x03` R`@\x81 \x80T\x91a\x05\x82\x83a\r#V[\x90\x91UPP`\x01`\x01`\xA0\x1B\x03\x82\x16`\0\x90\x81R`\x03` R`@\x81 \x80T\x91a\x05\xAB\x83a\r:V[\x90\x91UPP`\0\x81\x81R`\x02` \x90\x81R`@\x80\x83 \x80T`\x01`\x01`\xA0\x1B\x03\x80\x88\x16`\x01`\x01`\xA0\x1B\x03\x19\x92\x83\x16\x81\x17\x90\x93U`\x04\x90\x94R\x82\x85 \x80T\x90\x91\x16\x90U\x90Q\x84\x93\x91\x92\x87\x16\x91\x7F\xDD\xF2R\xAD\x1B\xE2\xC8\x9Bi\xC2\xB0h\xFC7\x8D\xAA\x95+\xA7\xF1c\xC4\xA1\x16(\xF5ZM\xF5#\xB3\xEF\x91\xA4PPPV[a\x06*\x83\x83\x83a\x04&V[\x81;\x15\x80a\x06\xCAWP`@Qc\n\x85\xBD\x01`\xE1\x1B\x80\x82R3`\x04\x83\x01R`\x01`\x01`\xA0\x1B\x03\x85\x81\x16`$\x84\x01R`D\x83\x01\x84\x90R`\x80`d\x84\x01R`\0`\x84\x84\x01R\x90\x91\x90\x84\x16\x90c\x15\x0Bz\x02\x90`\xA4\x01` `@Q\x80\x83\x03\x81`\0\x87Z\xF1\x15\x80\x15a\x06\x9AW=`\0\x80>=`\0\xFD[PPPP`@Q=`\x1F\x19`\x1F\x82\x01\x16\x82\x01\x80`@RP\x81\x01\x90a\x06\xBE\x91\x90a\rSV[`\x01`\x01`\xE0\x1B\x03\x19\x16\x14[a\x07\tW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x10`$\x82\x01Ro\x15S\x94\xD0Q\x91W\xD4\x91P\xD2T\x12QS\x95`\x82\x1B`D\x82\x01R`d\x01a\x03\xC1V[PPPV[`\x06T`\xFF\x16\x15a\x07WW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x13`$\x82\x01Rr\x10S\x14\x91PQ\x16W\xD2S\x92U\x12PS\x12V\x91Q`j\x1B`D\x82\x01R`d\x01a\x03\xC1V[`\0a\x07c\x83\x82a\r\xC0V[P`\x01a\x07p\x82\x82a\r\xC0V[PP`\x06\x80T`\xFF\x19\x16`\x01\x17\x90UPV[`\0\x81\x81R`\x02` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x16\x80a\x07\xD4W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\n`$\x82\x01Ri\x13\x93\xD5\x17\xD3RS\x95\x11Q`\xB2\x1B`D\x82\x01R`d\x01a\x03\xC1V[\x91\x90PV[`\0`\x01`\x01`\xA0\x1B\x03\x82\x16a\x08 W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x0C`$\x82\x01RkZERO_ADDRESS`\xA0\x1B`D\x82\x01R`d\x01a\x03\xC1V[P`\x01`\x01`\xA0\x1B\x03\x16`\0\x90\x81R`\x03` R`@\x90 T\x90V[`\x01\x80Ta\x02\xBE\x90a\x0C\xD3V[3`\0\x81\x81R`\x05` \x90\x81R`@\x80\x83 `\x01`\x01`\xA0\x1B\x03\x87\x16\x80\x85R\x90\x83R\x92\x81\x90 \x80T`\xFF\x19\x16\x86\x15\x15\x90\x81\x17\x90\x91U\x90Q\x90\x81R\x91\x92\x91\x7F\x170~\xAB9\xABa\x07\xE8\x89\x98E\xAD=Y\xBD\x96S\xF2\0\xF2 \x92\x04\x89\xCA+Y7il1\x91\x01`@Q\x80\x91\x03\x90\xA3PPV[a\x08\xC0\x84\x84\x84a\x04&V[\x82;\x15\x80a\tLWP`@Qc\n\x85\xBD\x01`\xE1\x1B\x80\x82R\x90`\x01`\x01`\xA0\x1B\x03\x85\x16\x90c\x15\x0Bz\x02\x90a\x08\xFD\x903\x90\x89\x90\x88\x90\x88\x90`\x04\x01a\x0E\x80V[` `@Q\x80\x83\x03\x81`\0\x87Z\xF1\x15\x80\x15a\t\x1CW=`\0\x80>=`\0\xFD[PPPP`@Q=`\x1F\x19`\x1F\x82\x01\x16\x82\x01\x80`@RP\x81\x01\x90a\t@\x91\x90a\rSV[`\x01`\x01`\xE0\x1B\x03\x19\x16\x14[a\t\x8BW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x10`$\x82\x01Ro\x15S\x94\xD0Q\x91W\xD4\x91P\xD2T\x12QS\x95`\x82\x1B`D\x82\x01R`d\x01a\x03\xC1V[PPPPV[`\x01`\x01`\xE0\x1B\x03\x19\x81\x16\x81\x14a\t\xA7W`\0\x80\xFD[PV[`\0` \x82\x84\x03\x12\x15a\t\xBCW`\0\x80\xFD[\x815a\t\xC7\x81a\t\x91V[\x93\x92PPPV[`\0\x81Q\x80\x84R`\0[\x81\x81\x10\x15a\t\xF4W` \x81\x85\x01\x81\x01Q\x86\x83\x01\x82\x01R\x01a\t\xD8V[P`\0` \x82\x86\x01\x01R` `\x1F\x19`\x1F\x83\x01\x16\x85\x01\x01\x91PP\x92\x91PPV[` \x81R`\0a\t\xC7` \x83\x01\x84a\t\xCEV[`\0` \x82\x84\x03\x12\x15a\n9W`\0\x80\xFD[P5\x91\x90PV[\x805`\x01`\x01`\xA0\x1B\x03\x81\x16\x81\x14a\x07\xD4W`\0\x80\xFD[`\0\x80`@\x83\x85\x03\x12\x15a\njW`\0\x80\xFD[a\ns\x83a\n@V[\x94` \x93\x90\x93\x015\x93PPPV[`\0\x80`\0``\x84\x86\x03\x12\x15a\n\x96W`\0\x80\xFD[a\n\x9F\x84a\n@V[\x92Pa\n\xAD` \x85\x01a\n@V[\x91P`@\x84\x015\x90P\x92P\x92P\x92V[cNH{q`\xE0\x1B`\0R`A`\x04R`$`\0\xFD[`\0g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x84\x11\x15a\n\xEEWa\n\xEEa\n\xBDV[`@Q`\x1F\x85\x01`\x1F\x19\x90\x81\x16`?\x01\x16\x81\x01\x90\x82\x82\x11\x81\x83\x10\x17\x15a\x0B\x16Wa\x0B\x16a\n\xBDV[\x81`@R\x80\x93P\x85\x81R\x86\x86\x86\x01\x11\x15a\x0B/W`\0\x80\xFD[\x85\x85` \x83\x017`\0` \x87\x83\x01\x01RPPP\x93\x92PPPV[`\0\x82`\x1F\x83\x01\x12a\x0BZW`\0\x80\xFD[a\t\xC7\x83\x835` \x85\x01a\n\xD3V[`\0\x80`@\x83\x85\x03\x12\x15a\x0B|W`\0\x80\xFD[\x825g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x82\x11\x15a\x0B\x94W`\0\x80\xFD[a\x0B\xA0\x86\x83\x87\x01a\x0BIV[\x93P` \x85\x015\x91P\x80\x82\x11\x15a\x0B\xB6W`\0\x80\xFD[Pa\x0B\xC3\x85\x82\x86\x01a\x0BIV[\x91PP\x92P\x92\x90PV[`\0` \x82\x84\x03\x12\x15a\x0B\xDFW`\0\x80\xFD[a\t\xC7\x82a\n@V[`\0\x80`@\x83\x85\x03\x12\x15a\x0B\xFBW`\0\x80\xFD[a\x0C\x04\x83a\n@V[\x91P` \x83\x015\x80\x15\x15\x81\x14a\x0C\x19W`\0\x80\xFD[\x80\x91PP\x92P\x92\x90PV[`\0\x80`\0\x80`\x80\x85\x87\x03\x12\x15a\x0C:W`\0\x80\xFD[a\x0CC\x85a\n@V[\x93Pa\x0CQ` \x86\x01a\n@V[\x92P`@\x85\x015\x91P``\x85\x015g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x81\x11\x15a\x0CtW`\0\x80\xFD[\x85\x01`\x1F\x81\x01\x87\x13a\x0C\x85W`\0\x80\xFD[a\x0C\x94\x87\x825` \x84\x01a\n\xD3V[\x91PP\x92\x95\x91\x94P\x92PV[`\0\x80`@\x83\x85\x03\x12\x15a\x0C\xB3W`\0\x80\xFD[a\x0C\xBC\x83a\n@V[\x91Pa\x0C\xCA` \x84\x01a\n@V[\x90P\x92P\x92\x90PV[`\x01\x81\x81\x1C\x90\x82\x16\x80a\x0C\xE7W`\x7F\x82\x16\x91P[` \x82\x10\x81\x03a\r\x07WcNH{q`\xE0\x1B`\0R`\"`\x04R`$`\0\xFD[P\x91\x90PV[cNH{q`\xE0\x1B`\0R`\x11`\x04R`$`\0\xFD[`\0\x81a\r2Wa\r2a\r\rV[P`\0\x19\x01\x90V[`\0`\x01\x82\x01a\rLWa\rLa\r\rV[P`\x01\x01\x90V[`\0` \x82\x84\x03\x12\x15a\reW`\0\x80\xFD[\x81Qa\t\xC7\x81a\t\x91V[`\x1F\x82\x11\x15a\x07\tW`\0\x81`\0R` `\0 `\x1F\x85\x01`\x05\x1C\x81\x01` \x86\x10\x15a\r\x99WP\x80[`\x1F\x85\x01`\x05\x1C\x82\x01\x91P[\x81\x81\x10\x15a\r\xB8W\x82\x81U`\x01\x01a\r\xA5V[PPPPPPV[\x81Qg\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x81\x11\x15a\r\xDAWa\r\xDAa\n\xBDV[a\r\xEE\x81a\r\xE8\x84Ta\x0C\xD3V[\x84a\rpV[` \x80`\x1F\x83\x11`\x01\x81\x14a\x0E#W`\0\x84\x15a\x0E\x0BWP\x85\x83\x01Q[`\0\x19`\x03\x86\x90\x1B\x1C\x19\x16`\x01\x85\x90\x1B\x17\x85Ua\r\xB8V[`\0\x85\x81R` \x81 `\x1F\x19\x86\x16\x91[\x82\x81\x10\x15a\x0ERW\x88\x86\x01Q\x82U\x94\x84\x01\x94`\x01\x90\x91\x01\x90\x84\x01a\x0E3V[P\x85\x82\x10\x15a\x0EpW\x87\x85\x01Q`\0\x19`\x03\x88\x90\x1B`\xF8\x16\x1C\x19\x16\x81U[PPPPP`\x01\x90\x81\x1B\x01\x90UPV[`\x01`\x01`\xA0\x1B\x03\x85\x81\x16\x82R\x84\x16` \x82\x01R`@\x81\x01\x83\x90R`\x80``\x82\x01\x81\x90R`\0\x90a\x0E\xB3\x90\x83\x01\x84a\t\xCEV[\x96\x95PPPPPPV\xFE\xA2dipfsX\"\x12 &\x90@\xE3\x8A\xCFWY\xC7N*\x05(\x84\x12\x9B\\\xA9\x06<t\x0Bd\xC5\xBB\x05IW\xE0\x90\x9C6dsolcC\0\x08\x16\x003";
+    const __DEPLOYED_BYTECODE: &[u8] = b"`\x80`@R`\x046\x10a\0\xDDW`\x005`\xE0\x1C\x80ccR!\x1E\x11a\0\x7FW\x80c\xA2,\xB4e\x11a\0YW\x80c\xA2,\xB4e\x14a\x02EW\x80c\xB8\x8DO\xDE\x14a\x02eW\x80c\xC8{V\xDD\x14a\x02xW\x80c\xE9\x85\xE9\xC5\x14a\x02\x99W`\0\x80\xFD[\x80ccR!\x1E\x14a\x01\xE2W\x80cp\xA0\x821\x14a\x02\x02W\x80c\x95\xD8\x9BA\x14a\x020W`\0\x80\xFD[\x80c\t^\xA7\xB3\x11a\0\xBBW\x80c\t^\xA7\xB3\x14a\x01\x87W\x80c#\xB8r\xDD\x14a\x01\x9CW\x80cB\x84.\x0E\x14a\x01\xAFW\x80cL\xD8\x8Bv\x14a\x01\xC2W`\0\x80\xFD[\x80c\x01\xFF\xC9\xA7\x14a\0\xE2W\x80c\x06\xFD\xDE\x03\x14a\x01\x17W\x80c\x08\x18\x12\xFC\x14a\x019W[`\0\x80\xFD[4\x80\x15a\0\xEEW`\0\x80\xFD[Pa\x01\x02a\0\xFD6`\x04a\n3V[a\x02\xE2V[`@Q\x90\x15\x15\x81R` \x01[`@Q\x80\x91\x03\x90\xF3[4\x80\x15a\x01#W`\0\x80\xFD[Pa\x01,a\x034V[`@Qa\x01\x0E\x91\x90a\n\x9DV[4\x80\x15a\x01EW`\0\x80\xFD[Pa\x01oa\x01T6`\x04a\n\xB0V[`\0\x90\x81R`\x04` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x16\x90V[`@Q`\x01`\x01`\xA0\x1B\x03\x90\x91\x16\x81R` \x01a\x01\x0EV[a\x01\x9Aa\x01\x956`\x04a\n\xE0V[a\x03\xC6V[\0[a\x01\x9Aa\x01\xAA6`\x04a\x0B\nV[a\x04\xADV[a\x01\x9Aa\x01\xBD6`\x04a\x0B\nV[a\x06\xA6V[4\x80\x15a\x01\xCEW`\0\x80\xFD[Pa\x01\x9Aa\x01\xDD6`\x04a\x0B\xF2V[a\x07\x95V[4\x80\x15a\x01\xEEW`\0\x80\xFD[Pa\x01oa\x01\xFD6`\x04a\n\xB0V[a\x08\tV[4\x80\x15a\x02\x0EW`\0\x80\xFD[Pa\x02\"a\x02\x1D6`\x04a\x0CVV[a\x08`V[`@Q\x90\x81R` \x01a\x01\x0EV[4\x80\x15a\x02<W`\0\x80\xFD[Pa\x01,a\x08\xC3V[4\x80\x15a\x02QW`\0\x80\xFD[Pa\x01\x9Aa\x02`6`\x04a\x0CqV[a\x08\xD2V[a\x01\x9Aa\x02s6`\x04a\x0C\xADV[a\t>V[4\x80\x15a\x02\x84W`\0\x80\xFD[Pa\x01,a\x02\x936`\x04a\n\xB0V[P``\x90V[4\x80\x15a\x02\xA5W`\0\x80\xFD[Pa\x01\x02a\x02\xB46`\x04a\r)V[`\x01`\x01`\xA0\x1B\x03\x91\x82\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 \x93\x90\x94\x16\x82R\x91\x90\x91R T`\xFF\x16\x90V[`\0c\x01\xFF\xC9\xA7`\xE0\x1B`\x01`\x01`\xE0\x1B\x03\x19\x83\x16\x14\x80a\x03\x13WPc\x80\xACX\xCD`\xE0\x1B`\x01`\x01`\xE0\x1B\x03\x19\x83\x16\x14[\x80a\x03.WPc[^\x13\x9F`\xE0\x1B`\x01`\x01`\xE0\x1B\x03\x19\x83\x16\x14[\x92\x91PPV[```\0\x80Ta\x03C\x90a\r\\V[\x80`\x1F\x01` \x80\x91\x04\x02` \x01`@Q\x90\x81\x01`@R\x80\x92\x91\x90\x81\x81R` \x01\x82\x80Ta\x03o\x90a\r\\V[\x80\x15a\x03\xBCW\x80`\x1F\x10a\x03\x91Wa\x01\0\x80\x83T\x04\x02\x83R\x91` \x01\x91a\x03\xBCV[\x82\x01\x91\x90`\0R` `\0 \x90[\x81T\x81R\x90`\x01\x01\x90` \x01\x80\x83\x11a\x03\x9FW\x82\x90\x03`\x1F\x16\x82\x01\x91[PPPPP\x90P\x90V[`\0\x81\x81R`\x02` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x163\x81\x14\x80a\x04\x0FWP`\x01`\x01`\xA0\x1B\x03\x81\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 3\x84R\x90\x91R\x90 T`\xFF\x16[a\x04QW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x0E`$\x82\x01Rm\x13\x93\xD5\x17\xD0UU\x12\x13\xD4\x92V\x91Q`\x92\x1B`D\x82\x01R`d\x01[`@Q\x80\x91\x03\x90\xFD[`\0\x82\x81R`\x04` R`@\x80\x82 \x80T`\x01`\x01`\xA0\x1B\x03\x19\x16`\x01`\x01`\xA0\x1B\x03\x87\x81\x16\x91\x82\x17\x90\x92U\x91Q\x85\x93\x91\x85\x16\x91\x7F\x8C[\xE1\xE5\xEB\xEC}[\xD1OqB}\x1E\x84\xF3\xDD\x03\x14\xC0\xF7\xB2)\x1E[ \n\xC8\xC7\xC3\xB9%\x91\xA4PPPV[`\0\x81\x81R`\x02` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x84\x81\x16\x91\x16\x14a\x05\x03W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\n`$\x82\x01RiWRONG_FROM`\xB0\x1B`D\x82\x01R`d\x01a\x04HV[`\x01`\x01`\xA0\x1B\x03\x82\x16a\x05MW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x11`$\x82\x01Rp\x12S\x95\x90S\x12Q\x17\xD4\x91P\xD2T\x12QS\x95`z\x1B`D\x82\x01R`d\x01a\x04HV[3`\x01`\x01`\xA0\x1B\x03\x84\x16\x14\x80a\x05\x87WP`\x01`\x01`\xA0\x1B\x03\x83\x16`\0\x90\x81R`\x05` \x90\x81R`@\x80\x83 3\x84R\x90\x91R\x90 T`\xFF\x16[\x80a\x05\xA8WP`\0\x81\x81R`\x04` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x163\x14[a\x05\xE5W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x0E`$\x82\x01Rm\x13\x93\xD5\x17\xD0UU\x12\x13\xD4\x92V\x91Q`\x92\x1B`D\x82\x01R`d\x01a\x04HV[`\x01`\x01`\xA0\x1B\x03\x83\x16`\0\x90\x81R`\x03` R`@\x81 \x80T\x91a\x06\t\x83a\r\xACV[\x90\x91UPP`\x01`\x01`\xA0\x1B\x03\x82\x16`\0\x90\x81R`\x03` R`@\x81 \x80T\x91a\x062\x83a\r\xC3V[\x90\x91UPP`\0\x81\x81R`\x02` \x90\x81R`@\x80\x83 \x80T`\x01`\x01`\xA0\x1B\x03\x80\x88\x16`\x01`\x01`\xA0\x1B\x03\x19\x92\x83\x16\x81\x17\x90\x93U`\x04\x90\x94R\x82\x85 \x80T\x90\x91\x16\x90U\x90Q\x84\x93\x91\x92\x87\x16\x91\x7F\xDD\xF2R\xAD\x1B\xE2\xC8\x9Bi\xC2\xB0h\xFC7\x8D\xAA\x95+\xA7\xF1c\xC4\xA1\x16(\xF5ZM\xF5#\xB3\xEF\x91\xA4PPPV[a\x06\xB1\x83\x83\x83a\x04\xADV[\x81;\x15\x80a\x07QWP`@Qc\n\x85\xBD\x01`\xE1\x1B\x80\x82R3`\x04\x83\x01R`\x01`\x01`\xA0\x1B\x03\x85\x81\x16`$\x84\x01R`D\x83\x01\x84\x90R`\x80`d\x84\x01R`\0`\x84\x84\x01R\x90\x91\x90\x84\x16\x90c\x15\x0Bz\x02\x90`\xA4\x01` `@Q\x80\x83\x03\x81`\0\x87Z\xF1\x15\x80\x15a\x07!W=`\0\x80>=`\0\xFD[PPPP`@Q=`\x1F\x19`\x1F\x82\x01\x16\x82\x01\x80`@RP\x81\x01\x90a\x07E\x91\x90a\r\xDCV[`\x01`\x01`\xE0\x1B\x03\x19\x16\x14[a\x07\x90W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x10`$\x82\x01Ro\x15S\x94\xD0Q\x91W\xD4\x91P\xD2T\x12QS\x95`\x82\x1B`D\x82\x01R`d\x01a\x04HV[PPPV[`\x06T`\xFF\x16\x15a\x07\xDEW`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x13`$\x82\x01Rr\x10S\x14\x91PQ\x16W\xD2S\x92U\x12PS\x12V\x91Q`j\x1B`D\x82\x01R`d\x01a\x04HV[`\0a\x07\xEA\x83\x82a\x0EIV[P`\x01a\x07\xF7\x82\x82a\x0EIV[PP`\x06\x80T`\xFF\x19\x16`\x01\x17\x90UPV[`\0\x81\x81R`\x02` R`@\x90 T`\x01`\x01`\xA0\x1B\x03\x16\x80a\x08[W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\n`$\x82\x01Ri\x13\x93\xD5\x17\xD3RS\x95\x11Q`\xB2\x1B`D\x82\x01R`d\x01a\x04HV[\x91\x90PV[`\0`\x01`\x01`\xA0\x1B\x03\x82\x16a\x08\xA7W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x0C`$\x82\x01RkZERO_ADDRESS`\xA0\x1B`D\x82\x01R`d\x01a\x04HV[P`\x01`\x01`\xA0\x1B\x03\x16`\0\x90\x81R`\x03` R`@\x90 T\x90V[```\x01\x80Ta\x03C\x90a\r\\V[3`\0\x81\x81R`\x05` \x90\x81R`@\x80\x83 `\x01`\x01`\xA0\x1B\x03\x87\x16\x80\x85R\x90\x83R\x92\x81\x90 \x80T`\xFF\x19\x16\x86\x15\x15\x90\x81\x17\x90\x91U\x90Q\x90\x81R\x91\x92\x91\x7F\x170~\xAB9\xABa\x07\xE8\x89\x98E\xAD=Y\xBD\x96S\xF2\0\xF2 \x92\x04\x89\xCA+Y7il1\x91\x01`@Q\x80\x91\x03\x90\xA3PPV[a\tI\x84\x84\x84a\x04\xADV[\x82;\x15\x80a\t\xD5WP`@Qc\n\x85\xBD\x01`\xE1\x1B\x80\x82R\x90`\x01`\x01`\xA0\x1B\x03\x85\x16\x90c\x15\x0Bz\x02\x90a\t\x86\x903\x90\x89\x90\x88\x90\x88\x90`\x04\x01a\x0F\tV[` `@Q\x80\x83\x03\x81`\0\x87Z\xF1\x15\x80\x15a\t\xA5W=`\0\x80>=`\0\xFD[PPPP`@Q=`\x1F\x19`\x1F\x82\x01\x16\x82\x01\x80`@RP\x81\x01\x90a\t\xC9\x91\x90a\r\xDCV[`\x01`\x01`\xE0\x1B\x03\x19\x16\x14[a\n\x14W`@QbF\x1B\xCD`\xE5\x1B\x81R` `\x04\x82\x01R`\x10`$\x82\x01Ro\x15S\x94\xD0Q\x91W\xD4\x91P\xD2T\x12QS\x95`\x82\x1B`D\x82\x01R`d\x01a\x04HV[PPPPV[`\x01`\x01`\xE0\x1B\x03\x19\x81\x16\x81\x14a\n0W`\0\x80\xFD[PV[`\0` \x82\x84\x03\x12\x15a\nEW`\0\x80\xFD[\x815a\nP\x81a\n\x1AV[\x93\x92PPPV[`\0\x81Q\x80\x84R`\0[\x81\x81\x10\x15a\n}W` \x81\x85\x01\x81\x01Q\x86\x83\x01\x82\x01R\x01a\naV[P`\0` \x82\x86\x01\x01R` `\x1F\x19`\x1F\x83\x01\x16\x85\x01\x01\x91PP\x92\x91PPV[` \x81R`\0a\nP` \x83\x01\x84a\nWV[`\0` \x82\x84\x03\x12\x15a\n\xC2W`\0\x80\xFD[P5\x91\x90PV[\x805`\x01`\x01`\xA0\x1B\x03\x81\x16\x81\x14a\x08[W`\0\x80\xFD[`\0\x80`@\x83\x85\x03\x12\x15a\n\xF3W`\0\x80\xFD[a\n\xFC\x83a\n\xC9V[\x94` \x93\x90\x93\x015\x93PPPV[`\0\x80`\0``\x84\x86\x03\x12\x15a\x0B\x1FW`\0\x80\xFD[a\x0B(\x84a\n\xC9V[\x92Pa\x0B6` \x85\x01a\n\xC9V[\x91P`@\x84\x015\x90P\x92P\x92P\x92V[cNH{q`\xE0\x1B`\0R`A`\x04R`$`\0\xFD[`\0g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x84\x11\x15a\x0BwWa\x0Bwa\x0BFV[`@Q`\x1F\x85\x01`\x1F\x19\x90\x81\x16`?\x01\x16\x81\x01\x90\x82\x82\x11\x81\x83\x10\x17\x15a\x0B\x9FWa\x0B\x9Fa\x0BFV[\x81`@R\x80\x93P\x85\x81R\x86\x86\x86\x01\x11\x15a\x0B\xB8W`\0\x80\xFD[\x85\x85` \x83\x017`\0` \x87\x83\x01\x01RPPP\x93\x92PPPV[`\0\x82`\x1F\x83\x01\x12a\x0B\xE3W`\0\x80\xFD[a\nP\x83\x835` \x85\x01a\x0B\\V[`\0\x80`@\x83\x85\x03\x12\x15a\x0C\x05W`\0\x80\xFD[\x825g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x82\x11\x15a\x0C\x1DW`\0\x80\xFD[a\x0C)\x86\x83\x87\x01a\x0B\xD2V[\x93P` \x85\x015\x91P\x80\x82\x11\x15a\x0C?W`\0\x80\xFD[Pa\x0CL\x85\x82\x86\x01a\x0B\xD2V[\x91PP\x92P\x92\x90PV[`\0` \x82\x84\x03\x12\x15a\x0ChW`\0\x80\xFD[a\nP\x82a\n\xC9V[`\0\x80`@\x83\x85\x03\x12\x15a\x0C\x84W`\0\x80\xFD[a\x0C\x8D\x83a\n\xC9V[\x91P` \x83\x015\x80\x15\x15\x81\x14a\x0C\xA2W`\0\x80\xFD[\x80\x91PP\x92P\x92\x90PV[`\0\x80`\0\x80`\x80\x85\x87\x03\x12\x15a\x0C\xC3W`\0\x80\xFD[a\x0C\xCC\x85a\n\xC9V[\x93Pa\x0C\xDA` \x86\x01a\n\xC9V[\x92P`@\x85\x015\x91P``\x85\x015g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x81\x11\x15a\x0C\xFDW`\0\x80\xFD[\x85\x01`\x1F\x81\x01\x87\x13a\r\x0EW`\0\x80\xFD[a\r\x1D\x87\x825` \x84\x01a\x0B\\V[\x91PP\x92\x95\x91\x94P\x92PV[`\0\x80`@\x83\x85\x03\x12\x15a\r<W`\0\x80\xFD[a\rE\x83a\n\xC9V[\x91Pa\rS` \x84\x01a\n\xC9V[\x90P\x92P\x92\x90PV[`\x01\x81\x81\x1C\x90\x82\x16\x80a\rpW`\x7F\x82\x16\x91P[` \x82\x10\x81\x03a\r\x90WcNH{q`\xE0\x1B`\0R`\"`\x04R`$`\0\xFD[P\x91\x90PV[cNH{q`\xE0\x1B`\0R`\x11`\x04R`$`\0\xFD[`\0\x81a\r\xBBWa\r\xBBa\r\x96V[P`\0\x19\x01\x90V[`\0`\x01\x82\x01a\r\xD5Wa\r\xD5a\r\x96V[P`\x01\x01\x90V[`\0` \x82\x84\x03\x12\x15a\r\xEEW`\0\x80\xFD[\x81Qa\nP\x81a\n\x1AV[`\x1F\x82\x11\x15a\x07\x90W`\0\x81`\0R` `\0 `\x1F\x85\x01`\x05\x1C\x81\x01` \x86\x10\x15a\x0E\"WP\x80[`\x1F\x85\x01`\x05\x1C\x82\x01\x91P[\x81\x81\x10\x15a\x0EAW\x82\x81U`\x01\x01a\x0E.V[PPPPPPV[\x81Qg\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x81\x11\x15a\x0EcWa\x0Eca\x0BFV[a\x0Ew\x81a\x0Eq\x84Ta\r\\V[\x84a\r\xF9V[` \x80`\x1F\x83\x11`\x01\x81\x14a\x0E\xACW`\0\x84\x15a\x0E\x94WP\x85\x83\x01Q[`\0\x19`\x03\x86\x90\x1B\x1C\x19\x16`\x01\x85\x90\x1B\x17\x85Ua\x0EAV[`\0\x85\x81R` \x81 `\x1F\x19\x86\x16\x91[\x82\x81\x10\x15a\x0E\xDBW\x88\x86\x01Q\x82U\x94\x84\x01\x94`\x01\x90\x91\x01\x90\x84\x01a\x0E\xBCV[P\x85\x82\x10\x15a\x0E\xF9W\x87\x85\x01Q`\0\x19`\x03\x88\x90\x1B`\xF8\x16\x1C\x19\x16\x81U[PPPPP`\x01\x90\x81\x1B\x01\x90UPV[`\x01`\x01`\xA0\x1B\x03\x85\x81\x16\x82R\x84\x16` \x82\x01R`@\x81\x01\x83\x90R`\x80``\x82\x01\x81\x90R`\0\x90a\x0F<\x90\x83\x01\x84a\nWV[\x96\x95PPPPPPV\xFE\xA2dipfsX\"\x12 =r^\x93\xCC\xB9\xFD/\xE8\xDD\x01\x99F.e\xFBT\xB5\xC0K/\xD2~\x024kp\xDC\x88D\xCAmdsolcC\0\x08\x16\x003";
     /// The deployed bytecode of the contract.
     pub static MOCKERC721_DEPLOYED_BYTECODE: ::ethers::core::types::Bytes = ::ethers::core::types::Bytes::from_static(
         __DEPLOYED_BYTECODE,
@@ -4908,13 +10116,13 @@ pub mod mock_erc721 {
         ///Calls the contract's `getApproved` (0x081812fc) function
         pub fn get_approved(
             &self,
-            p0: ::ethers::core::types::U256,
+            id: ::ethers::core::types::U256,
         ) -> ::ethers::contract::builders::ContractCall<
             M,
             ::ethers::core::types::Address,
         > {
             self.0
-                .method_hash([8, 24, 18, 252], p0)
+                .method_hash([8, 24, 18, 252], id)
                 .expect("method not found (this should never happen)")
         }
         ///Calls the contract's `initialize` (0x4cd88b76) function
@@ -4930,11 +10138,11 @@ pub mod mock_erc721 {
         ///Calls the contract's `isApprovedForAll` (0xe985e9c5) function
         pub fn is_approved_for_all(
             &self,
-            p0: ::ethers::core::types::Address,
-            p1: ::ethers::core::types::Address,
+            owner: ::ethers::core::types::Address,
+            operator: ::ethers::core::types::Address,
         ) -> ::ethers::contract::builders::ContractCall<M, bool> {
             self.0
-                .method_hash([233, 133, 233, 197], (p0, p1))
+                .method_hash([233, 133, 233, 197], (owner, operator))
                 .expect("method not found (this should never happen)")
         }
         ///Calls the contract's `name` (0x06fdde03) function
@@ -5091,9 +10299,9 @@ pub mod mock_erc721 {
         #[ethevent(indexed)]
         pub owner: ::ethers::core::types::Address,
         #[ethevent(indexed)]
-        pub spender: ::ethers::core::types::Address,
+        pub approved: ::ethers::core::types::Address,
         #[ethevent(indexed)]
-        pub id: ::ethers::core::types::U256,
+        pub token_id: ::ethers::core::types::U256,
     }
     #[derive(
         Clone,
@@ -5134,7 +10342,7 @@ pub mod mock_erc721 {
         #[ethevent(indexed)]
         pub to: ::ethers::core::types::Address,
         #[ethevent(indexed)]
-        pub id: ::ethers::core::types::U256,
+        pub token_id: ::ethers::core::types::U256,
     }
     ///Container type for all of the contract's events
     #[derive(
@@ -5243,7 +10451,9 @@ pub mod mock_erc721 {
         Hash
     )]
     #[ethcall(name = "getApproved", abi = "getApproved(uint256)")]
-    pub struct GetApprovedCall(pub ::ethers::core::types::U256);
+    pub struct GetApprovedCall {
+        pub id: ::ethers::core::types::U256,
+    }
     ///Container type for all input parameters for the `initialize` function with signature `initialize(string,string)` and selector `0x4cd88b76`
     #[derive(
         Clone,
@@ -5276,10 +10486,10 @@ pub mod mock_erc721 {
         Hash
     )]
     #[ethcall(name = "isApprovedForAll", abi = "isApprovedForAll(address,address)")]
-    pub struct IsApprovedForAllCall(
-        pub ::ethers::core::types::Address,
-        pub ::ethers::core::types::Address,
-    );
+    pub struct IsApprovedForAllCall {
+        pub owner: ::ethers::core::types::Address,
+        pub operator: ::ethers::core::types::Address,
+    }
     ///Container type for all input parameters for the `name` function with signature `name()` and selector `0x06fdde03`
     #[derive(
         Clone,
