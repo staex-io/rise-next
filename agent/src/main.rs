@@ -27,7 +27,7 @@ mod indexer;
 
 // We use this step when iterating over blocks
 // to get smart contract events from these blocks.
-pub(crate) const BLOCK_STEP: u64 = 25;
+pub(crate) const BLOCK_STEP: u64 = 1;
 
 type Error = Box<dyn std::error::Error>;
 
@@ -210,7 +210,7 @@ async fn main() -> Result<(), Error> {
         cli.ground_cycle_contract_addr,
     );
     #[cfg(target_os = "linux")]
-    let app = App::new(cfg, cli.landing_wait_time, cli.device_index)?;
+    let app = App::new(&cfg, cli.landing_wait_time, cli.device_index)?;
     #[cfg(target_os = "macos")]
     let app = App::new(&cfg, cli.landing_wait_time)?;
     match cli.command {
