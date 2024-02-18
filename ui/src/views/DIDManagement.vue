@@ -38,6 +38,9 @@ export default {
       this.success = ''
     },
     load() {
+      this.station = null
+      this.location = ''
+      this.price = ''
       const contractAddress = import.meta.env.VITE_DID_CONTRACT_ADDRESS
       const provider = new ethers.getDefaultProvider(import.meta.env.VITE_RPC_URL)
       const signer = new ethers.Wallet(this.selectedAccountPrivateKey, provider)
@@ -119,7 +122,7 @@ export default {
       </div>
       <div class="card-field">
         <span class="card-field-label">Price</span>
-        <span class="card-field-value">{{ station.price }}</span>
+        <span class="card-field-value">{{ station.price }} ETH</span>
       </div>
     </div>
   </div>

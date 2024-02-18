@@ -1,6 +1,7 @@
 <script>
 import { WalletLocalStorageKey, WalletAccountsKey } from '@/constants/index.js'
 import { ReadWallet } from '../utils'
+import { ethers } from 'ethers'
 
 export default {
   data() {
@@ -38,6 +39,7 @@ export default {
         }
         let data = await res.json()
         this.stats = data
+        data.amount = ethers.formatEther(ethers.parseEther(data.amount))
       } catch (e) {
         console.error(e)
         return
@@ -73,7 +75,7 @@ export default {
       </div>
       <div class="card-field">
         <span class="card-field-label">Amount (income or expense)</span>
-        <span class="card-field-value">{{ stats.amount }}</span>
+        <span class="card-field-value">{{ stats.amount }} ETH</span>
       </div>
     </div>
   </div>

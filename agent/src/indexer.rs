@@ -1,4 +1,6 @@
-use std::{fs::OpenOptions, future::Future, io::ErrorKind, sync::Arc, time::Duration};
+use std::{
+    fs::OpenOptions, future::Future, io::ErrorKind, str::FromStr, sync::Arc, time::Duration,
+};
 
 use axum::{
     extract::Query,
@@ -12,10 +14,11 @@ use ethers::{
     abi::RawLog,
     contract::EthLogDecode,
     providers::{Http, Middleware, Provider},
-    types::{Address, Block, Filter, Log, H256, U256},
-    utils::{self, format_ether, keccak256, parse_ether},
+    types::{Address, Block, Filter, Log, H256},
+    utils::{format_ether, keccak256},
 };
 use log::{debug, error, info, trace};
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use sqlx::{Connection, QueryBuilder, SqliteConnection};
 use tokio::{sync::Mutex, time::sleep};
@@ -83,7 +86,7 @@ impl Indexer {
         let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url.clone())?;
 
         let mut from_block: u64 = from_block;
-        let mut block_step: u64 = 2625;
+        let mut block_step: u64 = 3000;
         loop {
             let to_block: u64 = from_block + block_step;
             let block = provider.get_block(to_block).await?;
@@ -107,7 +110,7 @@ impl Indexer {
                 self.process_logs(&block, logs).await?;
             }
             from_block += block_step;
-            sleep(Duration::from_secs(4)).await;
+            sleep(Duration::from_secs(1)).await;
         }
     }
 
@@ -157,7 +160,7 @@ impl DatabaseSaver for DIDContractEvents {
                     .save_station(
                         &format!("{:?}", Address::from(event.p0)),
                         &event.location,
-                        &utils::format_ether(event.price),
+                        &format_ether(event.price),
                     )
                     .await
             }
@@ -174,7 +177,7 @@ impl DatabaseSaver for AgreementContractEvents {
                     .save_agreement(
                         &format!("{:?}", Address::from(event.0)),
                         &format!("{:?}", Address::from(event.1)),
-                        &utils::format_ether(event.2),
+                        &format_ether(event.2),
                         false,
                     )
                     .await
@@ -257,6 +260,15 @@ struct DatabaseLanding {
 struct DatabaseStats {
     landings: u32,
     amount: String,
+}
+
+impl Default for DatabaseStats {
+    fn default() -> Self {
+        Self {
+            landings: 0,
+            amount: "0".to_string(),
+        }
+    }
 }
 
 #[derive(Clone)]
@@ -405,34 +417,43 @@ impl Database {
         let station_drone_agreement = self.get_agreement(station, drone).await?;
         let station_landlord_agreement = self.get_agreement(station, landlord).await?;
 
-        let drone_stats = self.get_stats(drone).await?;
-        self.update_stats(drone, drone_stats.landings + 1, &U256::from(0).to_string()).await?;
+        // If it is not takeoff or rejected it is approved landing so we can update stats.
+        if is_taken_off || is_rejected {
+            let drone_stats = self.get_stats(drone).await?;
+            self.save_stats(
+                drone,
+                drone_stats.landings + 1,
+                &(Decimal::from_str(&drone_stats.amount).map_err(map_decimal_err)?
+                    - Decimal::from_str(&station_drone_agreement.amount)
+                        .map_err(map_decimal_err)?)
+                .to_string(),
+            )
+            .await?;
 
-        let station_stats = self.get_stats(station).await?;
-        self.update_stats(
-            station,
-            station_stats.landings + 1,
-            &format_ether(
-                parse_ether(station_stats.amount)?
-                    .checked_add(parse_ether(&station_drone_agreement.amount)?)
-                    .ok_or_else(|| "failed to add station stats amount".to_string())?
-                    .checked_sub(parse_ether(&station_landlord_agreement.amount)?)
-                    .unwrap_or(U256::from(0)),
-            ),
-        )
-        .await?;
+            let station_stats = self.get_stats(station).await?;
+            self.save_stats(
+                station,
+                station_stats.landings + 1,
+                &(Decimal::from_str(&station_stats.amount).map_err(map_decimal_err)?
+                    + Decimal::from_str(&station_drone_agreement.amount)
+                        .map_err(map_decimal_err)?
+                    - Decimal::from_str(&station_landlord_agreement.amount)
+                        .map_err(map_decimal_err)?)
+                .to_string(),
+            )
+            .await?;
 
-        let landlord_stats = self.get_stats(landlord).await?;
-        self.update_stats(
-            landlord,
-            landlord_stats.landings + 1,
-            &format_ether(
-                parse_ether(landlord_stats.amount)?
-                    .checked_add(parse_ether(&station_landlord_agreement.amount)?)
-                    .ok_or_else(|| "failed to add landlord stats amount".to_string())?,
-            ),
-        )
-        .await?;
+            let landlord_stats = self.get_stats(landlord).await?;
+            self.save_stats(
+                landlord,
+                landlord_stats.landings + 1,
+                &(Decimal::from_str(&landlord_stats.amount).map_err(map_decimal_err)?
+                    + Decimal::from_str(&station_landlord_agreement.amount)
+                        .map_err(map_decimal_err)?)
+                .to_string(),
+            )
+            .await?;
+        }
 
         let mut conn = self.conn.lock().await;
         sqlx::query(
@@ -502,9 +523,9 @@ impl Database {
         Ok(query)
     }
 
-    async fn update_stats(&self, address: &str, landings: u32, amount: &str) -> Result<(), Error> {
+    async fn save_stats(&self, address: &str, landings: u32, amount: &str) -> Result<(), Error> {
         let mut conn = self.conn.lock().await;
-        sqlx::query("update stats set landings = ?2, amount = ?3 where address = ?1")
+        sqlx::query("insert into stats values (?1, ?2, ?3) on conflict do update set landings = ?2, amount = ?3")
             .bind(address.to_lowercase())
             .bind(landings)
             .bind(amount)
@@ -514,16 +535,23 @@ impl Database {
     }
 
     async fn get_stats(&self, address: &str) -> Result<DatabaseStats, Error> {
-        eprintln!("...");
         let mut conn = self.conn.lock().await;
-        let stats: DatabaseStats = sqlx::query_as::<_, DatabaseStats>(
-            "insert into stats (address, landings, amount) values (?1, 0, '0') on conflict do nothing returning *",
-        )
-        .bind(address.to_lowercase())
-        .fetch_one(&mut *conn)
-        .await?;
-        Ok(stats)
+        match sqlx::query_as::<_, DatabaseStats>("select * from stats where address = ?1")
+            .bind(address.to_lowercase())
+            .fetch_one(&mut *conn)
+            .await
+        {
+            Ok(stats) => Ok(stats),
+            Err(e) => match e {
+                sqlx::Error::RowNotFound => Ok(DatabaseStats::default()),
+                _ => Err(e.into()),
+            },
+        }
     }
+}
+
+fn map_decimal_err(e: rust_decimal::Error) -> String {
+    e.to_string()
 }
 
 struct ErrorResponse {

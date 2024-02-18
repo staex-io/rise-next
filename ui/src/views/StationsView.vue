@@ -43,7 +43,7 @@ export default {
         <tr>
           <th>Address</th>
           <th>Location</th>
-          <th>Price</th>
+          <th>Price (ETH)</th>
         </tr>
       </thead>
       <tbody>

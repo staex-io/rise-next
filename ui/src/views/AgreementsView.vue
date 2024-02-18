@@ -79,7 +79,7 @@ export default {
         <tr>
           <th>Station</th>
           <th>Entity</th>
-          <th>Price</th>
+          <th>Price (ETH)</th>
           <th>Signed</th>
         </tr>
       </thead>
