@@ -21,4 +21,4 @@ build:
 
 .PHONY: rsync
 rsync:
-	rsync -a --delete dist/ he1:/srv/iod/
+	rsync -a --delete dist/ he1:/srv/rise-ui/
