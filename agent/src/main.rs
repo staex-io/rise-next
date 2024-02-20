@@ -63,7 +63,7 @@ struct Cli {
     #[arg(default_value = "0")]
     device_index: Option<u8>,
     /// Choose env with predefined config values.
-    /// Possible values: custom, local, sepolia.
+    /// Possible values: local, sepolia, lisk-sepolia.
     #[arg(short, long)]
     #[arg(default_value = "local")]
     env: String,
@@ -170,10 +170,17 @@ impl Config {
             "sepolia" => Self {
                 rpc_url: "https://ethereum-sepolia.publicnode.com".to_string(),
                 chain_id: 11155111,
-                // Currently smart contacts are not deployed to Sepolia.
                 did_contract_addr: "0x17536460b997842f8396409514986905eF63b58E".to_string(),
                 agreement_contract_addr: "0x94a71B1940741145454Bb7AA490A66b86369F160".to_string(),
                 ground_cycle_contract_addr: "0x60197B0C29EE4F80ad3B5e88A86EC235aF05d0CA"
+                    .to_string(),
+            },
+            "lisk-sepolia" => Self {
+                rpc_url: "https://rpc.sepolia-api.lisk.com".to_string(),
+                chain_id: 4202,
+                did_contract_addr: "0x3bA4B1e2a1c775267e7b6288A8D66c411A56C8c3".to_string(),
+                agreement_contract_addr: "0x6beFEd6d4D0e4a9198266EAdf295F5C1eD78C3c7".to_string(),
+                ground_cycle_contract_addr: "0x677418C0141780DEbaAac07A508700410CCeBd9F"
                     .to_string(),
             },
             _ => unimplemented!(),
