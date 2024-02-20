@@ -84,11 +84,11 @@ export default {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="{ station, entity, amount, signed } in agreements" :key="station">
+        <tr v-for="{ station, entity, amount, is_signed } in agreements" :key="station">
           <td>{{ station }}</td>
           <td>{{ entity }}</td>
           <td>{{ amount }}</td>
-          <td>{{ signed ? 'False' : 'True' }}</td>
+          <td>{{ is_signed ? 'True' : 'False' }}</td>
         </tr>
       </tbody>
     </table>

@@ -91,6 +91,9 @@ impl Indexer {
 
         let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url.clone())?;
 
+        let latest_block = provider.get_block_number().await?;
+        debug!("latest block number in selected network is {latest_block}");
+
         let mut from_block: u64 = from_block;
         let mut block_step: u64 = 3000;
         loop {
