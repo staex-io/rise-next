@@ -147,6 +147,7 @@ struct Config {
     did_contract_addr: String,
     agreement_contract_addr: String,
     ground_cycle_contract_addr: String,
+    ground_cycle_no_crypto_contract_addr: String,
 }
 
 impl Config {
@@ -167,6 +168,8 @@ impl Config {
                 agreement_contract_addr: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512".to_string(),
                 ground_cycle_contract_addr: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
                     .to_string(),
+                ground_cycle_no_crypto_contract_addr: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+                    .to_string(), // todo: set it
             },
             "sepolia" => Self {
                 rpc_url: "https://ethereum-sepolia.publicnode.com".to_string(),
@@ -175,6 +178,8 @@ impl Config {
                 agreement_contract_addr: "0x94a71B1940741145454Bb7AA490A66b86369F160".to_string(),
                 ground_cycle_contract_addr: "0x60197B0C29EE4F80ad3B5e88A86EC235aF05d0CA"
                     .to_string(),
+                ground_cycle_no_crypto_contract_addr: "0x60197B0C29EE4F80ad3B5e88A86EC235aF05d0CA"
+                    .to_string(), // todo: set it
             },
             "lisk-sepolia" => Self {
                 rpc_url: "https://rpc.sepolia-api.lisk.com".to_string(),
@@ -183,6 +188,8 @@ impl Config {
                 agreement_contract_addr: "0x6beFEd6d4D0e4a9198266EAdf295F5C1eD78C3c7".to_string(),
                 ground_cycle_contract_addr: "0x677418C0141780DEbaAac07A508700410CCeBd9F"
                     .to_string(),
+                ground_cycle_no_crypto_contract_addr: "0x677418C0141780DEbaAac07A508700410CCeBd9F"
+                    .to_string(), // todo: set it
             },
             _ => unimplemented!(),
         };
@@ -599,6 +606,9 @@ fn check_contract_res<T, P: Middleware>(res: Result<T, ContractError<P>>) -> Res
                     }
                     GroundCycleContractErrors::ErrTakeoffRequired(_) => {
                         "it is required to takeoff first before doing landing".to_string()
+                    }
+                    GroundCycleContractErrors::ErrHandshake(_) => {
+                        "failed to pass handshake".to_string()
                     }
                     GroundCycleContractErrors::RevertString(e) => e,
                 }

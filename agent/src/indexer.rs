@@ -9,12 +9,15 @@ use axum::{
     routing::get,
     Extension, Json, Router,
 };
-use contracts_rs::{AgreementContractEvents, DIDContractEvents, GroundCycleContractEvents};
+use contracts_rs::{
+    AgreementContractEvents, DIDContractEvents, GroundCycleContractEvents,
+    GroundCycleNoCryptoContractEvents,
+};
 use ethers::{
     abi::RawLog,
     contract::EthLogDecode,
     providers::{Http, Middleware, Provider},
-    types::{Address, Block, Filter, Log, H256},
+    types::{Address, Block, Filter, Log, H160, H256},
     utils::{format_ether, keccak256},
 };
 use log::{debug, error, info, trace};
@@ -83,10 +86,13 @@ impl Indexer {
         let did_contract_addr: Address = cfg.did_contract_addr.parse()?;
         let agreement_contract_addr: Address = cfg.agreement_contract_addr.parse()?;
         let ground_cycle_contract_addr: Address = cfg.ground_cycle_contract_addr.parse()?;
+        let ground_cycle_no_crypto_contract_addr: Address =
+            cfg.ground_cycle_no_crypto_contract_addr.parse()?;
         let contracts: Vec<Address> = vec![
             did_contract_addr,
             agreement_contract_addr,
             ground_cycle_contract_addr,
+            ground_cycle_no_crypto_contract_addr,
         ];
 
         let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url.clone())?;
@@ -116,40 +122,101 @@ impl Indexer {
                         &Filter::new().address(*contract).from_block(from_block).to_block(to_block),
                     )
                     .await?;
-                self.process_logs(&block, logs).await?;
+                self.process_logs(
+                    &did_contract_addr,
+                    &agreement_contract_addr,
+                    &ground_cycle_contract_addr,
+                    &ground_cycle_no_crypto_contract_addr,
+                    &block,
+                    logs,
+                )
+                .await?;
             }
             from_block += block_step;
             sleep(Duration::from_secs(1)).await;
         }
     }
 
-    async fn process_logs(&self, block: &Block<H256>, logs: Vec<Log>) -> Result<(), Error> {
+    async fn process_logs(
+        &self,
+        did_contract_addr: &H160,
+        agreement_contract_addr: &H160,
+        ground_cycle_contract_addr: &H160,
+        ground_cycle_no_crypto_contract_addr: &H160,
+        block: &Block<H256>,
+        logs: Vec<Log>,
+    ) -> Result<(), Error> {
         for log in logs {
             let topic0 = log.topics[0];
-            match topic0 {
-                _ if (topic0 == self.did_updated_hash) => {
-                    debug!("received did event");
-                    let event = DIDContractEvents::decode_log(&RawLog::from(log))?;
-                    event.save(&self.database, block.timestamp.as_u32()).await?;
-                }
-                _ if (topic0 == self.agreement_created_hash
-                    || topic0 == self.agreement_signed_hash) =>
-                {
-                    debug!("received agreement event");
-                    let event = AgreementContractEvents::decode_log(&RawLog::from(log))?;
-                    event.save(&self.database, block.timestamp.as_u32()).await?;
-                }
-                _ if (topic0 == self.ground_cycle_landing_hash
-                    || topic0 == self.ground_cycle_takeoff_hash) =>
-                {
-                    debug!("received ground cycle event");
-                    let event = GroundCycleContractEvents::decode_log(&RawLog::from(log))?;
-                    event.save(&self.database, block.timestamp.as_u32()).await?;
-                }
-                _ => continue,
+            if &log.address == did_contract_addr {
+                return self.process_did_log(block, log, topic0).await;
+            } else if &log.address == agreement_contract_addr {
+                return self.process_agreement_log(block, log, topic0).await;
+            } else if &log.address == ground_cycle_contract_addr {
+                return self.process_ground_cycle_log(block, log, topic0).await;
+            } else if &log.address == ground_cycle_no_crypto_contract_addr {
+                return self.process_ground_cycle_no_crypto_log(block, log, topic0).await;
+            } else {
+                continue;
             }
         }
         Ok(())
+    }
+
+    async fn process_did_log(
+        &self,
+        block: &Block<H256>,
+        log: Log,
+        topic0: H256,
+    ) -> Result<(), Error> {
+        if topic0 != self.did_updated_hash {
+            return Ok(());
+        }
+        debug!("received did event");
+        let event = DIDContractEvents::decode_log(&RawLog::from(log))?;
+        event.save(&self.database, block.timestamp.as_u32()).await
+    }
+
+    async fn process_agreement_log(
+        &self,
+        block: &Block<H256>,
+        log: Log,
+        topic0: H256,
+    ) -> Result<(), Error> {
+        if topic0 != self.agreement_created_hash && topic0 != self.agreement_signed_hash {
+            return Ok(());
+        }
+        debug!("received agreement event");
+        let event = AgreementContractEvents::decode_log(&RawLog::from(log))?;
+        event.save(&self.database, block.timestamp.as_u32()).await
+    }
+
+    async fn process_ground_cycle_log(
+        &self,
+        block: &Block<H256>,
+        log: Log,
+        topic0: H256,
+    ) -> Result<(), Error> {
+        if topic0 != self.ground_cycle_landing_hash && topic0 != self.ground_cycle_takeoff_hash {
+            return Ok(());
+        }
+        debug!("received ground cycle event");
+        let event = GroundCycleContractEvents::decode_log(&RawLog::from(log))?;
+        event.save(&self.database, block.timestamp.as_u32()).await
+    }
+
+    async fn process_ground_cycle_no_crypto_log(
+        &self,
+        block: &Block<H256>,
+        log: Log,
+        topic0: H256,
+    ) -> Result<(), Error> {
+        if topic0 != self.ground_cycle_landing_hash && topic0 != self.ground_cycle_takeoff_hash {
+            return Ok(());
+        }
+        debug!("received ground cycle no crypto event");
+        let event = GroundCycleNoCryptoContractEvents::decode_log(&RawLog::from(log))?;
+        event.save(&self.database, block.timestamp.as_u32()).await
     }
 }
 
@@ -218,6 +285,7 @@ impl DatabaseSaver for GroundCycleContractEvents {
                         false,
                         false,
                         timestamp,
+                        false,
                     )
                     .await
             }
@@ -231,6 +299,43 @@ impl DatabaseSaver for GroundCycleContractEvents {
                         true,
                         false,
                         timestamp,
+                        false,
+                    )
+                    .await
+            }
+            _ => unimplemented!(),
+        }
+    }
+}
+
+impl DatabaseSaver for GroundCycleNoCryptoContractEvents {
+    async fn save(&self, database: &Database, timestamp: u32) -> Result<(), Error> {
+        match self {
+            GroundCycleNoCryptoContractEvents::LandingFilter(event) => {
+                database
+                    .save_landing(
+                        event.0.as_u32(),
+                        &format!("{:?}", Address::from(event.1)),
+                        &format!("{:?}", Address::from(event.2)),
+                        &format!("{:?}", Address::from(event.3)),
+                        false,
+                        false,
+                        timestamp,
+                        true,
+                    )
+                    .await
+            }
+            GroundCycleNoCryptoContractEvents::TakeoffFilter(event) => {
+                database
+                    .save_landing(
+                        event.0.as_u32(),
+                        &format!("{:?}", Address::from(event.1)),
+                        &format!("{:?}", Address::from(event.2)),
+                        &format!("{:?}", Address::from(event.3)),
+                        true,
+                        false,
+                        timestamp,
+                        true,
                     )
                     .await
             }
@@ -427,46 +532,55 @@ impl Database {
         is_taken_off: bool,
         is_rejected: bool,
         timestamp: u32,
+        no_crypto: bool,
     ) -> Result<(), Error> {
-        let station_drone_agreement = self.get_agreement(station, drone).await?;
-        let station_landlord_agreement = self.get_agreement(station, landlord).await?;
-
         // If it is not takeoff or rejected it is approved landing so we can update stats.
         if is_taken_off || is_rejected {
             let drone_stats = self.get_stats(drone).await?;
-            self.save_stats(
-                drone,
-                drone_stats.landings + 1,
-                &(Decimal::from_str(&drone_stats.amount).map_err(map_decimal_err)?
-                    - Decimal::from_str(&station_drone_agreement.amount)
-                        .map_err(map_decimal_err)?)
-                .to_string(),
-            )
-            .await?;
-
             let station_stats = self.get_stats(station).await?;
-            self.save_stats(
-                station,
-                station_stats.landings + 1,
-                &(Decimal::from_str(&station_stats.amount).map_err(map_decimal_err)?
-                    + Decimal::from_str(&station_drone_agreement.amount)
-                        .map_err(map_decimal_err)?
-                    - Decimal::from_str(&station_landlord_agreement.amount)
-                        .map_err(map_decimal_err)?)
-                .to_string(),
-            )
-            .await?;
-
             let landlord_stats = self.get_stats(landlord).await?;
-            self.save_stats(
-                landlord,
-                landlord_stats.landings + 1,
-                &(Decimal::from_str(&landlord_stats.amount).map_err(map_decimal_err)?
-                    + Decimal::from_str(&station_landlord_agreement.amount)
-                        .map_err(map_decimal_err)?)
-                .to_string(),
-            )
-            .await?;
+            let (
+                (drone_landings, drone_amount),
+                (station_landings, station_amount),
+                (landlord_landings, landlord_amount),
+            ) = if no_crypto {
+                (
+                    (drone_stats.landings + 1, drone_stats.amount),
+                    (station_stats.landings + 1, station_stats.amount),
+                    (landlord_stats.landings + 1, landlord_stats.amount),
+                )
+            } else {
+                let station_drone_agreement = self.get_agreement(station, drone).await?;
+                let station_landlord_agreement = self.get_agreement(station, landlord).await?;
+                (
+                    (
+                        drone_stats.landings + 1,
+                        (Decimal::from_str(&drone_stats.amount).map_err(map_decimal_err)?
+                            - Decimal::from_str(&station_drone_agreement.amount)
+                                .map_err(map_decimal_err)?)
+                        .to_string(),
+                    ),
+                    (
+                        station_stats.landings + 1,
+                        (Decimal::from_str(&station_stats.amount).map_err(map_decimal_err)?
+                            + Decimal::from_str(&station_drone_agreement.amount)
+                                .map_err(map_decimal_err)?
+                            - Decimal::from_str(&station_landlord_agreement.amount)
+                                .map_err(map_decimal_err)?)
+                        .to_string(),
+                    ),
+                    (
+                        landlord_stats.landings + 1,
+                        (Decimal::from_str(&landlord_stats.amount).map_err(map_decimal_err)?
+                            + Decimal::from_str(&station_landlord_agreement.amount)
+                                .map_err(map_decimal_err)?)
+                        .to_string(),
+                    ),
+                )
+            };
+            self.save_stats(drone, drone_landings, &drone_amount).await?;
+            self.save_stats(station, station_landings, &station_amount).await?;
+            self.save_stats(landlord, landlord_landings, &landlord_amount).await?;
         }
 
         let mut conn = self.conn.lock().await;
