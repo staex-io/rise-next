@@ -168,28 +168,21 @@ impl Config {
                 agreement_contract_addr: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512".to_string(),
                 ground_cycle_contract_addr: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
                     .to_string(),
-                ground_cycle_no_crypto_contract_addr: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
-                    .to_string(), // todo: set it
-            },
-            "sepolia" => Self {
-                rpc_url: "https://ethereum-sepolia.publicnode.com".to_string(),
-                chain_id: 11155111,
-                did_contract_addr: "0x17536460b997842f8396409514986905eF63b58E".to_string(),
-                agreement_contract_addr: "0x94a71B1940741145454Bb7AA490A66b86369F160".to_string(),
-                ground_cycle_contract_addr: "0x60197B0C29EE4F80ad3B5e88A86EC235aF05d0CA"
+                ground_cycle_no_crypto_contract_addr: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
                     .to_string(),
-                ground_cycle_no_crypto_contract_addr: "0x60197B0C29EE4F80ad3B5e88A86EC235aF05d0CA"
-                    .to_string(), // todo: set it
             },
+            "sepolia" => {
+                error!("deployed smart contracts are outdated on Sepolia");
+                unimplemented!();
+            }
             "lisk-sepolia" => Self {
                 rpc_url: "https://rpc.sepolia-api.lisk.com".to_string(),
                 chain_id: 4202,
-                did_contract_addr: "0x3bA4B1e2a1c775267e7b6288A8D66c411A56C8c3".to_string(),
-                agreement_contract_addr: "0x6beFEd6d4D0e4a9198266EAdf295F5C1eD78C3c7".to_string(),
-                ground_cycle_contract_addr: "0x677418C0141780DEbaAac07A508700410CCeBd9F"
+                did_contract_addr: "0xD17d6e91e18c4CebC8CE87AC614f2eA5782E237D".to_string(),
+                agreement_contract_addr: "0xe6E52a89718B682048e3279EbE980328f85d22Fc".to_string(),
+                ground_cycle_contract_addr: "0x7C0114eAC19b77875325bE6aE6009EfA5d83Fe99"
                     .to_string(),
-                ground_cycle_no_crypto_contract_addr: "0x677418C0141780DEbaAac07A508700410CCeBd9F"
-                    .to_string(), // todo: set it
+                ground_cycle_no_crypto_contract_addr: "0x2b1E180D421a99bd615dde649C31E29d7575E86D".to_string(),
             },
             _ => unimplemented!(),
         };

@@ -4,6 +4,7 @@ pragma solidity ^0.8.22;
 import "forge-std/Script.sol";
 import {AgreementContract} from "../src/Agreement.sol";
 import {GroundCycleContract} from "../src/GroundCycle.sol";
+import {GroundCycleNoCryptoContract} from "../src/GroundCycleNoCrypto.sol";
 import {DIDContract} from "../src/DID.sol";
 import "forge-std/console.sol";
 
@@ -22,6 +23,7 @@ contract RiseScript is Script {
         new DIDContract();
         AgreementContract agreement = new AgreementContract();
         new GroundCycleContract(landingWaitTime, agreement);
+        new GroundCycleNoCryptoContract(landingWaitTime);
         vm.stopBroadcast();
     }
 }
