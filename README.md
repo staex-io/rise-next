@@ -1,6 +1,14 @@
 # RISE-next
 
-RISE (dRone InfraStructure paymEnts)
+RISE (dRone InfraStructure paymEnts).
+
+The goal of the project is to assess feasibility of creating a new revenue stream for cell tower companies (TowCo) by sharing revenue from operating drone ports placed near cell towers. Each time a drone lands or takes off, the drone port debits the drone operator’s wallet and credits the cell tower company’s (land provider) wallet. The amount of money a drone operator pays to the drone port operator and the percentage of money that goes to the cell tower company is configurable and is agreed by a contract between the corresponding companies which is stored in on-chain using smart contract.
+
+Each ground station and drone will have a wallet, and the application will run on the router directly attached to the ground station and on the drone’s on-board computer. The router — or cloud-in-a-box, as we call it — features a web UI and marketplace for installing applications that run on the router inside containers. The RISE application will also be packaged for cloud-in-a-box which makes it very well integrated into Staex platform: it will receive automatic software updates and will be installed and configured via standard means. Nevertheless, full functionality of the application including web UI will be available to users that do not have Staex’s cloud-in-a-box without any restrictions.
+
+https://staex.io/web3-drone-corridor
+
+![](./docs/images/NEXA.png)
 
 [Docs](./docs/)
 
