@@ -10,6 +10,7 @@ error ErrAgreementNotSigned();
 error ErrRejectTooEarly();
 error ErrRejectApprovedLanding();
 error ErrTakeoffRequired();
+error ErrHandshake();
 
 struct Info {
     // If id is not zero it means landing was approved and has an id.
@@ -57,10 +58,17 @@ contract GroundCycleContract {
             return;
         }
         // It means it is second or more time when drone executes this method, so skip.
-        // But station is not land yet.
+        // But station is not landed yet.
         if (landing.landlord == address(0)) {
+            // As drone sent tokens not first time
+            // we need to return them (refund).
             payable(msg.sender).transfer(msg.value);
             return;
+        }
+        // Passing previous check means station is already executed
+        // landing, so we can try to approve it.
+        if (msg.sender != landing.drone) {
+            revert ErrHandshake();
         }
         approve(landing);
     }
@@ -73,7 +81,7 @@ contract GroundCycleContract {
             revert ErrTakeoffRequired();
         }
         if (landing.drone == address(0)) {
-            // It means there are landing from drone.
+            // It means there was not landing from drone.
             landings[msg.sender] = Info(0, drone, payable(msg.sender), landlord, block.timestamp);
             return;
         } else if (landing.landlord == address(0)) {
@@ -81,8 +89,15 @@ contract GroundCycleContract {
             landings[msg.sender].landlord = landlord;
         } else if (landing.landlord != address(0) && landing.id == 0) {
             // It means there are no landing by drone and it is not first landing by station.
+            // As station sent tokens not first time
+            // we need to return them (refund).
             payable(msg.sender).transfer(msg.value);
             return;
+        }
+        // Passing previous check means drone is already executed
+        // landing, so we can try to approve it.
+        if (landing.drone != drone) {
+            revert ErrHandshake();
         }
         approve(landing);
     }
