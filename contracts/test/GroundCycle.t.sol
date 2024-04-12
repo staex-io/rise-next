@@ -11,7 +11,8 @@ import {
     ErrNoLanding,
     ErrRejectApprovedLanding,
     ErrTakeoffRequired,
-    ErrRejectTooEarly
+    ErrRejectTooEarly,
+    ErrHandshake
 } from "../src/GroundCycle.sol";
 import {AgreementContract, ErrNoAgreement} from "../src/Agreement.sol";
 import "forge-std/Vm.sol";
@@ -19,6 +20,7 @@ import {VmSafe} from "forge-std/Vm.sol";
 
 contract GroundCycleTest is Test {
     string constant DRONE_WALLET_NAME = "drone";
+    string constant FAKE_DRONE_WALLET_NAME = "fake_drone";
     string constant STATION_WALLET_NAME = "station";
     string constant LANDLORD_WALLET_NAME = "landlord";
     uint256 constant START_TOKENS = 100 ether;
@@ -41,10 +43,12 @@ contract GroundCycleTest is Test {
     function test_All() public {
         // Create wallets for entities.
         VmSafe.Wallet memory drone = vm.createWallet(DRONE_WALLET_NAME);
+        VmSafe.Wallet memory fakeDrone = vm.createWallet(FAKE_DRONE_WALLET_NAME);
         VmSafe.Wallet memory station = vm.createWallet(STATION_WALLET_NAME);
         VmSafe.Wallet memory landlord = vm.createWallet(LANDLORD_WALLET_NAME);
         // Set balances.
         vm.deal(drone.addr, START_TOKENS);
+        vm.deal(fakeDrone.addr, START_TOKENS);
         vm.deal(station.addr, START_TOKENS);
         vm.deal(landlord.addr, START_TOKENS);
 
@@ -82,6 +86,14 @@ contract GroundCycleTest is Test {
         agreementContract.sign(station.addr, DRONE_STATION_AMOUNT);
         vm.prank(landlord.addr);
         agreementContract.sign(station.addr, STATION_LANDLORD_AMOUNT);
+
+        /* 
+          Create and sign an agreemnt between fake drone and station.
+        */
+        vm.prank(station.addr);
+        agreementContract.create(fakeDrone.addr, DRONE_STATION_AMOUNT);
+        vm.prank(fakeDrone.addr);
+        agreementContract.sign(station.addr, DRONE_STATION_AMOUNT);
 
         /*
           Check landing rejection.
@@ -138,6 +150,12 @@ contract GroundCycleTest is Test {
         // Check that drone can execute landing twice.
         vm.prank(drone.addr);
         groundCycleContract.landingByDrone{value: DRONE_STATION_AMOUNT}(payable(station.addr));
+        // Check that station cannot land drone which is not landed to it.
+        vm.prank(station.addr);
+        vm.expectRevert(ErrHandshake.selector);
+        groundCycleContract.landingByStation{value: STATION_LANDLORD_AMOUNT}(
+            payable(fakeDrone.addr), payable(landlord.addr)
+        );
         // Check that station can execute their landing method and landing should be approved.
         vm.prank(station.addr);
         vm.expectEmit(true, true, true, true);
@@ -239,6 +257,10 @@ contract GroundCycleTest is Test {
         groundCycleContract.landingByStation{value: STATION_LANDLORD_AMOUNT}(
             payable(drone.addr), payable(landlord.addr)
         );
+        // Check that fake drone cannot execute their landing method and landing is not approved.
+        vm.prank(fakeDrone.addr);
+        vm.expectRevert(ErrHandshake.selector);
+        groundCycleContract.landingByDrone{value: DRONE_STATION_AMOUNT}(payable(station.addr));
         // Check that drone can execute their landing method and landing should be approved.
         vm.prank(drone.addr);
         vm.expectEmit(true, true, true, true);

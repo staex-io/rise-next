@@ -14,7 +14,7 @@ test: lint
 	cd contracts && forge test --use 0.8.22 --gas-report --summary --detailed -vv
 
 coverage: test
-	cd contracts && forge coverage --use 0.8.22 --report summary
+	cd contracts && forge coverage --use 0.8.22 --report debug
 
 lint:
 	cd contracts && forge fmt

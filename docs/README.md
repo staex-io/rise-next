@@ -1,5 +1,13 @@
 # Docs
 
+## Landing
+
+![](./images/landing.png)
+
+## Takeoff
+
+![](./images/takeoff.png)
+
 ## Current implementation
 
 Currently we use: Foundry, Solidity, Ethereum, Rust, Vue.

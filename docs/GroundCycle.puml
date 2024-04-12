@@ -13,12 +13,13 @@ drone -> sc: Sign an agreement
 station -> sc: Create an agreement\n for landlord
 landlord -> sc: Sign an agreement
 
-drone -> station: Scan qr code\n to get address
-station -> drone: Scan qr code\n to get address
+drone -> station: Scan qr code\n to get an address
+station -> drone: Scan qr code\n to get an address
 drone -> sc: Send tokens and\n execute landing
 station -> sc: Send tokens and\n execute landing
+sc -> sc: Get required\namount from\nagreement\nand compare
 
-sc -> sc: Approve\n landing
+sc -> sc: Approve\n landing,\nemit event
 sc -> station: Send tokens according\n drone - stataion agreement
 sc -> landlord: Send tokens according\n drone - stataion agreement
 

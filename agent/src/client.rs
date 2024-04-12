@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use contracts_rs::{AgreementContract, GroundCycleContract};
+use contracts_rs::{AgreementContract, GroundCycleContract, GroundCycleNoCryptoContract};
 use ethers::{
     middleware::SignerMiddleware, providers::Middleware, signers::Signer, types::Address,
 };
@@ -10,17 +10,24 @@ pub(crate) struct Client<M> {
     provider: M,
     pub(crate) agreement_addr: Address,
     pub(crate) ground_cycle_addr: Address,
+    pub(crate) ground_cycle_no_crypto_addr: Address,
 }
 
 impl<M> Client<M>
 where
     M: Middleware + Clone,
 {
-    pub(crate) fn new(provider: M, agreement_addr: Address, ground_cycle_addr: Address) -> Self {
+    pub(crate) fn new(
+        provider: M,
+        agreement_addr: Address,
+        ground_cycle_addr: Address,
+        ground_cycle_no_crypto_addr: Address,
+    ) -> Self {
         Self {
             provider,
             agreement_addr,
             ground_cycle_addr,
+            ground_cycle_no_crypto_addr,
         }
     }
 
@@ -46,5 +53,20 @@ where
     ) -> GroundCycleContract<SignerMiddleware<M, S>> {
         let client = Arc::new(SignerMiddleware::new(self.provider.clone(), wallet));
         GroundCycleContract::new(self.ground_cycle_addr, client)
+    }
+
+    pub(crate) fn ground_cycle_no_crypto(&self) -> GroundCycleNoCryptoContract<M> {
+        GroundCycleNoCryptoContract::new(
+            self.ground_cycle_no_crypto_addr,
+            Arc::new(self.provider.clone()),
+        )
+    }
+
+    pub(crate) fn ground_cycle_no_crypto_signer<S: Signer>(
+        &self,
+        wallet: S,
+    ) -> GroundCycleNoCryptoContract<SignerMiddleware<M, S>> {
+        let client = Arc::new(SignerMiddleware::new(self.provider.clone(), wallet));
+        GroundCycleNoCryptoContract::new(self.ground_cycle_no_crypto_addr, client)
     }
 }
