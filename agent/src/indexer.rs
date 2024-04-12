@@ -107,7 +107,7 @@ impl Indexer {
             let block = provider.get_block(to_block).await?;
             trace!("scanning from {from_block} to {to_block} block");
             if block.is_none() {
-                block_step /= 10;
+                block_step /= 2;
                 if block_step == 0 {
                     block_step = 1;
                 }
@@ -149,15 +149,13 @@ impl Indexer {
         for log in logs {
             let topic0 = log.topics[0];
             if &log.address == did_contract_addr {
-                return self.process_did_log(block, log, topic0).await;
+                self.process_did_log(block, log, topic0).await?;
             } else if &log.address == agreement_contract_addr {
-                return self.process_agreement_log(block, log, topic0).await;
+                self.process_agreement_log(block, log, topic0).await?;
             } else if &log.address == ground_cycle_contract_addr {
-                return self.process_ground_cycle_log(block, log, topic0).await;
+                self.process_ground_cycle_log(block, log, topic0).await?;
             } else if &log.address == ground_cycle_no_crypto_contract_addr {
-                return self.process_ground_cycle_no_crypto_log(block, log, topic0).await;
-            } else {
-                continue;
+                self.process_ground_cycle_no_crypto_log(block, log, topic0).await?;
             }
         }
         Ok(())
@@ -835,10 +833,16 @@ async fn get_landings(
     // When user provides ID it means it wants to get particular landing.
     if params.id.is_some() && internal.len() == 1 {
         let internal = &internal[0];
-        let agreement_drone = database.get_agreement(&internal.station, &internal.drone).await?;
-        let agreement_landlord =
-            database.get_agreement(&internal.station, &internal.landlord).await?;
-        external[0].agreements = Some(vec![agreement_drone.into(), agreement_landlord.into()])
+        if let Ok(agreement) = database.get_agreement(&internal.station, &internal.drone).await {
+            external[0].agreements = Some(vec![agreement.into()])
+        }
+        if let Ok(agreement) = database.get_agreement(&internal.station, &internal.landlord).await {
+            if let Some(mut agreements) = external[0].agreements.take() {
+                agreements.push(agreement.into())
+            } else {
+                external[0].agreements = Some(vec![agreement.into()])
+            }
+        }
     }
     Ok((StatusCode::OK, Json(external)))
 }

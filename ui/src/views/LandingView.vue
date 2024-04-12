@@ -64,14 +64,14 @@ export default {
         <span class="card-field-label">Date</span>
         <span class="card-field-value">{{ new Date(landing.date * 1000) }}</span>
       </div>
-      <hr />
-      <div class="card-field">
+      <hr v-if="landing.agreements" />
+      <div class="card-field" v-if="landing.agreements && landing.agreements.length >= 1">
         <span class="card-field-label">Agreement Station & Drone</span>
         <span class="card-field-value">
           <pre>{{ JSON.stringify(landing.agreements[0], null, 4) }}</pre>
         </span>
       </div>
-      <div class="card-field">
+      <div class="card-field" v-if="landing.agreements && landing.agreements.length >= 2">
         <span class="card-field-label">Agreement Station & Landlord</span>
         <span class="card-field-value">
           <pre>{{ JSON.stringify(landing.agreements[1], null, 4) }}</pre>

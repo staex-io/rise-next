@@ -8,15 +8,14 @@ use std::{
 use clap::{Parser, Subcommand};
 use client::Client;
 use contracts_rs::{
-    Agreement, AgreementContractErrors, GroundCycleContractErrors, GroundCycleContractEvents,
-    GroundCycleNoCryptoContractEvents,
+    AgreementContractErrors, GroundCycleContractErrors, GroundCycleContractEvents,
+    GroundCycleNoCryptoContractErrors, GroundCycleNoCryptoContractEvents,
 };
 use ethers::{
     contract::{ContractError, EthLogDecode, Event},
     providers::{Http, Middleware, Provider},
-    signers::LocalWallet,
-    signers::Signer,
-    types::{Address, Filter, H256},
+    signers::{LocalWallet, Signer},
+    types::{Address, Filter, H256, U256},
     utils::{format_ether, keccak256, parse_ether},
 };
 use log::{debug, error, info, warn, LevelFilter};
@@ -29,7 +28,7 @@ mod indexer;
 
 // We use this step when iterating over blocks
 // to get smart contract events from these blocks.
-pub(crate) const BLOCK_STEP: u64 = 1;
+pub(crate) const BLOCK_STEP: u64 = 1000;
 
 type Error = Box<dyn std::error::Error>;
 
@@ -51,10 +50,10 @@ struct Cli {
     #[arg(short, long)]
     agreement_contract_addr: Option<String>,
     /// Ground cycle smart contract address.
-    #[arg(short, long)]
+    #[arg(long)]
     ground_cycle_contract_addr: Option<String>,
     /// Ground cycle no crypto smart contract address.
-    #[arg(short, long)]
+    #[arg(long)]
     ground_cycle_no_crypto_contract_addr: Option<String>,
     /// Use GroundCycleNoCrypto smart contract.
     #[arg(short, long)]
@@ -127,7 +126,7 @@ enum Commands {
     Events {
         /// Choose block to start query from.
         #[arg(short, long)]
-        #[arg(default_value = "4807184")]
+        #[arg(default_value = "3800000")]
         from_block: u64,
     },
     /// Run indexer.
@@ -143,7 +142,7 @@ enum Commands {
         #[arg(default_value = "4698")]
         port: u16,
         /// From which block indexer should start scanning.
-        #[arg(default_value = "5306804")]
+        #[arg(default_value = "3800000")]
         from_block: u64,
     },
 }
@@ -315,7 +314,7 @@ impl App {
         let agreement_contract_addr: Address = cfg.agreement_contract_addr.parse()?;
         let ground_cycle_contract_addr: Address = cfg.ground_cycle_contract_addr.parse()?;
         let ground_cycle_no_crypto_contract_addr: Address =
-            cfg.ground_cycle_contract_addr.parse()?;
+            cfg.ground_cycle_no_crypto_contract_addr.parse()?;
         let contracts_client = Client::new(
             provider.clone(),
             agreement_contract_addr,
@@ -389,14 +388,23 @@ impl App {
         station_address: Address,
         no_crypto: bool,
     ) -> Result<(), Error> {
-        let agreement = check_contract_res(
-            self.contracts_client.agreement().get(station_address, wallet.address()).call().await,
-        )?;
+        let amount = if no_crypto {
+            U256::from(0)
+        } else {
+            check_contract_res(
+                self.contracts_client
+                    .agreement()
+                    .get(station_address, wallet.address())
+                    .call()
+                    .await,
+            )?
+            .amount
+        };
         let block_number = self.provider.get_block_number().await?.as_u64();
         info!(
             "starting landing by drone from block {} with agreement amount {}",
             block_number,
-            format_ether(agreement.amount)
+            format_ether(amount)
         );
         let landing_call = if no_crypto {
             self.contracts_client
@@ -406,7 +414,7 @@ impl App {
             self.contracts_client
                 .ground_cycle_signer(wallet.clone())
                 .landing_by_drone(station_address)
-                .value(agreement.amount)
+                .value(amount)
         };
         let call_res = landing_call.send().await;
         check_contract_res(call_res)?.await?;
@@ -423,14 +431,23 @@ impl App {
     ) -> Result<(), Error> {
         let wallet = LocalWallet::from_str(&station_private_key)?.with_chain_id(self.chain_id);
         let landlord_address: Address = landlord_address.parse()?;
-        let agreement: Agreement = check_contract_res(
-            self.contracts_client.agreement().get(wallet.address(), landlord_address).call().await,
-        )?;
+        let amount = if no_crypto {
+            U256::from(0)
+        } else {
+            check_contract_res(
+                self.contracts_client
+                    .agreement()
+                    .get(wallet.address(), landlord_address)
+                    .call()
+                    .await,
+            )?
+            .amount
+        };
         if let Some(drone_address) = drone_address {
             // If drone address is not None we need to execute landing method and exit.
             let drone_address: Address = drone_address.parse()?;
             info!("execute landing by station and exit branch");
-            self.landing_by_station_(wallet, agreement, drone_address, landlord_address, no_crypto)
+            self.landing_by_station_(wallet, amount, drone_address, landlord_address, no_crypto)
                 .await
         } else {
             // If drone address is None we are starting infinity node with camera support.
@@ -438,7 +455,7 @@ impl App {
             let drone_address = scan_address(self.device_index).await?;
             #[cfg(target_os = "macos")]
             let drone_address = scan_address().await?;
-            self.landing_by_station_(wallet, agreement, drone_address, landlord_address, no_crypto)
+            self.landing_by_station_(wallet, amount, drone_address, landlord_address, no_crypto)
                 .await
         }
     }
@@ -446,7 +463,7 @@ impl App {
     async fn landing_by_station_(
         &self,
         wallet: LocalWallet,
-        agreement: Agreement,
+        amount: U256,
         drone_address: Address,
         landlord_address: Address,
         no_crypto: bool,
@@ -461,7 +478,7 @@ impl App {
             self.contracts_client
                 .ground_cycle_signer(wallet.clone())
                 .landing_by_station(drone_address, landlord_address)
-                .value(agreement.amount)
+                .value(amount)
         };
         let call_res = landing_call.send().await;
         check_contract_res(call_res)?.await?;
@@ -511,6 +528,14 @@ impl App {
         info!("ground cycle smart contract events");
         Self::read_events(self.contracts_client.ground_cycle().events(), from_block, to_block)
             .await?;
+
+        info!("ground cycle no crypto smart contract events");
+        Self::read_events(
+            self.contracts_client.ground_cycle_no_crypto().events(),
+            from_block,
+            to_block,
+        )
+        .await?;
 
         Ok(())
     }
@@ -709,6 +734,32 @@ fn check_contract_res<T, P: Middleware>(res: Result<T, ContractError<P>>) -> Res
                         "failed to pass handshake".to_string()
                     }
                     GroundCycleContractErrors::RevertString(e) => e,
+                }
+                .into());
+            }
+            if let Some(contract_err) =
+                e.decode_contract_revert::<GroundCycleNoCryptoContractErrors>()
+            {
+                return Err(match contract_err {
+                    GroundCycleNoCryptoContractErrors::ErrNoLanding(_) => {
+                        "there was no landing for these entities".to_string()
+                    }
+                    GroundCycleNoCryptoContractErrors::ErrNoApprovedLanding(_) => {
+                        "there was no approved landing for these entities".to_string()
+                    }
+                    GroundCycleNoCryptoContractErrors::ErrRejectApprovedLanding(_) => {
+                        "cannot reject approved landing".to_string()
+                    }
+                    GroundCycleNoCryptoContractErrors::ErrRejectTooEarly(_) => {
+                        "reject is too early, wait more time".to_string()
+                    }
+                    GroundCycleNoCryptoContractErrors::ErrTakeoffRequired(_) => {
+                        "it is required to takeoff first before doing landing".to_string()
+                    }
+                    GroundCycleNoCryptoContractErrors::ErrHandshake(_) => {
+                        "failed to pass handshake".to_string()
+                    }
+                    GroundCycleNoCryptoContractErrors::RevertString(e) => e,
                 }
                 .into());
             }
