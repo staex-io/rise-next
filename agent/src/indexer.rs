@@ -289,8 +289,13 @@ impl Database {
     async fn new(dsn: String) -> Result<Self, Error> {
         // Create file if not exists to be able to open and migrate.
         let file_name = dsn.split(':').collect::<Vec<&str>>()[1];
-        if let Err(e) =
-            OpenOptions::new().read(true).write(true).create(true).create_new(true).open(file_name)
+        if let Err(e) = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .create_new(true)
+            .open(file_name)
         {
             match e.kind() {
                 ErrorKind::AlreadyExists => (),

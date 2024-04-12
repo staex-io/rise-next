@@ -21,6 +21,7 @@ use ethers::{
 use log::{debug, error, info, warn, LevelFilter};
 use serde::Deserialize;
 use tokio::time::{self, sleep};
+// use image::{GenericImageView,DynamicImage};
 
 mod client;
 mod indexer;

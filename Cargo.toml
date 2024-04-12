@@ -4,5 +4,5 @@ default-members = ["contracts-rs", "agent"]
 resolver = "2"
 
 [workspace.dependencies]
-ethers = { version = "2.0.13", features = ["rustls"], default-features = false }
-serde = { version = "1.0.196", features = ["std", "derive"], default-features = false }
+ethers = { version = "2.0.14", features = ["rustls"], default-features = false }
+serde = { version = "1.0.197", features = ["std", "derive"], default-features = false }

@@ -7,17 +7,18 @@ edition = "2021"
 contracts-rs = { path = "../contracts-rs" }
 ethers = { workspace = true }
 serde = { workspace = true }
-tokio = { version = "1.36.0", features = ["macros", "rt-multi-thread", "signal"], default-features = false }
-log = { version = "0.4.20", features = [], default-features = false }
-env_logger = { version = "0.11.2", features = ["auto-color", "humantime"], default-features = false }
-serde_json = { version = "1.0.105", features = ["std"], default-features = false }
-clap = { version = "4.5.1", features = ["std", "derive", "help"], default-features = false }
+tokio = { version = "1.37.0", features = ["macros", "rt-multi-thread", "signal"], default-features = false }
+log = { version = "0.4.21", features = [], default-features = false }
+env_logger = { version = "0.11.3", features = ["auto-color", "humantime"], default-features = false }
+serde_json = { version = "1.0.115", features = ["std"], default-features = false }
+clap = { version = "4.5.4", features = ["std", "derive", "help"], default-features = false }
 bardecoder = { version = "0.5.0", features = [], default-features = false }
-image = { version = "0.24.8", features = [], default-features = false }
-sqlx = { version = "0.7.3", features = ["sqlite", "migrate", "macros"], default-features = false }
-axum = { version = "0.7.4", features = [], default-features = true }
-serde_qs = { version = "0.12.0", features = [], default-features = false }
-rust_decimal = { version = "1.34.3", features = [], default-features = false }
+# We cannot use latest image version because bardecoder will be broken.
+image = { version = "0.24.9", features = [], default-features = false }
+sqlx = { version = "0.7.4", features = ["sqlite", "migrate", "macros"], default-features = false }
+axum = { version = "0.7.5", features = [], default-features = true }
+serde_qs = { version = "0.13.0", features = [], default-features = false }
+rust_decimal = { version = "1.35.0", features = [], default-features = false }
 
 [dev-dependencies]
 assertables = { version = "7.0.1", features = [], default-features = false }
