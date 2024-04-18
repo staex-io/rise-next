@@ -427,15 +427,16 @@ impl App {
         mut stop_r: watch::Receiver<()>,
     ) {
         loop {
+            let stop_r_ = stop_r.clone();
             trace!("starting new landing by drone loop");
             select! {
                 _ = stop_r.changed() => {
                     trace!("landing by drone loop received stop signal");
                     return;
                 }
-                _ = sleep(Duration::from_secs(1)) => {
+                _ = sleep(Duration::from_millis(500)) => {
                     if let Err(e) = self.landing_by_drone_(
-                            &wallet, &station_address, no_crypto,
+                            &wallet, &station_address, no_crypto, stop_r_,
                         ).await {
                             error!("failed to landing by drone: {:?}", e);
                         }
@@ -449,6 +450,7 @@ impl App {
         wallet: &LocalWallet,
         station_address: &Option<String>,
         no_crypto: bool,
+        stop_r: watch::Receiver<()>,
     ) -> Result<(), Error> {
         if let Some(station_address) = station_address {
             // If station address is not None we need to execute landing method and exit.
@@ -457,9 +459,9 @@ impl App {
         } else {
             // If station address is None we are starting infinity node with camera support.
             #[cfg(target_os = "linux")]
-            let station_address = scan_address(self.device_index)?;
+            let station_address = scan_address(self.device_index, stop_r).await?;
             #[cfg(target_os = "macos")]
-            let station_address = scan_address()?;
+            let station_address = scan_address(stop_r).await?;
             self.landing_by_drone__(wallet, station_address, no_crypto).await
         }
     }
@@ -516,18 +518,18 @@ impl App {
         mut stop_r: watch::Receiver<()>,
     ) {
         loop {
+            let stop_r_ = stop_r.clone();
             trace!("starting new landing by station loop");
             select! {
                 _ = stop_r.changed() => {
                     trace!("landing by station loop received stop signal");
                     return;
                 }
-                _ = sleep(Duration::from_secs(1)) => {
-                    eprintln!("...");
+                _ = sleep(Duration::from_millis(500)) => {
                     if let Err(e) = self.landing_by_station_(
                             &wallet, station_private_key.to_owned(),
                             &drone_address, landlord_address,
-                            amount, no_crypto
+                            amount, no_crypto, stop_r_
                         ).await {
                             error!("failed to landing by station: {:?}", e);
                         }
@@ -536,6 +538,7 @@ impl App {
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     async fn landing_by_station_(
         &self,
         wallet: &LocalWallet,
@@ -544,6 +547,7 @@ impl App {
         landlord_address: H160,
         amount: U256,
         no_crypto: bool,
+        stop_r: watch::Receiver<()>,
     ) -> Result<(), Error> {
         // If there is active landing for the station let's execute takeoff automatically.
         let active_landing = {
@@ -568,9 +572,9 @@ impl App {
         } else {
             // If drone address is None we are starting infinity node with camera support.
             #[cfg(target_os = "linux")]
-            let drone_address = scan_address(self.device_index)?;
+            let drone_address = scan_address(self.device_index, stop_r).await?;
             #[cfg(target_os = "macos")]
-            let drone_address = scan_address()?;
+            let drone_address = scan_address(stop_r).await?;
             self.landing_by_station__(wallet, amount, drone_address, landlord_address, no_crypto)
                 .await
         }
@@ -892,51 +896,64 @@ struct QrCodeOutput {
 }
 
 #[cfg(target_os = "linux")]
-fn scan_address(device_index: u8) -> Result<Address, Error> {
+async fn scan_address(device_index: u8, stop_r: watch::Receiver<()>) -> Result<Address, Error> {
     let cmd = ffmpeg_read_camera_cmd(device_index);
-    scan_address_(cmd)
+    scan_address_(cmd).await
 }
 
 #[cfg(target_os = "macos")]
-fn scan_address() -> Result<Address, Error> {
+async fn scan_address(stop_r: watch::Receiver<()>) -> Result<Address, Error> {
     let cmd = ffmpeg_read_camera_cmd();
-    scan_address_(cmd)
+    scan_address_(cmd, stop_r).await
 }
 
 // We can't use async in this function as it is not Send.
-fn scan_address_(mut cmd: std::process::Command) -> Result<Address, Error> {
-    let decoder = bardecoder::default_decoder();
+async fn scan_address_(
+    mut cmd: std::process::Command,
+    stop_r: watch::Receiver<()>,
+) -> Result<Address, Error> {
     loop {
-        let output = cmd.output()?;
-        if !output.status.success() {
-            error!("failed to scan camera output");
-            std::thread::sleep(Duration::from_secs(1));
-            continue;
+        if stop_r.has_changed()? {
+            return Err("scan address received stop signal".to_string().into());
         }
-        let img = image::load_from_memory(&output.stdout)?;
-        let results = decoder.decode(&img);
-        if results.len() != 1 {
-            debug!("no available qr code; continue scanning camera output");
-            std::thread::sleep(Duration::from_millis(250));
-            continue;
+        let address = scan_address__(&mut cmd)?;
+        if let Some(address) = address {
+            return Ok(address);
         }
-        if let Ok(result) = &results[0] {
-            match serde_json::from_str::<QrCodeOutput>(result) {
-                Ok(data) => {
-                    if let Ok(address) = data.address.parse() {
-                        return Ok(address);
-                    } else {
-                        error!("address from qr code is invalid")
-                    }
+        sleep(Duration::from_millis(250)).await;
+    }
+}
+
+fn scan_address__(cmd: &mut std::process::Command) -> Result<Option<Address>, Error> {
+    let decoder = bardecoder::default_decoder();
+    let output = cmd.output()?;
+    if !output.status.success() {
+        error!("failed to scan camera output");
+        return Ok(None);
+    }
+    let img = image::load_from_memory(&output.stdout)?;
+    let results = decoder.decode(&img);
+    if results.len() != 1 {
+        debug!("no available qr code; continue scanning camera output");
+        return Ok(None);
+    }
+    if let Ok(result) = &results[0] {
+        match serde_json::from_str::<QrCodeOutput>(result) {
+            Ok(data) => {
+                if let Ok(address) = data.address.parse() {
+                    return Ok(Some(address));
+                } else {
+                    error!("address from qr code is invalid");
+                    return Ok(None);
                 }
-                Err(_) => {
-                    warn!("failed to decode json response from qr code output");
-                    std::thread::sleep(Duration::from_millis(250));
-                    continue;
-                }
+            }
+            Err(_) => {
+                warn!("failed to decode json response from qr code output");
+                return Ok(None);
             }
         }
     }
+    Ok(None)
 }
 
 #[cfg(target_os = "linux")]
