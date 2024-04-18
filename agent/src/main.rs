@@ -186,11 +186,11 @@ impl Config {
             "lisk-sepolia" => Self {
                 rpc_url: "https://rpc.sepolia-api.lisk.com".to_string(),
                 chain_id: 4202,
-                did_contract_addr: "0xD17d6e91e18c4CebC8CE87AC614f2eA5782E237D".to_string(),
-                agreement_contract_addr: "0xe6E52a89718B682048e3279EbE980328f85d22Fc".to_string(),
-                ground_cycle_contract_addr: "0x7C0114eAC19b77875325bE6aE6009EfA5d83Fe99"
+                did_contract_addr: "0xb513e687f5d72C25e3B75e2F59eD1De89806CA3C".to_string(),
+                agreement_contract_addr: "0x5A0De82C2aea42f18F103bd81Fb7189A2adF5e06".to_string(),
+                ground_cycle_contract_addr: "0x2CfCaCF6Ac82e09c1a2E1ec3C9DfB865125CDe94"
                     .to_string(),
-                ground_cycle_no_crypto_contract_addr: "0x2b1E180D421a99bd615dde649C31E29d7575E86D"
+                ground_cycle_no_crypto_contract_addr: "0xEe53d2E4dF8C4Aea9Fc4a41fFC77E600357Cf08C"
                     .to_string(),
             },
             _ => unimplemented!(),
@@ -449,6 +449,21 @@ impl App {
             )?
             .amount
         };
+
+        // If there is active landing for the station let's execute takeoff automatically.
+        let active_landing = {
+            let landing_state = check_contract_res(
+                self.contracts_client.ground_cycle_no_crypto().get(wallet.address()).call().await,
+            )?;
+            landing_state.id != U256::from(0)
+        };
+        if active_landing {
+            debug!("there is an active landing for the station; takeoff");
+            self.takeoff(station_private_key, no_crypto).await?;
+        } else {
+            debug!("there are no active landing for the station");
+        }
+
         if let Some(drone_address) = drone_address {
             // If drone address is not None we need to execute landing method and exit.
             let drone_address: Address = drone_address.parse()?;
