@@ -455,14 +455,14 @@ impl App {
         if let Some(station_address) = station_address {
             // If station address is not None we need to execute landing method and exit.
             let station_address: Address = station_address.parse()?;
-            self.landing_by_drone__(wallet, station_address, no_crypto).await
+            self.landing_by_drone__(wallet, station_address, no_crypto, stop_r).await
         } else {
             // If station address is None we are starting infinity node with camera support.
             #[cfg(target_os = "linux")]
-            let station_address = scan_address(self.device_index, stop_r).await?;
+            let station_address = scan_address(self.device_index, stop_r.clone()).await?;
             #[cfg(target_os = "macos")]
-            let station_address = scan_address(stop_r).await?;
-            self.landing_by_drone__(wallet, station_address, no_crypto).await
+            let station_address = scan_address(stop_r.clone()).await?;
+            self.landing_by_drone__(wallet, station_address, no_crypto, stop_r).await
         }
     }
 
@@ -471,6 +471,7 @@ impl App {
         wallet: &LocalWallet,
         station_address: Address,
         no_crypto: bool,
+        stop_r: watch::Receiver<()>,
     ) -> Result<(), Error> {
         let amount = if no_crypto {
             U256::from(0)
@@ -503,7 +504,7 @@ impl App {
         let call_res = landing_call.send().await;
         check_contract_res(call_res)?.await?;
         info!("drone landed successfully, waiting for confirmation by station");
-        self.wait_for_reject(wallet, station_address, block_number, no_crypto).await
+        self.wait_for_reject(wallet, station_address, block_number, no_crypto, stop_r).await
     }
 
     #[allow(clippy::too_many_arguments)]
@@ -567,16 +568,30 @@ impl App {
             // If drone address is not None we need to execute landing method and exit.
             let drone_address: Address = drone_address.parse()?;
             info!("execute landing by station and exit branch");
-            self.landing_by_station__(wallet, amount, drone_address, landlord_address, no_crypto)
-                .await
+            self.landing_by_station__(
+                wallet,
+                amount,
+                drone_address,
+                landlord_address,
+                no_crypto,
+                stop_r,
+            )
+            .await
         } else {
             // If drone address is None we are starting infinity node with camera support.
             #[cfg(target_os = "linux")]
-            let drone_address = scan_address(self.device_index, stop_r).await?;
+            let drone_address = scan_address(self.device_index, stop_r.clone()).await?;
             #[cfg(target_os = "macos")]
-            let drone_address = scan_address(stop_r).await?;
-            self.landing_by_station__(wallet, amount, drone_address, landlord_address, no_crypto)
-                .await
+            let drone_address = scan_address(stop_r.clone()).await?;
+            self.landing_by_station__(
+                wallet,
+                amount,
+                drone_address,
+                landlord_address,
+                no_crypto,
+                stop_r,
+            )
+            .await
         }
     }
 
@@ -587,6 +602,7 @@ impl App {
         drone_address: Address,
         landlord_address: Address,
         no_crypto: bool,
+        stop_r: watch::Receiver<()>,
     ) -> Result<(), Error> {
         info!("starting landing by station");
         let block_number = self.provider.get_block_number().await?.as_u64();
@@ -603,7 +619,7 @@ impl App {
         let call_res = landing_call.send().await;
         check_contract_res(call_res)?.await?;
         info!("station landed successfully, waiting for confirmation by drone");
-        self.wait_for_reject(wallet, wallet.address(), block_number, no_crypto).await
+        self.wait_for_reject(wallet, wallet.address(), block_number, no_crypto, stop_r).await
     }
 
     async fn takeoff(&self, station_private_key: String, no_crypto: bool) -> Result<(), Error> {
@@ -666,9 +682,13 @@ impl App {
         station_address: Address,
         start_block: u64,
         no_crypto: bool,
+        stop_r: watch::Receiver<()>,
     ) -> Result<(), Error> {
         let started = SystemTime::now();
         loop {
+            if stop_r.has_changed()? {
+                return Ok(());
+            }
             // Get latest block in a chain.
             let stop_block = self.provider.get_block_number().await?.as_u64();
             let mut from_block = start_block;
@@ -920,7 +940,7 @@ async fn scan_address_(
         if let Some(address) = address {
             return Ok(address);
         }
-        sleep(Duration::from_millis(250)).await;
+        sleep(Duration::from_millis(500)).await;
     }
 }
 
@@ -937,23 +957,26 @@ fn scan_address__(cmd: &mut std::process::Command) -> Result<Option<Address>, Er
         debug!("no available qr code; continue scanning camera output");
         return Ok(None);
     }
-    if let Ok(result) = &results[0] {
-        match serde_json::from_str::<QrCodeOutput>(result) {
+    match &results[0] {
+        Ok(result) => match serde_json::from_str::<QrCodeOutput>(result) {
             Ok(data) => {
                 if let Ok(address) = data.address.parse() {
-                    return Ok(Some(address));
+                    Ok(Some(address))
                 } else {
                     error!("address from qr code is invalid");
-                    return Ok(None);
+                    Ok(None)
                 }
             }
             Err(_) => {
                 warn!("failed to decode json response from qr code output");
-                return Ok(None);
+                Ok(None)
             }
+        },
+        Err(e) => {
+            debug!("qr code cannot be scanned correctly even we found one, continue to try: {e}");
+            Ok(None)
         }
     }
-    Ok(None)
 }
 
 #[cfg(target_os = "linux")]
