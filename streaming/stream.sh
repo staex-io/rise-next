@@ -1,5 +1,5 @@
 #!/bin/sh
-video_file=/Users/lavr/Downloads/IMG_6143.mp4
+video_file=${location}
 hostname=127.0.0.1:1935
 exec ffmpeg \
     -loglevel error \
