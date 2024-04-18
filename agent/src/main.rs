@@ -297,8 +297,14 @@ impl App {
         let provider: Provider<Http> = Provider::<Http>::try_from(cfg.rpc_url.clone())?;
         let agreement_contract_addr: Address = cfg.agreement_contract_addr.parse()?;
         let ground_cycle_contract_addr: Address = cfg.ground_cycle_contract_addr.parse()?;
-        let contracts_client =
-            Client::new(provider.clone(), agreement_contract_addr, ground_cycle_contract_addr);
+        let ground_cycle_no_crypto_contract_addr: Address =
+            cfg.ground_cycle_no_crypto_contract_addr.parse()?;
+        let contracts_client = Client::new(
+            provider.clone(),
+            agreement_contract_addr,
+            ground_cycle_contract_addr,
+            ground_cycle_no_crypto_contract_addr,
+        );
         Ok(Self {
             provider,
             chain_id: cfg.chain_id,
