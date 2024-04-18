@@ -940,7 +940,7 @@ async fn scan_address_(
         if let Some(address) = address {
             return Ok(address);
         }
-        sleep(Duration::from_millis(500)).await;
+        sleep(Duration::from_millis(250)).await;
     }
 }
 
@@ -951,32 +951,44 @@ fn scan_address__(cmd: &mut std::process::Command) -> Result<Option<Address>, Er
         error!("failed to scan camera output");
         return Ok(None);
     }
-    let img = image::load_from_memory(&output.stdout)?;
-    let results = decoder.decode(&img);
-    if results.len() != 1 {
-        debug!("no available qr code; continue scanning camera output");
-        return Ok(None);
-    }
-    match &results[0] {
-        Ok(result) => match serde_json::from_str::<QrCodeOutput>(result) {
-            Ok(data) => {
-                if let Ok(address) = data.address.parse() {
-                    Ok(Some(address))
-                } else {
-                    error!("address from qr code is invalid");
-                    Ok(None)
-                }
-            }
-            Err(_) => {
-                warn!("failed to decode json response from qr code output");
-                Ok(None)
-            }
-        },
-        Err(e) => {
-            debug!("qr code cannot be scanned correctly even we found one, continue to try: {e}");
-            Ok(None)
+    let mut img = image::load_from_memory(&output.stdout)?;
+    for _ in 0..3 {
+        let results = decoder.decode(&img);
+        if results.len() != 1 {
+            debug!("no available qr code; continue scanning camera output");
+            return Ok(None);
         }
+        // We need it for debug.
+        // img.save(format!(
+        //     "./debug/{}.png",
+        //     SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs()
+        // ))
+        // .unwrap();
+        match &results[0] {
+            Ok(result) => match serde_json::from_str::<QrCodeOutput>(result) {
+                Ok(data) => {
+                    if let Ok(address) = data.address.parse() {
+                        return Ok(Some(address));
+                    } else {
+                        error!("address from qr code is invalid");
+                        return Ok(None);
+                    }
+                }
+                Err(_) => {
+                    warn!("failed to decode json response from qr code output");
+                    return Ok(None);
+                }
+            },
+            Err(e) => {
+                debug!(
+                    "qr code cannot be scanned correctly even we found one, continue to try: {e}"
+                );
+            }
+        }
+        debug!("resize image by div all dimensions by 2");
+        img = img.resize(img.width() / 2, img.height() / 2, image::imageops::FilterType::Nearest);
     }
+    Ok(None)
 }
 
 #[cfg(target_os = "linux")]
