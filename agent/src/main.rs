@@ -927,7 +927,6 @@ async fn scan_address(stop_r: watch::Receiver<()>) -> Result<Address, Error> {
     scan_address_(cmd, stop_r).await
 }
 
-// We can't use async in this function as it is not Send.
 async fn scan_address_(
     mut cmd: std::process::Command,
     stop_r: watch::Receiver<()>,
