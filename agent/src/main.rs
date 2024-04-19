@@ -15,12 +15,16 @@ use ethers::{
     contract::{ContractError, EthLogDecode, Event},
     providers::{Http, Middleware, Provider},
     signers::{LocalWallet, Signer},
-    types::{Address, Filter, H256, U256},
+    types::{Address, Filter, H160, H256, U256},
     utils::{format_ether, keccak256, parse_ether},
 };
-use log::{debug, error, info, warn, LevelFilter};
+use log::{debug, error, info, trace, warn, LevelFilter};
 use serde::Deserialize;
-use tokio::time::{self, sleep};
+use tokio::{
+    select,
+    sync::watch,
+    time::{self, sleep, timeout},
+};
 // use image::{GenericImageView,DynamicImage};
 
 mod client;
@@ -30,7 +34,14 @@ mod indexer;
 // to get smart contract events from these blocks.
 pub(crate) const BLOCK_STEP: u64 = 1000;
 
-type Error = Box<dyn std::error::Error>;
+#[derive(Debug)]
+struct Error(String);
+
+impl<T: ToString> From<T> for Error {
+    fn from(value: T) -> Self {
+        Self(value.to_string())
+    }
+}
 
 /// Command line utility to interact with RISE smart contracts.
 #[derive(Parser)]
@@ -186,11 +197,11 @@ impl Config {
             "lisk-sepolia" => Self {
                 rpc_url: "https://rpc.sepolia-api.lisk.com".to_string(),
                 chain_id: 4202,
-                did_contract_addr: "0xD17d6e91e18c4CebC8CE87AC614f2eA5782E237D".to_string(),
-                agreement_contract_addr: "0xe6E52a89718B682048e3279EbE980328f85d22Fc".to_string(),
-                ground_cycle_contract_addr: "0x7C0114eAC19b77875325bE6aE6009EfA5d83Fe99"
+                did_contract_addr: "0xb513e687f5d72C25e3B75e2F59eD1De89806CA3C".to_string(),
+                agreement_contract_addr: "0x5A0De82C2aea42f18F103bd81Fb7189A2adF5e06".to_string(),
+                ground_cycle_contract_addr: "0x2CfCaCF6Ac82e09c1a2E1ec3C9DfB865125CDe94"
                     .to_string(),
-                ground_cycle_no_crypto_contract_addr: "0x2b1E180D421a99bd615dde649C31E29d7575E86D"
+                ground_cycle_no_crypto_contract_addr: "0xEe53d2E4dF8C4Aea9Fc4a41fFC77E600357Cf08C"
                     .to_string(),
             },
             _ => unimplemented!(),
@@ -251,19 +262,60 @@ async fn main() -> Result<(), Error> {
         Commands::LandingByDrone {
             drone_private_key,
             station_address,
-        } => app.landing_by_drone(drone_private_key, station_address, cli.no_crypto).await?,
+        } => {
+            let wallet = LocalWallet::from_str(&drone_private_key)?.with_chain_id(app.chain_id);
+            let (stop_s, stop_r) = watch::channel(());
+            tokio::spawn(async move {
+                app.landing_by_drone(wallet, station_address, cli.no_crypto, stop_r).await;
+            });
+            tokio::signal::ctrl_c().await?;
+            debug!("received termination signal");
+            stop_s.send(())?;
+            if let Err(e) = timeout(Duration::from_secs(10), stop_s.closed()).await {
+                error!("failed to stop because of timeout: {}", e);
+            }
+            info!("everything was stopped successfully");
+        }
+
         Commands::LandingByStation {
             station_private_key,
             drone_address,
             landlord_address,
         } => {
-            app.landing_by_station(
-                station_private_key,
-                drone_address,
-                landlord_address,
-                cli.no_crypto,
-            )
-            .await?
+            let wallet = LocalWallet::from_str(&station_private_key)?.with_chain_id(app.chain_id);
+            let landlord_address: Address = landlord_address.parse()?;
+            let amount = if cli.no_crypto {
+                U256::from(0)
+            } else {
+                check_contract_res(
+                    app.contracts_client
+                        .agreement()
+                        .get(wallet.address(), landlord_address)
+                        .call()
+                        .await,
+                )?
+                .amount
+            };
+            let (stop_s, stop_r) = watch::channel(());
+            tokio::spawn(async move {
+                app.landing_by_station(
+                    wallet,
+                    station_private_key,
+                    drone_address,
+                    landlord_address,
+                    amount,
+                    cli.no_crypto,
+                    stop_r,
+                )
+                .await;
+            });
+            tokio::signal::ctrl_c().await?;
+            debug!("received termination signal");
+            stop_s.send(())?;
+            if let Err(e) = timeout(Duration::from_secs(10), stop_s.closed()).await {
+                error!("failed to stop because of timeout: {}", e);
+            }
+            info!("everything was stopped successfully");
         }
         Commands::Takeoff {
             station_private_key,
@@ -369,30 +421,57 @@ impl App {
 
     async fn landing_by_drone(
         &self,
-        drone_private_key: String,
+        wallet: LocalWallet,
         station_address: Option<String>,
         no_crypto: bool,
-    ) -> Result<(), Error> {
-        let wallet = LocalWallet::from_str(&drone_private_key)?.with_chain_id(self.chain_id);
-        if let Some(station_address) = station_address {
-            // If station address is not None we need to execute landing method and exit.
-            let station_address: Address = station_address.parse()?;
-            self.landing_by_drone_(wallet, station_address, no_crypto).await
-        } else {
-            // If station address is None we are starting infinity node with camera support.
-            #[cfg(target_os = "linux")]
-            let station_address = scan_address(self.device_index).await?;
-            #[cfg(target_os = "macos")]
-            let station_address = scan_address().await?;
-            self.landing_by_drone_(wallet, station_address, no_crypto).await
+        mut stop_r: watch::Receiver<()>,
+    ) {
+        loop {
+            let stop_r_ = stop_r.clone();
+            trace!("starting new landing by drone loop");
+            select! {
+                _ = stop_r.changed() => {
+                    trace!("landing by drone loop received stop signal");
+                    return;
+                }
+                _ = sleep(Duration::from_millis(500)) => {
+                    if let Err(e) = self.landing_by_drone_(
+                            &wallet, &station_address, no_crypto, stop_r_,
+                        ).await {
+                            error!("failed to landing by drone: {:?}", e);
+                        }
+                }
+            }
         }
     }
 
     async fn landing_by_drone_(
         &self,
-        wallet: LocalWallet,
+        wallet: &LocalWallet,
+        station_address: &Option<String>,
+        no_crypto: bool,
+        stop_r: watch::Receiver<()>,
+    ) -> Result<(), Error> {
+        if let Some(station_address) = station_address {
+            // If station address is not None we need to execute landing method and exit.
+            let station_address: Address = station_address.parse()?;
+            self.landing_by_drone__(wallet, station_address, no_crypto, stop_r).await
+        } else {
+            // If station address is None we are starting infinity node with camera support.
+            #[cfg(target_os = "linux")]
+            let station_address = scan_address(self.device_index, stop_r.clone()).await?;
+            #[cfg(target_os = "macos")]
+            let station_address = scan_address(stop_r.clone()).await?;
+            self.landing_by_drone__(wallet, station_address, no_crypto, stop_r).await
+        }
+    }
+
+    async fn landing_by_drone__(
+        &self,
+        wallet: &LocalWallet,
         station_address: Address,
         no_crypto: bool,
+        stop_r: watch::Receiver<()>,
     ) -> Result<(), Error> {
         let amount = if no_crypto {
             U256::from(0)
@@ -425,54 +504,105 @@ impl App {
         let call_res = landing_call.send().await;
         check_contract_res(call_res)?.await?;
         info!("drone landed successfully, waiting for confirmation by station");
-        self.wait_for_reject(wallet, station_address, block_number, no_crypto).await
+        self.wait_for_reject(wallet, station_address, block_number, no_crypto, stop_r).await
     }
 
+    #[allow(clippy::too_many_arguments)]
     async fn landing_by_station(
         &self,
+        wallet: LocalWallet,
         station_private_key: String,
         drone_address: Option<String>,
-        landlord_address: String,
+        landlord_address: H160,
+        amount: U256,
         no_crypto: bool,
+        mut stop_r: watch::Receiver<()>,
+    ) {
+        loop {
+            let stop_r_ = stop_r.clone();
+            trace!("starting new landing by station loop");
+            select! {
+                _ = stop_r.changed() => {
+                    trace!("landing by station loop received stop signal");
+                    return;
+                }
+                _ = sleep(Duration::from_millis(500)) => {
+                    if let Err(e) = self.landing_by_station_(
+                            &wallet, station_private_key.to_owned(),
+                            &drone_address, landlord_address,
+                            amount, no_crypto, stop_r_
+                        ).await {
+                            error!("failed to landing by station: {:?}", e);
+                        }
+                }
+            }
+        }
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    async fn landing_by_station_(
+        &self,
+        wallet: &LocalWallet,
+        station_private_key: String,
+        drone_address: &Option<String>,
+        landlord_address: H160,
+        amount: U256,
+        no_crypto: bool,
+        stop_r: watch::Receiver<()>,
     ) -> Result<(), Error> {
-        let wallet = LocalWallet::from_str(&station_private_key)?.with_chain_id(self.chain_id);
-        let landlord_address: Address = landlord_address.parse()?;
-        let amount = if no_crypto {
-            U256::from(0)
-        } else {
-            check_contract_res(
-                self.contracts_client
-                    .agreement()
-                    .get(wallet.address(), landlord_address)
-                    .call()
-                    .await,
-            )?
-            .amount
+        // If there is active landing for the station let's execute takeoff automatically.
+        let active_landing = {
+            let landing_state = check_contract_res(
+                self.contracts_client.ground_cycle_no_crypto().get(wallet.address()).call().await,
+            )?;
+            landing_state.id != U256::from(0)
         };
+        if active_landing {
+            debug!("there is an active landing for the station; takeoff");
+            self.takeoff(station_private_key, no_crypto).await?;
+        } else {
+            debug!("there are no active landing for the station");
+        }
+
         if let Some(drone_address) = drone_address {
             // If drone address is not None we need to execute landing method and exit.
             let drone_address: Address = drone_address.parse()?;
             info!("execute landing by station and exit branch");
-            self.landing_by_station_(wallet, amount, drone_address, landlord_address, no_crypto)
-                .await
+            self.landing_by_station__(
+                wallet,
+                amount,
+                drone_address,
+                landlord_address,
+                no_crypto,
+                stop_r,
+            )
+            .await
         } else {
             // If drone address is None we are starting infinity node with camera support.
             #[cfg(target_os = "linux")]
-            let drone_address = scan_address(self.device_index).await?;
+            let drone_address = scan_address(self.device_index, stop_r.clone()).await?;
             #[cfg(target_os = "macos")]
-            let drone_address = scan_address().await?;
-            self.landing_by_station_(wallet, amount, drone_address, landlord_address, no_crypto)
-                .await
+            let drone_address = scan_address(stop_r.clone()).await?;
+            self.landing_by_station__(
+                wallet,
+                amount,
+                drone_address,
+                landlord_address,
+                no_crypto,
+                stop_r,
+            )
+            .await
         }
     }
 
-    async fn landing_by_station_(
+    async fn landing_by_station__(
         &self,
-        wallet: LocalWallet,
+        wallet: &LocalWallet,
         amount: U256,
         drone_address: Address,
         landlord_address: Address,
         no_crypto: bool,
+        stop_r: watch::Receiver<()>,
     ) -> Result<(), Error> {
         info!("starting landing by station");
         let block_number = self.provider.get_block_number().await?.as_u64();
@@ -489,7 +619,7 @@ impl App {
         let call_res = landing_call.send().await;
         check_contract_res(call_res)?.await?;
         info!("station landed successfully, waiting for confirmation by drone");
-        self.wait_for_reject(wallet.clone(), wallet.address(), block_number, no_crypto).await
+        self.wait_for_reject(wallet, wallet.address(), block_number, no_crypto, stop_r).await
     }
 
     async fn takeoff(&self, station_private_key: String, no_crypto: bool) -> Result<(), Error> {
@@ -548,13 +678,17 @@ impl App {
 
     async fn wait_for_reject(
         &self,
-        wallet: LocalWallet,
+        wallet: &LocalWallet,
         station_address: Address,
         start_block: u64,
         no_crypto: bool,
+        stop_r: watch::Receiver<()>,
     ) -> Result<(), Error> {
         let started = SystemTime::now();
         loop {
+            if stop_r.has_changed()? {
+                return Ok(());
+            }
             // Get latest block in a chain.
             let stop_block = self.provider.get_block_number().await?.as_u64();
             let mut from_block = start_block;
@@ -588,9 +722,11 @@ impl App {
         }
         warn!("no approved landing for {}s, starting for landing reject", self.landing_wait_time);
         let reject_call = if no_crypto {
-            self.contracts_client.ground_cycle_no_crypto_signer(wallet).reject(station_address)
+            self.contracts_client
+                .ground_cycle_no_crypto_signer(wallet.clone())
+                .reject(station_address)
         } else {
-            self.contracts_client.ground_cycle_signer(wallet).reject(station_address)
+            self.contracts_client.ground_cycle_signer(wallet.clone()).reject(station_address)
         };
         let call_res = reject_call.send().await;
         check_contract_res(call_res)?.await?;
@@ -780,50 +916,79 @@ struct QrCodeOutput {
 }
 
 #[cfg(target_os = "linux")]
-async fn scan_address(device_index: u8) -> Result<Address, Error> {
+async fn scan_address(device_index: u8, stop_r: watch::Receiver<()>) -> Result<Address, Error> {
     let cmd = ffmpeg_read_camera_cmd(device_index);
-    scan_address_(cmd).await
+    scan_address_(cmd, stop_r).await
 }
 
 #[cfg(target_os = "macos")]
-async fn scan_address() -> Result<Address, Error> {
+async fn scan_address(stop_r: watch::Receiver<()>) -> Result<Address, Error> {
     let cmd = ffmpeg_read_camera_cmd();
-    scan_address_(cmd).await
+    scan_address_(cmd, stop_r).await
 }
 
-async fn scan_address_(mut cmd: std::process::Command) -> Result<Address, Error> {
-    let decoder = bardecoder::default_decoder();
+async fn scan_address_(
+    mut cmd: std::process::Command,
+    stop_r: watch::Receiver<()>,
+) -> Result<Address, Error> {
     loop {
-        let output = cmd.output()?;
-        if !output.status.success() {
-            error!("failed to scan camera output");
-            sleep(Duration::from_secs(1)).await;
-            continue;
+        if stop_r.has_changed()? {
+            return Err("scan address received stop signal".to_string().into());
         }
-        let img = image::load_from_memory(&output.stdout)?;
+        let address = scan_address__(&mut cmd)?;
+        if let Some(address) = address {
+            return Ok(address);
+        }
+        sleep(Duration::from_millis(250)).await;
+    }
+}
+
+fn scan_address__(cmd: &mut std::process::Command) -> Result<Option<Address>, Error> {
+    let decoder = bardecoder::default_decoder();
+    let output = cmd.output()?;
+    if !output.status.success() {
+        trace!("failed to scan camera output");
+        return Ok(None);
+    }
+    let mut img = image::load_from_memory(&output.stdout)?;
+    for i in 0..3 {
         let results = decoder.decode(&img);
         if results.len() != 1 {
-            debug!("no available qr code; continue scanning camera output");
-            sleep(Duration::from_millis(250)).await;
-            continue;
+            trace!("no available qr code; continue scanning camera output");
+            return Ok(None);
         }
-        if let Ok(result) = &results[0] {
-            match serde_json::from_str::<QrCodeOutput>(result) {
+        // We need it for debug.
+        // img.save(format!(
+        //     "./debug/{}.png",
+        //     SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs()
+        // ))
+        // .unwrap();
+        match &results[0] {
+            Ok(result) => match serde_json::from_str::<QrCodeOutput>(result) {
                 Ok(data) => {
                     if let Ok(address) = data.address.parse() {
-                        return Ok(address);
+                        trace!("iteration {}", i);
+                        return Ok(Some(address));
                     } else {
-                        error!("address from qr code is invalid")
+                        error!("address from qr code is invalid");
+                        return Ok(None);
                     }
                 }
                 Err(_) => {
                     warn!("failed to decode json response from qr code output");
-                    sleep(Duration::from_millis(250)).await;
-                    continue;
+                    return Ok(None);
                 }
+            },
+            Err(e) => {
+                trace!(
+                    "qr code cannot be scanned correctly even we found one, continue to try: {e}"
+                );
             }
         }
+        trace!("resize image by div all dimensions by 2");
+        img = img.resize(img.width() / 2, img.height() / 2, image::imageops::FilterType::Nearest);
     }
+    Ok(None)
 }
 
 #[cfg(target_os = "linux")]

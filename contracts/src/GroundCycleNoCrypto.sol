@@ -97,6 +97,11 @@ contract GroundCycleNoCryptoContract {
         delete landings[msg.sender];
     }
 
+    function get(address station) external view returns (Info memory) {
+        Info memory landing = landings[station];
+        return landing;
+    }
+
     function reject(address station) external {
         Info memory landing = landings[station];
         if (landing.id != 0) {
