@@ -40,13 +40,13 @@ pub(crate) async fn run(
     let indexer = Indexer::new(database.clone()).await?;
     tokio::spawn(async move {
         if let Err(e) = indexer.run(cfg, from_block).await {
-            error!("failed to run indexer: {e}");
+            error!("failed to run indexer: {:?}", e);
         }
     });
 
     tokio::spawn(async move {
         if let Err(e) = run_api(host, port, database).await {
-            error!("failed to run api: {e}")
+            error!("failed to run api: {:?}", e)
         }
     });
 
@@ -691,6 +691,12 @@ impl<T: ToString> From<T> for ErrorResponse {
             status_code: StatusCode::INTERNAL_SERVER_ERROR,
             message: value.to_string(),
         }
+    }
+}
+
+impl From<Error> for ErrorResponse {
+    fn from(value: Error) -> Self {
+        value.0.into()
     }
 }
 
