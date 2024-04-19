@@ -918,7 +918,7 @@ struct QrCodeOutput {
 #[cfg(target_os = "linux")]
 async fn scan_address(device_index: u8, stop_r: watch::Receiver<()>) -> Result<Address, Error> {
     let cmd = ffmpeg_read_camera_cmd(device_index);
-    scan_address_(cmd).await
+    scan_address_(cmd, stop_r).await
 }
 
 #[cfg(target_os = "macos")]
@@ -951,7 +951,7 @@ fn scan_address__(cmd: &mut std::process::Command) -> Result<Option<Address>, Er
         return Ok(None);
     }
     let mut img = image::load_from_memory(&output.stdout)?;
-    for _ in 0..3 {
+    for i in 0..3 {
         let results = decoder.decode(&img);
         if results.len() != 1 {
             debug!("no available qr code; continue scanning camera output");
@@ -967,6 +967,7 @@ fn scan_address__(cmd: &mut std::process::Command) -> Result<Option<Address>, Er
             Ok(result) => match serde_json::from_str::<QrCodeOutput>(result) {
                 Ok(data) => {
                     if let Ok(address) = data.address.parse() {
+                        debug!("iteration {}", i);
                         return Ok(Some(address));
                     } else {
                         error!("address from qr code is invalid");
