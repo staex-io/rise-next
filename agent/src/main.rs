@@ -947,14 +947,14 @@ fn scan_address__(cmd: &mut std::process::Command) -> Result<Option<Address>, Er
     let decoder = bardecoder::default_decoder();
     let output = cmd.output()?;
     if !output.status.success() {
-        error!("failed to scan camera output");
+        trace!("failed to scan camera output");
         return Ok(None);
     }
     let mut img = image::load_from_memory(&output.stdout)?;
     for i in 0..3 {
         let results = decoder.decode(&img);
         if results.len() != 1 {
-            debug!("no available qr code; continue scanning camera output");
+            trace!("no available qr code; continue scanning camera output");
             return Ok(None);
         }
         // We need it for debug.
@@ -967,7 +967,7 @@ fn scan_address__(cmd: &mut std::process::Command) -> Result<Option<Address>, Er
             Ok(result) => match serde_json::from_str::<QrCodeOutput>(result) {
                 Ok(data) => {
                     if let Ok(address) = data.address.parse() {
-                        debug!("iteration {}", i);
+                        trace!("iteration {}", i);
                         return Ok(Some(address));
                     } else {
                         error!("address from qr code is invalid");
@@ -980,12 +980,12 @@ fn scan_address__(cmd: &mut std::process::Command) -> Result<Option<Address>, Er
                 }
             },
             Err(e) => {
-                debug!(
+                trace!(
                     "qr code cannot be scanned correctly even we found one, continue to try: {e}"
                 );
             }
         }
-        debug!("resize image by div all dimensions by 2");
+        trace!("resize image by div all dimensions by 2");
         img = img.resize(img.width() / 2, img.height() / 2, image::imageops::FilterType::Nearest);
     }
     Ok(None)
