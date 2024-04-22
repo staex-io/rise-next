@@ -1314,6 +1314,178 @@ pub mod did_contract {
         pub price: ::ethers::core::types::U256,
     }
 }
+pub use data_proving_contract::*;
+/// This module was auto-generated with ethers-rs Abigen.
+/// More information at: <https://github.com/gakonst/ethers-rs>
+#[allow(
+    clippy::enum_variant_names,
+    clippy::too_many_arguments,
+    clippy::upper_case_acronyms,
+    clippy::type_complexity,
+    dead_code,
+    non_camel_case_types,
+)]
+pub mod data_proving_contract {
+    #[allow(deprecated)]
+    fn __abi() -> ::ethers::core::abi::Abi {
+        ::ethers::core::abi::ethabi::Contract {
+            constructor: ::core::option::Option::None,
+            functions: ::core::convert::From::from([
+                (
+                    ::std::borrow::ToOwned::to_owned("save"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned("save"),
+                            inputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::borrow::ToOwned::to_owned("hash"),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::String,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("string"),
+                                    ),
+                                },
+                            ],
+                            outputs: ::std::vec![],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::NonPayable,
+                        },
+                    ],
+                ),
+            ]),
+            events: ::std::collections::BTreeMap::new(),
+            errors: ::std::collections::BTreeMap::new(),
+            receive: false,
+            fallback: false,
+        }
+    }
+    ///The parsed JSON ABI of the contract.
+    pub static DATAPROVINGCONTRACT_ABI: ::ethers::contract::Lazy<
+        ::ethers::core::abi::Abi,
+    > = ::ethers::contract::Lazy::new(__abi);
+    #[rustfmt::skip]
+    const __BYTECODE: &[u8] = b"`\x80`@R4\x80\x15a\0\x10W`\0\x80\xFD[Pa\x02`\x80a\0 `\09`\0\xF3\xFE`\x80`@R4\x80\x15a\0\x10W`\0\x80\xFD[P`\x046\x10a\0+W`\x005`\xE0\x1C\x80c8\xE4\x8F\x06\x14a\x000W[`\0\x80\xFD[a\0Ca\0>6`\x04a\0WV[a\0EV[\0[`\0a\0R\x82\x84\x83a\x01iV[PPPV[`\0\x80` \x83\x85\x03\x12\x15a\0jW`\0\x80\xFD[\x825g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x82\x11\x15a\0\x82W`\0\x80\xFD[\x81\x85\x01\x91P\x85`\x1F\x83\x01\x12a\0\x96W`\0\x80\xFD[\x815\x81\x81\x11\x15a\0\xA5W`\0\x80\xFD[\x86` \x82\x85\x01\x01\x11\x15a\0\xB7W`\0\x80\xFD[` \x92\x90\x92\x01\x96\x91\x95P\x90\x93PPPPV[cNH{q`\xE0\x1B`\0R`A`\x04R`$`\0\xFD[`\x01\x81\x81\x1C\x90\x82\x16\x80a\0\xF3W`\x7F\x82\x16\x91P[` \x82\x10\x81\x03a\x01\x13WcNH{q`\xE0\x1B`\0R`\"`\x04R`$`\0\xFD[P\x91\x90PV[`\x1F\x82\x11\x15a\0RW`\0\x81`\0R` `\0 `\x1F\x85\x01`\x05\x1C\x81\x01` \x86\x10\x15a\x01BWP\x80[`\x1F\x85\x01`\x05\x1C\x82\x01\x91P[\x81\x81\x10\x15a\x01aW\x82\x81U`\x01\x01a\x01NV[PPPPPPV[g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x83\x11\x15a\x01\x81Wa\x01\x81a\0\xC9V[a\x01\x95\x83a\x01\x8F\x83Ta\0\xDFV[\x83a\x01\x19V[`\0`\x1F\x84\x11`\x01\x81\x14a\x01\xC9W`\0\x85\x15a\x01\xB1WP\x83\x82\x015[`\0\x19`\x03\x87\x90\x1B\x1C\x19\x16`\x01\x86\x90\x1B\x17\x83Ua\x02#V[`\0\x83\x81R` \x90 `\x1F\x19\x86\x16\x90\x83[\x82\x81\x10\x15a\x01\xFAW\x86\x85\x015\x82U` \x94\x85\x01\x94`\x01\x90\x92\x01\x91\x01a\x01\xDAV[P\x86\x82\x10\x15a\x02\x17W`\0\x19`\xF8\x88`\x03\x1B\x16\x1C\x19\x84\x87\x015\x16\x81U[PP`\x01\x85`\x01\x1B\x01\x83U[PPPPPV\xFE\xA2dipfsX\"\x12 \xA8\xF6e\xBC\xE0\xD1\x8E\x111(,8\xCD\x83L\x90\xDE\x15\xEEO|\xC4<Ia\x80\xED\xB7\x97a\xD2sdsolcC\0\x08\x16\x003";
+    /// The bytecode of the contract.
+    pub static DATAPROVINGCONTRACT_BYTECODE: ::ethers::core::types::Bytes = ::ethers::core::types::Bytes::from_static(
+        __BYTECODE,
+    );
+    #[rustfmt::skip]
+    const __DEPLOYED_BYTECODE: &[u8] = b"`\x80`@R4\x80\x15a\0\x10W`\0\x80\xFD[P`\x046\x10a\0+W`\x005`\xE0\x1C\x80c8\xE4\x8F\x06\x14a\x000W[`\0\x80\xFD[a\0Ca\0>6`\x04a\0WV[a\0EV[\0[`\0a\0R\x82\x84\x83a\x01iV[PPPV[`\0\x80` \x83\x85\x03\x12\x15a\0jW`\0\x80\xFD[\x825g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x82\x11\x15a\0\x82W`\0\x80\xFD[\x81\x85\x01\x91P\x85`\x1F\x83\x01\x12a\0\x96W`\0\x80\xFD[\x815\x81\x81\x11\x15a\0\xA5W`\0\x80\xFD[\x86` \x82\x85\x01\x01\x11\x15a\0\xB7W`\0\x80\xFD[` \x92\x90\x92\x01\x96\x91\x95P\x90\x93PPPPV[cNH{q`\xE0\x1B`\0R`A`\x04R`$`\0\xFD[`\x01\x81\x81\x1C\x90\x82\x16\x80a\0\xF3W`\x7F\x82\x16\x91P[` \x82\x10\x81\x03a\x01\x13WcNH{q`\xE0\x1B`\0R`\"`\x04R`$`\0\xFD[P\x91\x90PV[`\x1F\x82\x11\x15a\0RW`\0\x81`\0R` `\0 `\x1F\x85\x01`\x05\x1C\x81\x01` \x86\x10\x15a\x01BWP\x80[`\x1F\x85\x01`\x05\x1C\x82\x01\x91P[\x81\x81\x10\x15a\x01aW\x82\x81U`\x01\x01a\x01NV[PPPPPPV[g\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x83\x11\x15a\x01\x81Wa\x01\x81a\0\xC9V[a\x01\x95\x83a\x01\x8F\x83Ta\0\xDFV[\x83a\x01\x19V[`\0`\x1F\x84\x11`\x01\x81\x14a\x01\xC9W`\0\x85\x15a\x01\xB1WP\x83\x82\x015[`\0\x19`\x03\x87\x90\x1B\x1C\x19\x16`\x01\x86\x90\x1B\x17\x83Ua\x02#V[`\0\x83\x81R` \x90 `\x1F\x19\x86\x16\x90\x83[\x82\x81\x10\x15a\x01\xFAW\x86\x85\x015\x82U` \x94\x85\x01\x94`\x01\x90\x92\x01\x91\x01a\x01\xDAV[P\x86\x82\x10\x15a\x02\x17W`\0\x19`\xF8\x88`\x03\x1B\x16\x1C\x19\x84\x87\x015\x16\x81U[PP`\x01\x85`\x01\x1B\x01\x83U[PPPPPV\xFE\xA2dipfsX\"\x12 \xA8\xF6e\xBC\xE0\xD1\x8E\x111(,8\xCD\x83L\x90\xDE\x15\xEEO|\xC4<Ia\x80\xED\xB7\x97a\xD2sdsolcC\0\x08\x16\x003";
+    /// The deployed bytecode of the contract.
+    pub static DATAPROVINGCONTRACT_DEPLOYED_BYTECODE: ::ethers::core::types::Bytes = ::ethers::core::types::Bytes::from_static(
+        __DEPLOYED_BYTECODE,
+    );
+    pub struct DataProvingContract<M>(::ethers::contract::Contract<M>);
+    impl<M> ::core::clone::Clone for DataProvingContract<M> {
+        fn clone(&self) -> Self {
+            Self(::core::clone::Clone::clone(&self.0))
+        }
+    }
+    impl<M> ::core::ops::Deref for DataProvingContract<M> {
+        type Target = ::ethers::contract::Contract<M>;
+        fn deref(&self) -> &Self::Target {
+            &self.0
+        }
+    }
+    impl<M> ::core::ops::DerefMut for DataProvingContract<M> {
+        fn deref_mut(&mut self) -> &mut Self::Target {
+            &mut self.0
+        }
+    }
+    impl<M> ::core::fmt::Debug for DataProvingContract<M> {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+            f.debug_tuple(::core::stringify!(DataProvingContract))
+                .field(&self.address())
+                .finish()
+        }
+    }
+    impl<M: ::ethers::providers::Middleware> DataProvingContract<M> {
+        /// Creates a new contract instance with the specified `ethers` client at
+        /// `address`. The contract derefs to a `ethers::Contract` object.
+        pub fn new<T: Into<::ethers::core::types::Address>>(
+            address: T,
+            client: ::std::sync::Arc<M>,
+        ) -> Self {
+            Self(
+                ::ethers::contract::Contract::new(
+                    address.into(),
+                    DATAPROVINGCONTRACT_ABI.clone(),
+                    client,
+                ),
+            )
+        }
+        /// Constructs the general purpose `Deployer` instance based on the provided constructor arguments and sends it.
+        /// Returns a new instance of a deployer that returns an instance of this contract after sending the transaction
+        ///
+        /// Notes:
+        /// - If there are no constructor arguments, you should pass `()` as the argument.
+        /// - The default poll duration is 7 seconds.
+        /// - The default number of confirmations is 1 block.
+        ///
+        ///
+        /// # Example
+        ///
+        /// Generate contract bindings with `abigen!` and deploy a new contract instance.
+        ///
+        /// *Note*: this requires a `bytecode` and `abi` object in the `greeter.json` artifact.
+        ///
+        /// ```ignore
+        /// # async fn deploy<M: ethers::providers::Middleware>(client: ::std::sync::Arc<M>) {
+        ///     abigen!(Greeter, "../greeter.json");
+        ///
+        ///    let greeter_contract = Greeter::deploy(client, "Hello world!".to_string()).unwrap().send().await.unwrap();
+        ///    let msg = greeter_contract.greet().call().await.unwrap();
+        /// # }
+        /// ```
+        pub fn deploy<T: ::ethers::core::abi::Tokenize>(
+            client: ::std::sync::Arc<M>,
+            constructor_args: T,
+        ) -> ::core::result::Result<
+            ::ethers::contract::builders::ContractDeployer<M, Self>,
+            ::ethers::contract::ContractError<M>,
+        > {
+            let factory = ::ethers::contract::ContractFactory::new(
+                DATAPROVINGCONTRACT_ABI.clone(),
+                DATAPROVINGCONTRACT_BYTECODE.clone().into(),
+                client,
+            );
+            let deployer = factory.deploy(constructor_args)?;
+            let deployer = ::ethers::contract::ContractDeployer::new(deployer);
+            Ok(deployer)
+        }
+        ///Calls the contract's `save` (0x38e48f06) function
+        pub fn save(
+            &self,
+            hash: ::std::string::String,
+        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
+            self.0
+                .method_hash([56, 228, 143, 6], hash)
+                .expect("method not found (this should never happen)")
+        }
+    }
+    impl<M: ::ethers::providers::Middleware> From<::ethers::contract::Contract<M>>
+    for DataProvingContract<M> {
+        fn from(contract: ::ethers::contract::Contract<M>) -> Self {
+            Self::new(contract.address(), contract.client())
+        }
+    }
+    ///Container type for all input parameters for the `save` function with signature `save(string)` and selector `0x38e48f06`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        serde::Serialize,
+        serde::Deserialize,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "save", abi = "save(string)")]
+    pub struct SaveCall {
+        pub hash: ::std::string::String,
+    }
+}
 pub use ground_cycle_contract::*;
 /// This module was auto-generated with ethers-rs Abigen.
 /// More information at: <https://github.com/gakonst/ethers-rs>
