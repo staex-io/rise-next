@@ -6,6 +6,7 @@ use std::sync::Arc;
 use base64::Engine;
 use clap::Parser;
 use contracts_rs::DataProvingContract;
+use ethers::abi::AbiEncode;
 use ethers::providers::{Http, Provider};
 use ethers::signers::LocalWallet;
 use ethers::{middleware::SignerMiddleware, signers::Signer, types::Address};
@@ -26,7 +27,7 @@ struct Cli {
     output: String,
     /// Set smart contract address.
     #[arg(short, long)]
-    #[arg(default_value = "0xc01117e3cc1e59DCB924F54177745Acc56592572")]
+    #[arg(default_value = "0x0BD357DB61671f31fF0A75eb403C13E628C9242e")]
     smart_contract_address: String,
     /// Set private key to interact with smart contract.
     private_key: String,
@@ -59,7 +60,16 @@ async fn main() -> Result<ExitCode, Box<dyn std::error::Error>> {
     let client = Arc::new(SignerMiddleware::new(provider, wallet));
     let smart_contract_address = Address::from_str(&cli.smart_contract_address)?;
     let smart_contract = DataProvingContract::new(smart_contract_address, client);
-    smart_contract.save(encoded).send().await?;
+    let res = smart_contract
+        .save(encoded.clone())
+        .send()
+        .await?
+        .await?
+        .ok_or("failed to save new hash")?;
+    eprintln!("Transaction hash is {}", res.transaction_hash.encode_hex());
+
+    let res = smart_contract.get().call().await?;
+    assert_eq!(encoded, res, "on-chain hash should the same as computed");
 
     Ok(ExitCode::SUCCESS)
 }
