@@ -10,3 +10,6 @@ run_rtmp:
 
 start_streaming:
 	./stream.sh location=$(location)
+
+run_cutter:
+	cargo run
