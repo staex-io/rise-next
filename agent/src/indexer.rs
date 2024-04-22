@@ -101,7 +101,7 @@ impl Indexer {
         debug!("latest block number in selected network is {latest_block}");
 
         let mut from_block: u64 = from_block;
-        let mut block_step: u64 = 3000;
+        let mut block_step: u64 = 50_000;
         loop {
             let to_block: u64 = from_block + block_step;
             let block = provider.get_block(to_block).await?;
