@@ -12,7 +12,20 @@ export default {
 
 <template>
   <header>
-    <nav>
+    <nav class="nav-mobile">
+      <a href="/landings">
+        <img class="logo" alt="Staex logo" src="@/assets/logo-light.svg" />
+      </a>
+      <ul>
+        <li>
+          <RouterLink to="/landings">Landings</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/stations">Stations</RouterLink>
+        </li>
+      </ul>
+    </nav>
+    <nav class="nav-desktop">
       <a href="/wallet">
         <img class="logo" alt="Staex logo" src="@/assets/logo-light.svg" />
       </a>

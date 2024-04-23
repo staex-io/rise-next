@@ -308,6 +308,18 @@ select {
   }
 }
 
+@media (max-width: 800px) {
+  .nav-desktop {
+    display: none;
+  }
+}
+
+@media (min-width: 800px) {
+  .nav-mobile {
+    display: none;
+  }
+}
+
 .h-scroll-container {
   max-width: 100%;
   overflow-x: auto;

@@ -78,7 +78,7 @@ export default {
     </div>
   </div>
   <h1>Landings</h1>
-  <div>
+  <div class="h-scroll-container">
     <table v-if="landings.length">
       <thead>
         <tr>

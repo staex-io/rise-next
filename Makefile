@@ -29,4 +29,9 @@ deploy:
 		--fork-url ${RPC_URL} --broadcast -vvvv
 
 build_agent:
-	docker build -f deploy/Dockerfile -t ghcr.io/staex-io/rise-next/agent .
+	docker buildx build \
+		--platform linux/amd64 \
+		-t ghcr.io/staex-io/rise-next/agent:$(shell date +%d%m%Y%H%M) \
+		-f deploy/Dockerfile \
+		--push \
+		.

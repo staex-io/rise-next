@@ -17,7 +17,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      redirect: { name: 'walletManagement' },
+      redirect: { name: 'landings' },
     },
     {
       path: '/create-agreement',
