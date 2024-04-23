@@ -645,6 +645,7 @@ impl Database {
             query.push_bind(address);
             return Ok(query);
         }
+        query.push(" order by id desc");
         query.push(" limit ").push_bind(limit).push(" offset ").push_bind(offset);
         Ok(query)
     }
@@ -739,7 +740,7 @@ struct QueryParams {
 }
 
 fn default_limit() -> u32 {
-    10
+    20
 }
 fn default_offset() -> u32 {
     0
