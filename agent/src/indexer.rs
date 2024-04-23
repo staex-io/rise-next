@@ -104,7 +104,13 @@ impl Indexer {
         let mut block_step: u64 = 50_000;
         loop {
             let to_block: u64 = from_block + block_step;
-            let block = provider.get_block(to_block).await?;
+            let block = match provider.get_block(to_block).await{
+                Ok(block)=> block,
+                Err(e) => {
+                    error!("failed to get block from network: {e}");
+                    continue;
+                }
+            };
             trace!("scanning from {from_block} to {to_block} block");
             if block.is_none() {
                 block_step /= 2;
