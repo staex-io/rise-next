@@ -73,7 +73,7 @@ export default {
     </div>
   </div>
   <h1>Agreements</h1>
-  <div>
+  <div class="h-scroll-container">
     <table v-if="agreements.length">
       <thead>
         <tr>

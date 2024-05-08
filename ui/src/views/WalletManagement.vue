@@ -179,7 +179,7 @@ export default {
     <p class="error alert" v-if="error !== ''">{{ error }}</p>
   </div>
 
-  <div class="container choose-menu">
+  <div class="container choose-menu h-scroll-container">
     <button class="choose-menu-create-btn" type="button" @click="chooseMenu('show')">Show</button>
     <button class="choose-menu-create-btn" type="button" @click="chooseMenu('create-account')">
       Create account
@@ -201,7 +201,7 @@ export default {
         <button type="button" @click="clearWallet">Clear</button>
       </div>
     </div>
-    <div>
+    <div class="h-scroll-container">
       <table v-if="accountsAsArr.length">
         <thead>
           <tr>
@@ -225,7 +225,7 @@ export default {
         <h2>Partners</h2>
       </div>
     </div>
-    <div>
+    <div class="h-scroll-container">
       <table v-if="partnersAsArr.length">
         <thead>
           <tr>

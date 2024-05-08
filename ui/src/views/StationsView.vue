@@ -37,7 +37,7 @@ export default {
 
 <template>
   <h1>Stations</h1>
-  <div>
+  <div class="h-scroll-container">
     <table v-if="stations.length">
       <thead>
         <tr>

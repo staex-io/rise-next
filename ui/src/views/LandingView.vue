@@ -42,15 +42,21 @@ export default {
       </div>
       <div class="card-field">
         <span class="card-field-label">Drone</span>
-        <span class="card-field-value">{{ landing.drone }}</span>
+        <span class="card-field-value">
+          <div class="h-scroll-container">{{ landing.drone }}</div>
+        </span>
       </div>
       <div class="card-field">
         <span class="card-field-label">Station</span>
-        <span class="card-field-value">{{ landing.station }}</span>
+        <span class="card-field-value">
+          <div class="h-scroll-container">{{ landing.station }}</div>
+        </span>
       </div>
       <div class="card-field">
         <span class="card-field-label">Landlord</span>
-        <span class="card-field-value">{{ landing.landlord }}</span>
+        <span class="card-field-value">
+          <div class="h-scroll-container">{{ landing.landlord }}</div>
+        </span>
       </div>
       <div class="card-field">
         <span class="card-field-label">Taken off</span>

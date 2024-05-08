@@ -110,14 +110,18 @@ export default {
     <div class="card-content">
       <div class="card-field">
         <span class="card-field-label">Address</span>
-        <span class="card-field-value">{{ station.address }}</span>
+        <span class="card-field-value">
+          <div class="h-scroll-container">{{ station.address }}</div></span
+        >
       </div>
       <div class="card-field">
         <span class="card-field-label">Location</span>
         <span class="card-field-value">
-          <a :href="`https://www.google.com/maps/place/${station.location}`" target="_blank">
-            {{ station.location }}
-          </a>
+          <div class="h-scroll-container">
+            <a :href="`https://www.google.com/maps/place/${station.location}`" target="_blank">
+              {{ station.location }}
+            </a>
+          </div>
         </span>
       </div>
       <div class="card-field">

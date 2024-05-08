@@ -104,7 +104,13 @@ impl Indexer {
         let mut block_step: u64 = 50_000;
         loop {
             let to_block: u64 = from_block + block_step;
-            let block = provider.get_block(to_block).await?;
+            let block = match provider.get_block(to_block).await {
+                Ok(block) => block,
+                Err(e) => {
+                    error!("failed to get block from network: {e}");
+                    continue;
+                }
+            };
             trace!("scanning from {from_block} to {to_block} block");
             if block.is_none() {
                 block_step /= 2;
@@ -645,6 +651,7 @@ impl Database {
             query.push_bind(address);
             return Ok(query);
         }
+        query.push(" order by id desc");
         query.push(" limit ").push_bind(limit).push(" offset ").push_bind(offset);
         Ok(query)
     }
@@ -739,7 +746,7 @@ struct QueryParams {
 }
 
 fn default_limit() -> u32 {
-    10
+    20
 }
 fn default_offset() -> u32 {
     0

@@ -78,7 +78,7 @@ export default {
     </div>
   </div>
   <h1>Landings</h1>
-  <div>
+  <div class="h-scroll-container">
     <table v-if="landings.length">
       <thead>
         <tr>
@@ -104,7 +104,7 @@ export default {
           <td>{{ `${landlord.slice(2, 6)}..${landlord.slice(38, 42)}` }}</td>
           <td>{{ is_taken_off ? 'True' : 'False' }}</td>
           <td>{{ is_rejected ? 'True' : 'False' }}</td>
-          <td>{{ new Date(date * 1000).toDateString() }}</td>
+          <td>{{ new Date(date * 1000).toLocaleString() }}</td>
         </tr>
       </tbody>
     </table>
