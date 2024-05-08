@@ -14,7 +14,7 @@ export default {
   <header>
     <nav class="nav-mobile">
       <a href="/landings">
-        <img class="logo" alt="Staex logo" src="@/assets/logo-light.svg" />
+        <img class="logo" alt="Staex logo" src="/favicon.svg" />
       </a>
       <ul>
         <li>
@@ -27,7 +27,7 @@ export default {
     </nav>
     <nav class="nav-desktop">
       <a href="/wallet">
-        <img class="logo" alt="Staex logo" src="@/assets/logo-light.svg" />
+        <img class="logo" alt="Staex logo" src="/favicon.svg" />
       </a>
       <ul>
         <li>
