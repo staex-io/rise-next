@@ -1,3 +1,9 @@
+fmt:
+	cargo +nightly fmt
+
+lint: fmt
+	cargo clippy --tests --all-targets --all-features -- -D warnings
+
 build_rtmp:
 	docker build -t nginx-rtmp .
 
