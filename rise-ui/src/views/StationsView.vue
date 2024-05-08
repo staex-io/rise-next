@@ -7,6 +7,9 @@ export default {
       stations: [],
     }
   },
+  created() {
+    this.load()
+  },
   methods: {
     async load() {
       try {
@@ -28,9 +31,6 @@ export default {
         return
       }
     },
-  },
-  created() {
-    this.load()
   },
 }
 </script>

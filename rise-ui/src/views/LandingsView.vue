@@ -24,6 +24,10 @@ export default {
       this.load(account.address)
     },
   },
+  created() {
+    this.loadWallet()
+    this.load()
+  },
   methods: {
     async load(address) {
       try {
@@ -58,10 +62,6 @@ export default {
         },
       })
     },
-  },
-  created() {
-    this.loadWallet()
-    this.load()
   },
 }
 </script>

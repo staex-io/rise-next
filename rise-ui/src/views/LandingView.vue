@@ -6,6 +6,10 @@ export default {
       landing: null,
     }
   },
+  mounted() {
+    this.id = this.$route.params.id
+    this.load()
+  },
   methods: {
     async load() {
       try {
@@ -25,15 +29,11 @@ export default {
       }
     },
   },
-  mounted() {
-    this.id = this.$route.params.id
-    this.load()
-  },
 }
 </script>
 
 <template>
-  <div class="card" v-if="landing">
+  <div v-if="landing" class="card">
     <div class="card-header">Landing</div>
     <div class="card-content">
       <div class="card-field">
@@ -71,13 +71,13 @@ export default {
         <span class="card-field-value">{{ new Date(landing.date * 1000) }}</span>
       </div>
       <hr v-if="landing.agreements" />
-      <div class="card-field" v-if="landing.agreements && landing.agreements.length >= 1">
+      <div v-if="landing.agreements && landing.agreements.length >= 1" class="card-field">
         <span class="card-field-label">Agreement Station & Drone</span>
         <span class="card-field-value">
           <pre>{{ JSON.stringify(landing.agreements[0], null, 4) }}</pre>
         </span>
       </div>
-      <div class="card-field" v-if="landing.agreements && landing.agreements.length >= 2">
+      <div v-if="landing.agreements && landing.agreements.length >= 2" class="card-field">
         <span class="card-field-label">Agreement Station & Landlord</span>
         <span class="card-field-value">
           <pre>{{ JSON.stringify(landing.agreements[1], null, 4) }}</pre>

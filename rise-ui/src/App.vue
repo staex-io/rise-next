@@ -18,10 +18,10 @@ export default {
       </a>
       <ul>
         <li>
-          <RouterLink to="/landings">Landings</RouterLink>
+          <RouterLink to="/landings"> Landings </RouterLink>
         </li>
         <li>
-          <RouterLink to="/stations">Stations</RouterLink>
+          <RouterLink to="/stations"> Stations </RouterLink>
         </li>
       </ul>
     </nav>
@@ -31,39 +31,39 @@ export default {
       </a>
       <ul>
         <li>
-          <RouterLink to="/landings">Landings</RouterLink>
+          <RouterLink to="/landings"> Landings </RouterLink>
         </li>
         <li class="menu-item">
-          <RouterLink to="/">Agreements</RouterLink>
+          <RouterLink to="/"> Agreements </RouterLink>
           <ul class="submenu">
             <li>
-              <RouterLink to="/create-agreement">Create Agreement</RouterLink>
+              <RouterLink to="/create-agreement"> Create Agreement </RouterLink>
             </li>
             <li>
-              <RouterLink to="/sign-agreement">Sign Agreement</RouterLink>
+              <RouterLink to="/sign-agreement"> Sign Agreement </RouterLink>
             </li>
             <li>
-              <RouterLink to="/agreements">Agreements</RouterLink>
+              <RouterLink to="/agreements"> Agreements </RouterLink>
             </li>
             <li>
-              <RouterLink to="/get-agreement">Get Agreement</RouterLink>
+              <RouterLink to="/get-agreement"> Get Agreement </RouterLink>
             </li>
           </ul>
         </li>
         <li>
-          <RouterLink to="/wallet">Wallet</RouterLink>
+          <RouterLink to="/wallet"> Wallet </RouterLink>
         </li>
         <li>
-          <RouterLink to="/did">DID</RouterLink>
+          <RouterLink to="/did"> DID </RouterLink>
         </li>
         <li>
-          <RouterLink to="/stations">Stations</RouterLink>
+          <RouterLink to="/stations"> Stations </RouterLink>
         </li>
         <li>
-          <RouterLink to="/stats">Stats</RouterLink>
+          <RouterLink to="/stats"> Stats </RouterLink>
         </li>
         <li>
-          <RouterLink to="/qrcode">QRCode</RouterLink>
+          <RouterLink to="/qrcode"> QRCode </RouterLink>
         </li>
       </ul>
     </nav>

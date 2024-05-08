@@ -24,6 +24,9 @@ export default {
       this.load()
     },
   },
+  created() {
+    this.loadWallet()
+  },
   methods: {
     async load() {
       try {
@@ -51,9 +54,6 @@ export default {
       this.wallet = wallet
     },
   },
-  created() {
-    this.loadWallet()
-  },
 }
 </script>
 
@@ -66,7 +66,7 @@ export default {
       </option>
     </select>
   </div>
-  <div class="card local-row" v-if="stats">
+  <div v-if="stats" class="card local-row">
     <div class="card-header">Statistic</div>
     <div class="card-content">
       <div class="card-field">

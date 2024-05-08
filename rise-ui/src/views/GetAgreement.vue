@@ -49,6 +49,9 @@ export default {
       }
     },
   },
+  created() {
+    this.loadWallet()
+  },
   methods: {
     clearAlerts() {
       this.error = ''
@@ -88,9 +91,6 @@ export default {
       this.wallet = wallet
     },
   },
-  created() {
-    this.loadWallet()
-  },
 }
 </script>
 
@@ -122,7 +122,9 @@ export default {
     <button type="button" @click="getAgreement">Get</button>
   </div>
   <div>
-    <p class="error alert" v-if="error !== ''">{{ error }}</p>
+    <p v-if="error !== ''" class="error alert">
+      {{ error }}
+    </p>
   </div>
 </template>
 

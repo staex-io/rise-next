@@ -39,6 +39,7 @@ export default {
         new ethers.Wallet(privateKey)
         this.clearAlerts()
       } catch (error) {
+        console.error(error)
         this.error = 'Failed to parse entity private key.'
       }
     },
@@ -57,6 +58,9 @@ export default {
         this.clearAlerts()
       }
     },
+  },
+  created() {
+    this.loadWallet()
   },
   methods: {
     clearAlerts() {
@@ -90,9 +94,6 @@ export default {
       this.wallet = wallet
     },
   },
-  created() {
-    this.loadWallet()
-  },
 }
 </script>
 
@@ -118,16 +119,20 @@ export default {
   </div>
   <div>
     <label for="amount">Amount in ethers (ex: to settle 0.01 ether write just 0.01)</label>
-    <input type="number" name="amount" id="amount" v-model="amount" />
+    <input id="amount" v-model="amount" type="number" name="amount" />
   </div>
   <div>
     <button type="button" @click="signAgreement">Sign</button>
   </div>
   <div>
-    <p class="error alert" v-if="error !== ''">{{ error }}</p>
+    <p v-if="error !== ''" class="error alert">
+      {{ error }}
+    </p>
   </div>
   <div>
-    <p class="success alert" v-if="success !== ''">{{ success }}</p>
+    <p v-if="success !== ''" class="success alert">
+      {{ success }}
+    </p>
   </div>
 </template>
 

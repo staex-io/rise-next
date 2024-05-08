@@ -15,6 +15,14 @@ export default {
       error: '',
     }
   },
+  computed: {
+    accountsAsArr() {
+      return Array.from(this.wallet.get(WalletAccountsKey).entries())
+    },
+    partnersAsArr() {
+      return Array.from(this.wallet.get(WalletPartnersKey).entries())
+    },
+  },
   watch: {
     menu(val) {
       this.clearAlerts()
@@ -33,13 +41,11 @@ export default {
       this.clearAlerts()
     },
   },
-  computed: {
-    accountsAsArr() {
-      return Array.from(this.wallet.get(WalletAccountsKey).entries())
-    },
-    partnersAsArr() {
-      return Array.from(this.wallet.get(WalletPartnersKey).entries())
-    },
+  created() {
+    this.wallet = new Map()
+    this.wallet.set(WalletAccountsKey, new Map())
+    this.wallet.set(WalletPartnersKey, new Map())
+    this.loadWallet()
   },
   methods: {
     clearAlerts() {
@@ -164,19 +170,15 @@ export default {
       this.partnerAddress = ''
     },
   },
-  created() {
-    this.wallet = new Map()
-    this.wallet.set(WalletAccountsKey, new Map())
-    this.wallet.set(WalletPartnersKey, new Map())
-    this.loadWallet()
-  },
 }
 </script>
 
 <template>
   <h1>Wallet</h1>
   <div>
-    <p class="error alert" v-if="error !== ''">{{ error }}</p>
+    <p v-if="error !== ''" class="error alert">
+      {{ error }}
+    </p>
   </div>
 
   <div class="container choose-menu h-scroll-container">
@@ -246,11 +248,11 @@ export default {
       <button class="backup-download-btn" type="button" @click="downloadBackup">Backup</button>
       <button class="backup-load-btn" type="button" @click="triggerLoadBackup">Restore</button>
       <input
-        type="file"
-        @change="loadBackup"
-        accept=".json"
         ref="fileInput"
+        type="file"
+        accept=".json"
         style="display: none"
+        @change="loadBackup"
       />
     </div>
   </section>
@@ -259,11 +261,11 @@ export default {
     <div class="container">
       <div class="item create-account-input">
         <input
+          id="accountName"
+          v-model="accountName"
           type="text"
           name="accountName"
-          id="accountName"
           placeholder="Account name"
-          v-model="accountName"
         />
       </div>
       <div class="item create-account-btn">
@@ -276,18 +278,18 @@ export default {
     <div class="container">
       <div class="item load-account-input">
         <input
+          id="accountName"
+          v-model="accountName"
           type="text"
           name="accountName"
-          id="accountName"
           placeholder="Account name"
-          v-model="accountName"
         />
         <input
+          id="accountPrivateKey"
+          v-model="accountPrivateKey"
           type="text"
           name="accountPrivateKey"
-          id="accountPrivateKey"
           placeholder="Account private key"
-          v-model="accountPrivateKey"
         />
       </div>
       <div class="item load-account-btn">
@@ -300,18 +302,18 @@ export default {
     <div class="container">
       <div class="item load-account-input">
         <input
+          id="partnerName"
+          v-model="partnerName"
           type="text"
           name="partnerName"
-          id="partnerName"
           placeholder="Partner name"
-          v-model="partnerName"
         />
         <input
+          id="partnerAddress"
+          v-model="partnerAddress"
           type="text"
           name="partnerAddress"
-          id="partnerAddress"
           placeholder="Partner address"
-          v-model="partnerAddress"
         />
       </div>
       <div class="item load-account-btn">

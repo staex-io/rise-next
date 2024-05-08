@@ -32,6 +32,9 @@ export default {
       this.load()
     },
   },
+  created() {
+    this.loadWallet()
+  },
   methods: {
     clearAlerts() {
       this.error = ''
@@ -83,9 +86,6 @@ export default {
       this.wallet = wallet
     },
   },
-  created() {
-    this.loadWallet()
-  },
 }
 </script>
 
@@ -100,12 +100,16 @@ export default {
     </select>
   </div>
   <div class="local-row">
-    <p class="error alert" v-if="error !== ''">{{ error }}</p>
+    <p v-if="error !== ''" class="error alert">
+      {{ error }}
+    </p>
   </div>
   <div class="local-row">
-    <p class="success alert" v-if="success !== ''">{{ success }}</p>
+    <p v-if="success !== ''" class="success alert">
+      {{ success }}
+    </p>
   </div>
-  <div class="card local-row" v-if="station">
+  <div v-if="station" class="card local-row">
     <div class="card-header">Station</div>
     <div class="card-content">
       <div class="card-field">
@@ -132,11 +136,11 @@ export default {
   </div>
   <div class="local-row">
     <label for="location">Location</label>
-    <input type="text" name="location" id="location" v-model="location" />
+    <input id="location" v-model="location" type="text" name="location" />
   </div>
   <div class="local-row">
     <label for="price">Price in ethers (ex: to settle 0.01 ether write just 0.01)</label>
-    <input type="number" name="price" id="price" v-model="price" />
+    <input id="price" v-model="price" type="number" name="price" />
   </div>
   <div class="local-row">
     <button type="button" @click="update">Update</button>

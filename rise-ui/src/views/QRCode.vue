@@ -10,6 +10,12 @@ export default {
       error: '',
     }
   },
+  watch: {
+    address(value) {
+      this.address = value.trim().toLowerCase()
+      this.generateQrCode()
+    },
+  },
   methods: {
     clearAlerts() {
       this.error = ''
@@ -36,23 +42,19 @@ export default {
       })
     },
   },
-  watch: {
-    address(value) {
-      this.address = value.trim().toLowerCase()
-      this.generateQrCode()
-    },
-  },
 }
 </script>
 
 <template>
   <h1>Get your QR code</h1>
   <div>
-    <p class="error alert" v-if="error !== ''">{{ error }}</p>
+    <p v-if="error !== ''" class="error alert">
+      {{ error }}
+    </p>
   </div>
   <div>
     <label for="address">Address</label>
-    <input type="text" name="address" id="address" v-model="address" />
+    <input id="address" v-model="address" type="text" name="address" />
   </div>
   <div v-if="qrcode !== ''">
     <br />
