@@ -89,7 +89,7 @@ export default {
   <div style="margin-top: 25px" v-if="rawImage">
     <img src="/check.svg" width="25px" />
     <div>Photo was validated using smart contract on Lisk L2 network.</div>
-    <a href="https://sepolia-blockscout.lisk.com/address/0x6beFEd6d4D0e4a9198266EAdf295F5C1eD78C3c7" target="_blank">
+    <a href="https://sepolia-blockscout.lisk.com/address/0x0BD357DB61671f31fF0A75eb403C13E628C9242e" target="_blank">
       You can check hash in the explorer.
     </a>
   </div>
