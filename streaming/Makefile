@@ -4,6 +4,12 @@ fmt:
 lint: fmt
 	cargo clippy --tests --all-targets --all-features -- -D warnings
 
+build:
+	cargo build
+	{ echo '#![allow(warnings)]'; cat src/data_proving_contract.rs; } > src/data_proving_contract.rs_
+	rm -rf src/data_proving_contract.rs
+	mv src/data_proving_contract.rs_ src/data_proving_contract.rs
+
 build_rtmp:
 	docker build -t nginx-rtmp .
 

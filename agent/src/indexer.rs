@@ -9,10 +9,6 @@ use axum::{
     routing::get,
     Extension, Json, Router,
 };
-use contracts_rs::{
-    AgreementContractEvents, DIDContractEvents, GroundCycleContractEvents,
-    GroundCycleNoCryptoContractEvents,
-};
 use ethers::{
     abi::RawLog,
     contract::EthLogDecode,
@@ -26,7 +22,11 @@ use serde::{Deserialize, Serialize};
 use sqlx::{Connection, QueryBuilder, SqliteConnection};
 use tokio::{sync::Mutex, time::sleep};
 
-use crate::{Config, Error};
+use crate::{
+    agreement_contract::AgreementContractEvents, did_contract::DIDContractEvents,
+    ground_cycle_contract::GroundCycleContractEvents,
+    ground_cycle_no_crypto_contract::GroundCycleNoCryptoContractEvents, Config, Error,
+};
 
 pub(crate) async fn run(
     cfg: Config,

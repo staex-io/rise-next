@@ -4,7 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-contracts-rs = { path = "../contracts-rs" }
 ethers = { workspace = true }
 serde = { workspace = true }
 tokio = { workspace = true }
@@ -22,3 +21,6 @@ rust_decimal = { version = "1.35.0", features = [], default-features = false }
 
 [dev-dependencies]
 assertables = { version = "7.0.1", features = [], default-features = false }
+
+[build-dependencies]
+ethers = { workspace = true }

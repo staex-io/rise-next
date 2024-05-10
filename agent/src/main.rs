@@ -5,18 +5,19 @@ use std::{
     time::{Duration, SystemTime},
 };
 
+use agreement_contract::AgreementContractErrors;
 use clap::{Parser, Subcommand};
 use client::Client;
-use contracts_rs::{
-    AgreementContractErrors, GroundCycleContractErrors, GroundCycleContractEvents,
-    GroundCycleNoCryptoContractErrors, GroundCycleNoCryptoContractEvents,
-};
 use ethers::{
     contract::{ContractError, EthLogDecode, Event},
     providers::{Http, Middleware, Provider},
     signers::{LocalWallet, Signer},
     types::{Address, Filter, H160, H256, U256},
     utils::{format_ether, keccak256, parse_ether},
+};
+use ground_cycle_contract::{GroundCycleContractErrors, GroundCycleContractEvents};
+use ground_cycle_no_crypto_contract::{
+    GroundCycleNoCryptoContractErrors, GroundCycleNoCryptoContractEvents,
 };
 use log::{debug, error, info, trace, warn, LevelFilter};
 use serde::Deserialize;
@@ -27,7 +28,11 @@ use tokio::{
 };
 // use image::{GenericImageView,DynamicImage};
 
+mod agreement_contract;
 mod client;
+mod did_contract;
+mod ground_cycle_contract;
+mod ground_cycle_no_crypto_contract;
 mod indexer;
 
 // We use this step when iterating over blocks
@@ -1018,13 +1023,14 @@ mod tests {
     use std::time::Duration;
 
     use assertables::{assert_in_delta, assert_in_delta_as_result};
-    use contracts_rs::{Agreement, AgreementContractEvents, GroundCycleContractEvents};
     use ethers::{
         providers::{Middleware, PendingTransaction},
         signers::Signer,
         types::U256,
     };
     use log::debug;
+
+    use crate::agreement_contract::{Agreement, AgreementContractEvents};
 
     use super::*;
 

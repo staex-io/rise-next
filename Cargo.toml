@@ -1,6 +1,6 @@
 [workspace]
-members = ["contracts-rs", "agent", "streaming"]
-default-members = ["contracts-rs", "agent", "streaming"]
+members = ["agent", "streaming"]
+default-members = ["agent", "streaming"]
 resolver = "2"
 
 [workspace.dependencies]

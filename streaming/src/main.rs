@@ -5,12 +5,12 @@ use std::sync::Arc;
 
 use base64::Engine;
 use clap::Parser;
-use contracts_rs::DataProvingContract;
-use ethers::abi::AbiEncode;
 use ethers::providers::{Http, Provider};
 use ethers::signers::LocalWallet;
 use ethers::{middleware::SignerMiddleware, signers::Signer, types::Address};
 use sha2::{Digest, Sha256};
+
+mod data_proving_contract;
 
 /// Command line utility to interact with NEXA streaming.
 #[derive(Parser)]
@@ -64,17 +64,14 @@ async fn main() -> Result<ExitCode, Box<dyn std::error::Error>> {
     let wallet = LocalWallet::from_str(&cli.private_key)?.with_chain_id(4202u64);
     let provider: Provider<Http> = Provider::<Http>::try_from("https://rpc.sepolia-api.lisk.com")?;
     let client = Arc::new(SignerMiddleware::new(provider, wallet));
-    let smart_contract_address = Address::from_str(&cli.smart_contract_address)?;
-    let smart_contract = DataProvingContract::new(smart_contract_address, client);
-    let res = smart_contract
-        .save(encoded.clone())
-        .send()
-        .await?
-        .await?
-        .ok_or("failed to save new hash")?;
-    eprintln!("Transaction hash is {}", res.transaction_hash.encode_hex());
+    let contract_address = Address::from_str(&cli.smart_contract_address)?;
+    let contract = data_proving_contract::DataProvingContract::new(contract_address, client);
 
-    let res = smart_contract.get().call().await?;
+    let res =
+        contract.save(encoded.clone()).send().await?.await?.ok_or("failed to save new hash")?;
+    eprintln!("Transaction hash is {:?}", res.transaction_hash);
+
+    let res = contract.get().call().await?;
     assert_eq!(encoded, res, "on-chain hash should the same as computed");
 
     Ok(ExitCode::SUCCESS)

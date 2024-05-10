@@ -3,7 +3,30 @@ fmt:
 	cargo +nightly fmt
 
 lint: fmt
-	cargo clippy --tests --workspace --all-targets --all-features -- -D warnings
+	cargo clippy --tests --all-targets --all-features -- -D warnings
+
+build:
+	cargo build
+	
+	# Remove clippy warnings from did smart contract generated source code.
+	{ echo '#![allow(warnings)]'; cat src/did_contract.rs; } > src/did_contract.rs_
+	rm -rf src/did_contract.rs
+	mv src/did_contract.rs_ src/did_contract.rs
+	
+	# Remove clippy warnings from agreement smart contract generated source code.
+	{ echo '#![allow(warnings)]'; cat src/agreement_contract.rs; } > src/agreement_contract.rs_
+	rm -rf src/agreement_contract.rs
+	mv src/agreement_contract.rs_ src/agreement_contract.rs
+	
+	# Remove clippy warnings from ground cycle smart contract generated source code.
+	{ echo '#![allow(warnings)]'; cat src/ground_cycle_contract.rs; } > src/ground_cycle_contract.rs_
+	rm -rf src/ground_cycle_contract.rs
+	mv src/ground_cycle_contract.rs_ src/ground_cycle_contract.rs
+	
+	# Remove clippy warnings from ground cycle no crypto smart contract generated source code.
+	{ echo '#![allow(warnings)]'; cat src/ground_cycle_no_crypto_contract.rs; } > src/ground_cycle_no_crypto_contract.rs_
+	rm -rf src/ground_cycle_no_crypto_contract.rs
+	mv src/ground_cycle_no_crypto_contract.rs_ src/ground_cycle_no_crypto_contract.rs
 
 run:
 	cargo run
