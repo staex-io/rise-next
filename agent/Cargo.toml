@@ -4,13 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-contracts-rs = { path = "../contracts-rs" }
 ethers = { workspace = true }
 serde = { workspace = true }
-tokio = { version = "1.37.0", features = ["macros", "rt-multi-thread", "signal"], default-features = false }
+tokio = { workspace = true }
 log = { version = "0.4.21", features = [], default-features = false }
 env_logger = { version = "0.11.3", features = ["auto-color", "humantime"], default-features = false }
-serde_json = { version = "1.0.116", features = ["std"], default-features = false }
+serde_json = { version = "1.0.117", features = ["std"], default-features = false }
 clap = { version = "4.5.4", features = ["std", "derive", "help"], default-features = false }
 bardecoder = { version = "0.5.0", features = [], default-features = false }
 # We cannot use latest image version because bardecoder will be broken.
@@ -22,3 +21,6 @@ rust_decimal = { version = "1.35.0", features = [], default-features = false }
 
 [dev-dependencies]
 assertables = { version = "7.0.1", features = [], default-features = false }
+
+[build-dependencies]
+ethers = { workspace = true }

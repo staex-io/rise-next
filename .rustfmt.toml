@@ -1,4 +1,10 @@
 max_width = 100
 chain_width = 100
 fn_call_width = 100
-ignore = ["contracts-rs/src/contracts"]
+ignore = [
+  "agent/src/did_contract.rs",
+  "agent/src/agreement_contract.rs",
+  "agent/src/ground_cycle_contract.rs",
+  "agent/src/ground_cycle_no_crypto_contract.rs",
+  "streaming/src/data_proving_contract.rs",
+]

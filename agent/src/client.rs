@@ -1,8 +1,12 @@
 use std::sync::Arc;
 
-use contracts_rs::{AgreementContract, GroundCycleContract, GroundCycleNoCryptoContract};
 use ethers::{
     middleware::SignerMiddleware, providers::Middleware, signers::Signer, types::Address,
+};
+
+use crate::{
+    agreement_contract::AgreementContract, ground_cycle_contract::GroundCycleContract,
+    ground_cycle_no_crypto_contract::GroundCycleNoCryptoContract,
 };
 
 // Client to interact with smart contract on behalf of face of some wallet.

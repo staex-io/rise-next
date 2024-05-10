@@ -1,8 +1,9 @@
 [workspace]
-members = ["contracts-rs", "agent"]
-default-members = ["contracts-rs", "agent"]
+members = ["agent", "streaming"]
+default-members = ["agent", "streaming"]
 resolver = "2"
 
 [workspace.dependencies]
 ethers = { version = "2.0.14", features = ["rustls"], default-features = false }
-serde = { version = "1.0.198", features = ["std", "derive"], default-features = false }
+serde = { version = "1.0.201", features = ["std", "derive"], default-features = false }
+tokio = { version = "1.37.0", features = ["macros", "rt-multi-thread", "signal"], default-features = false }
