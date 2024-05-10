@@ -9,6 +9,10 @@ export default [
     },
   },
   {
-    ignores: ["src/assets/AgreementContract.json", "src/assets/DIDContract.json"]
+    ignores: [
+      "src/assets/DIDContract.json",
+      "src/assets/AgreementContract.json",
+      "src/assets/DataProvingContract.json",
+    ]
   }
 ];

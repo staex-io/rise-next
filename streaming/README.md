@@ -7,5 +7,6 @@ This folder contains source code related to the NEXA project.
 ```shell
 make run_rtmp
 make start_streaming location=/Users/lavr/Downloads/VIDEO.mov
-cargo run -- <private-key>
+cargo run -- make-snapshot
+cargo run -- claim-snapshot <private-key>
 ```
