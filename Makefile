@@ -7,8 +7,9 @@ build:
 	{ echo '#![allow(warnings)]'; cat contracts-rs/src/contracts/mod.rs; } > contracts-rs/src/contracts/mod.rs_
 	rm -rf contracts-rs/src/contracts/mod.rs
 	mv contracts-rs/src/contracts/mod.rs_ contracts-rs/src/contracts/mod.rs
-	cd contracts && cp out/DID.sol/DIDContract.json ../ui/src/assets/DIDContract.json
-	cd contracts && cp out/Agreement.sol/AgreementContract.json ../ui/src/assets/AgreementContract.json
+	cd contracts && cp out/DID.sol/DIDContract.json ../rise-ui/src/assets/DIDContract.json
+	cd contracts && cp out/Agreement.sol/AgreementContract.json ../rise-ui/src/assets/AgreementContract.json
+	cd contracts && cp out/DataProving.sol/DataProvingContract.json ../rise-ui/src/assets/DataProvingContract.json
 
 test: lint
 	cd contracts && forge test --use 0.8.22 --gas-report --summary --detailed -vv
