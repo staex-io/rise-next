@@ -21,6 +21,9 @@ export default {
           <RouterLink to="/landings"> Landings </RouterLink>
         </li>
         <li>
+          <RouterLink to="/stream/snapshot"> Stream </RouterLink>
+        </li>
+        <li>
           <RouterLink to="/stations"> Stations </RouterLink>
         </li>
       </ul>
@@ -32,6 +35,9 @@ export default {
       <ul>
         <li>
           <RouterLink to="/landings"> Landings </RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/stream/snapshot"> Stream </RouterLink>
         </li>
         <li class="menu-item">
           <RouterLink to="/"> Agreements </RouterLink>

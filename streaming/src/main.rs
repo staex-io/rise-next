@@ -23,7 +23,7 @@ struct Cli {
     input: String,
     /// Set output path where you want to save image.
     #[arg(short, long)]
-    #[arg(default_value = "last.jpg")]
+    #[arg(default_value = "static/stream_snapshot.jpg")]
     output: String,
     /// Set smart contract address.
     #[arg(short, long)]
@@ -41,8 +41,10 @@ async fn main() -> Result<ExitCode, Box<dyn std::error::Error>> {
     let output = cmd.output().unwrap();
     if !output.status.success() {
         eprintln!("Exit status is not success: {}", output.status);
-        eprintln!("There are logs from output:");
+        eprintln!("There are logs from stdout:");
         eprintln!("{:?}", from_utf8(&output.stdout));
+        eprintln!("There are logs from stderr:");
+        eprintln!("{:?}", from_utf8(&output.stderr));
         return Ok(ExitCode::FAILURE);
     }
 
@@ -54,6 +56,10 @@ async fn main() -> Result<ExitCode, Box<dyn std::error::Error>> {
     let mut encoded = String::new();
     base64::prelude::BASE64_STANDARD.encode_string(hash, &mut encoded);
     eprintln!("Encoded image hash to base64: {:?}", encoded);
+
+    if cli.private_key == "skip" {
+        return Ok(ExitCode::SUCCESS);
+    }
 
     let wallet = LocalWallet::from_str(&cli.private_key)?.with_chain_id(4202u64);
     let provider: Provider<Http> = Provider::<Http>::try_from("https://rpc.sepolia-api.lisk.com")?;

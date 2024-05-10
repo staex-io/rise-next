@@ -7,10 +7,12 @@ lint: fmt
 build_rtmp:
 	docker build -t nginx-rtmp .
 
-run_rtmp:
+run_rtmp: build_rtmp
 	docker run -d \
 		-p 1935:1935 \
+		-p 8090:8090 \
 		-v "${PWD}/rec:/tmp/rec" \
+		-v "${PWD}/static:/tmp/static" \
 		--name nginx-rtmp \
 		nginx-rtmp
 

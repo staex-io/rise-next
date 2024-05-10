@@ -6,6 +6,6 @@ This folder contains source code related to the NEXA project.
 
 ```shell
 make run_rtmp
-make start_streaming location=/Users/lavr/Downloads/IMG_6143.mp4
+make start_streaming location=/Users/lavr/Downloads/VIDEO.mov
 cargo run -- <private-key>
 ```
