@@ -1,0 +1,29 @@
+{
+  "name": "rise-ui",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint --config eslint.config.js --fix",
+    "format": "prettier --write src/ --write vite.config.js"
+  },
+  "dependencies": {
+    "@fontsource/roboto": "^5.0.13",
+    "ethers": "^6.12.1",
+    "js-base64": "^3.7.7",
+    "js-sha256": "^0.11.0",
+    "qrcode": "^1.5.3",
+    "vue": "^3.4.27",
+    "vue-router": "^4.3.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "vite": "^5.2.11",
+    "eslint": "^9.2.0",
+    "eslint-plugin-vue": "^9.25.0",
+    "prettier": "^3.2.5"
+  }
+}
