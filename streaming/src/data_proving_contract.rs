@@ -1,4 +1,3 @@
-#![allow(warnings)]
 pub use data_proving_contract::*;
 /// This module was auto-generated with ethers-rs Abigen.
 /// More information at: <https://github.com/gakonst/ethers-rs>

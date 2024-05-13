@@ -24,3 +24,11 @@ run_rtmp: build_rtmp
 
 start_streaming:
 	./stream.sh location=$(location)
+
+.PHONY: release
+release:
+	./ci/release.sh
+
+.PHONY: deploy
+deploy:
+	./ci/deploy.sh
