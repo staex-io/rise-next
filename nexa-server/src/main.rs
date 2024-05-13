@@ -1,6 +1,7 @@
 use std::fmt::Display;
 use std::time::SystemTime;
 
+use axum::http::header::HeaderName;
 use axum::response::{IntoResponse, Response};
 use axum::{http::StatusCode, routing::get, Json, Router};
 use base64::engine::general_purpose::STANDARD as BASE64_ENGINE;
@@ -11,6 +12,8 @@ use chrono::{DateTime, Utc};
 use http_body_util::BodyExt;
 use http_body_util::Full;
 use hyper::header::HeaderValue;
+use hyper::header::AUTHORIZATION;
+use hyper::header::CONTENT_TYPE;
 use hyper::{Method, Request};
 use hyper_tls::HttpsConnector;
 use hyper_util::{client::legacy::Client, rt::TokioExecutor};
@@ -28,6 +31,11 @@ async fn main() {
 }
 
 async fn session_get() -> Result<impl IntoResponse, Error> {
+    let access_token = get_access_token().await?;
+    let authorization =
+        HeaderValue::from_str(get_x_forwarded_authorization_header(access_token.as_str()).as_str())
+            .unwrap();
+    info!("access token {}", access_token);
     let request = SessionRequest {
         order_id: thread_rng().gen_range(0..9999).to_string(),
         money: Money {
@@ -43,15 +51,14 @@ async fn session_get() -> Result<impl IntoResponse, Error> {
     };
     let https = HttpsConnector::new();
     let client = Client::builder(TokioExecutor::new()).build::<_, Full<Bytes>>(https);
-    let authorization = HeaderValue::from_str(get_authorization_header().as_str()).unwrap();
     let body = serde_json::to_string(&request).unwrap();
     info!("auth {:?}", authorization);
     info!("body {}", body);
     let https_request: Request<Full<Bytes>> = Request::builder()
         .method(Method::POST)
         .uri("https://egw.int.paymenttools.net/api/v2/sessions")
-        .header(hyper::header::CONTENT_TYPE, HeaderValue::from_static("application/json"))
-        .header(hyper::header::AUTHORIZATION, authorization)
+        .header(CONTENT_TYPE, HeaderValue::from_static("application/json"))
+        .header(X_FORWARDED_AUTHORIZATION, authorization)
         .body(Full::from(body))?;
     let response = client.request(https_request).await?;
     info!("response status {}", response.status());
@@ -59,6 +66,46 @@ async fn session_get() -> Result<impl IntoResponse, Error> {
     info!("body {:?}", String::from_utf8(body.to_vec()));
     let session: SessionResponse = serde_json::from_slice(body.to_vec().as_slice())?;
     Ok((StatusCode::CREATED, Json(session)))
+}
+
+async fn get_access_token() -> Result<String, Error> {
+    let authorization = HeaderValue::from_str(get_authorization_header().as_str()).unwrap();
+    let request = AuthorizationRequest {
+        grant_type: "client_credentials".into(),
+    };
+    let body = serde_urlencoded::to_string(&request).unwrap();
+    let https = HttpsConnector::new();
+    let client = Client::builder(TokioExecutor::new()).build::<_, Full<Bytes>>(https);
+    let https_request: Request<Full<Bytes>> = Request::builder()
+        .method(Method::POST)
+        .uri("https://auth.int.pci.paymenttools.net/realms/merchants/protocol/openid-connect/token")
+        .header(CONTENT_TYPE, HeaderValue::from_static("application/x-www-form-urlencoded"))
+        .header(AUTHORIZATION, authorization)
+        .body(Full::from(body))?;
+    let response = client.request(https_request).await?;
+    let status = response.status();
+    if !status.is_success() {
+        let body = response.collect().await?.to_bytes();
+        let body = String::from_utf8(body.to_vec());
+        return Err(Error::internal(format!(
+            "paymenttools authorization request returned {}: {:?}",
+            status,
+            body
+        )));
+    }
+    let body = response.collect().await?.to_bytes();
+    let response: AuthorizationResponse = serde_json::from_slice(body.to_vec().as_slice())?;
+    Ok(response.access_token)
+}
+
+#[derive(Serialize)]
+struct AuthorizationRequest {
+    grant_type: String,
+}
+
+#[derive(Deserialize)]
+struct AuthorizationResponse {
+    access_token: String,
 }
 
 #[derive(Serialize)]
@@ -106,6 +153,10 @@ fn get_authorization_header() -> String {
     authorization.push_str(password.as_str());
     let authorization = BASE64_ENGINE.encode(authorization.as_bytes());
     format!("Basic {}", authorization)
+}
+
+fn get_x_forwarded_authorization_header(access_token: &str) -> String {
+    format!("Bearer {}", access_token)
 }
 
 struct Error {
@@ -164,3 +215,6 @@ impl From<axum::http::Error> for Error {
         Self::internal(other)
     }
 }
+
+#[allow(clippy::declare_interior_mutable_const)]
+const X_FORWARDED_AUTHORIZATION: HeaderName = HeaderName::from_static("x-forwarded-authorization");
