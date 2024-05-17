@@ -114,25 +114,36 @@ label {
     color: var(--staex-dark-pacific-blue);
 }
 
-input {
-    width: 100%;
-    padding: 16px;
-    margin: 0;
-    border: 1px solid var(--staex-gray);
-    border-radius: 4px;
-    box-sizing: border-box;
-    box-shadow: 0px 3px 6px var(--staex-stardust-silver);
+input:not([type]),
+input[type='text'],
+input[type='number'],
+input[type='email'],
+input[type='password'],
+input[type='file'],
+select,
+textarea {
+    background: var(--staex-stardust-silver);
+    color: var(--staex-dark-pacific-blue);
+    border-radius: 30px;
+    padding: 10px 20px 10px 20px;
+    border: none;
+    outline: none;
+    margin: 2px;
+    max-width: 19rem;
+    display: block;
 }
+
 
 button {
     border-radius: 30px;
-    padding: 10px;
+    padding: 10px 20px;
     background: var(--staex-metallic-gold);
     color: var(--staex-dark-pacific-blue);
     border: none;
     outline: none;
     cursor: pointer;
     font-weight: 300;
+    font-size: 14pt;
 }
 
 button.large {
@@ -404,7 +415,7 @@ select {
 }
 
 img, video {
-    max-width: calc(100vw - 2 * 4px);
+    max-width: calc(min(100vw - 2 * 4px, 1280px));
     border-radius: 4px;
 }
 

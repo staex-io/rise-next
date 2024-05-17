@@ -59,7 +59,7 @@ export default {
         <b>Card number: </b><span id="card-number">4999 9999 9999 0011</span>
         &nbsp;<CopyButton id="card-number" /><br />
         <b>Expiry date: </b><span id="card-expiry">03/30</span>
-        &nbsp;<CopyButton id="card-expiry" /><br />
+        <!--&nbsp;<CopyButton id="card-expiry" />--><br />
         <b>CVC: </b><span id="card-cvc">737</span>&nbsp;<CopyButton id="card-cvc" />
     </p>
     <div id="drop-in-container">
@@ -73,6 +73,11 @@ export default {
 <style scoped>
 .card-data {
     font-size: normal;
+}
+
+.card-data button {
+    padding: 10px !important;
+    font-size: 12pt !important;
 }
 
 .loader {

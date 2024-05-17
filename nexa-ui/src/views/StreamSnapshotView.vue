@@ -133,12 +133,12 @@ export default {
     </div>
     <div v-if="rawImage" class="margin">
         <p>
-            Video was validated using smart contract on Lisk L2 network. You can check the hash in
+            Video was validated using smart contract on Lisk L2 network. <!-- You can check the hash in
             <a
                 href="https://sepolia-blockscout.lisk.com/address/0x0BD357DB61671f31fF0A75eb403C13E628C9242e"
                 target="_blank"
                 >block explorer</a
-            >.
+                >.-->
         </p>
     </div>
     <div v-if="rawImage" class="check-container">

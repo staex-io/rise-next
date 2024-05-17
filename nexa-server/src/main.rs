@@ -1,9 +1,11 @@
-use std::fmt::Display;
 use std::time::SystemTime;
 
+use axum::extract::DefaultBodyLimit;
 use axum::http::header::HeaderName;
-use axum::response::{IntoResponse, Response};
-use axum::{http::StatusCode, routing::get, Json, Router};
+use axum::response::IntoResponse;
+use axum::routing::get;
+use axum::routing::post;
+use axum::{http::StatusCode, Json, Router};
 use base64::engine::general_purpose::STANDARD as BASE64_ENGINE;
 use base64::Engine;
 use bytes::Bytes;
@@ -16,15 +18,25 @@ use hyper::header::CONTENT_TYPE;
 use hyper::{Method, Request};
 use hyper_tls::HttpsConnector;
 use hyper_util::{client::legacy::Client, rt::TokioExecutor};
-use log::error;
-use log::info;
 use rand::{thread_rng, Rng};
 use serde::{Deserialize, Serialize};
+
+mod error;
+mod photo;
+mod video;
+
+use self::error::*;
+use self::photo::*;
+use self::video::*;
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
-    let app = Router::new().route("/v1/session", get(session_get));
+    let app = Router::new()
+        .route("/v1/session", get(session_get))
+        .route("/v1/video", post(video_post))
+        .route("/v1/photo", post(photo_post))
+        .layer(DefaultBodyLimit::max(2 * 1024 * 1024 * 1024));
     let listener = tokio::net::TcpListener::bind("127.0.0.1:9890").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
@@ -34,7 +46,7 @@ async fn session_get() -> Result<impl IntoResponse, Error> {
     let authorization =
         HeaderValue::from_str(get_x_forwarded_authorization_header(access_token.as_str()).as_str())
             .unwrap();
-    info!("access token {}", access_token);
+    //info!("access token {}", access_token);
     let request = SessionRequest {
         order_id: thread_rng().gen_range(0..9999).to_string(),
         money: Money {
@@ -51,8 +63,8 @@ async fn session_get() -> Result<impl IntoResponse, Error> {
     let https = HttpsConnector::new();
     let client = Client::builder(TokioExecutor::new()).build::<_, Full<Bytes>>(https);
     let body = serde_json::to_string(&request).unwrap();
-    info!("auth {:?}", authorization);
-    info!("body {}", body);
+    //info!("auth {:?}", authorization);
+    //info!("body {}", body);
     let https_request: Request<Full<Bytes>> = Request::builder()
         .method(Method::POST)
         .uri("https://egw.int.paymenttools.net/api/v2/sessions")
@@ -66,8 +78,7 @@ async fn session_get() -> Result<impl IntoResponse, Error> {
         let body = String::from_utf8(body.to_vec());
         return Err(Error::internal(format!(
             "paymenttools session request returned {}: {:?}",
-            status,
-            body
+            status, body
         )));
     }
     let body = response.collect().await?.to_bytes();
@@ -97,8 +108,7 @@ async fn get_access_token() -> Result<String, Error> {
         let body = String::from_utf8(body.to_vec());
         return Err(Error::internal(format!(
             "paymenttools authorization request returned {}: {:?}",
-            status,
-            body
+            status, body
         )));
     }
     let body = response.collect().await?.to_bytes();
@@ -167,63 +177,6 @@ fn _get_authorization_header() -> String {
 
 fn get_x_forwarded_authorization_header(access_token: &str) -> String {
     format!("Bearer {}", access_token)
-}
-
-struct Error {
-    status_code: StatusCode,
-    message: String,
-}
-
-impl Error {
-    pub(crate) fn internal(message: impl ToString) -> Self {
-        Self {
-            status_code: StatusCode::INTERNAL_SERVER_ERROR,
-            message: message.to_string(),
-        }
-    }
-}
-
-impl Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} {}", self.status_code, self.message)
-    }
-}
-
-impl IntoResponse for Error {
-    fn into_response(self) -> Response {
-        if self.status_code == StatusCode::INTERNAL_SERVER_ERROR {
-            error!("internal server error: {}", self.message);
-        }
-        if self.message.is_empty() {
-            self.status_code.into_response()
-        } else {
-            (self.status_code, self.message).into_response()
-        }
-    }
-}
-
-impl From<hyper_util::client::legacy::Error> for Error {
-    fn from(other: hyper_util::client::legacy::Error) -> Self {
-        Self::internal(other)
-    }
-}
-
-impl From<serde_json::Error> for Error {
-    fn from(other: serde_json::Error) -> Self {
-        Self::internal(other)
-    }
-}
-
-impl From<hyper::Error> for Error {
-    fn from(other: hyper::Error) -> Self {
-        Self::internal(other)
-    }
-}
-
-impl From<axum::http::Error> for Error {
-    fn from(other: axum::http::Error) -> Self {
-        Self::internal(other)
-    }
 }
 
 #[allow(clippy::declare_interior_mutable_const)]
