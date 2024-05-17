@@ -19,4 +19,4 @@ build:
 
 .PHONY: rsync
 rsync:
-	rsync -a --delete dist/ he2:/srv/web3.staex.io/
+	rsync -a --delete --exclude photo.jpg --exclude video.mp4 dist/ he2:/srv/web3.staex.io/

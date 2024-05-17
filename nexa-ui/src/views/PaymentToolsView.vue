@@ -1,48 +1,87 @@
+<script setup>
+import CopyButton from '@/components/CopyButton.vue'
+</script>
+
 <script>
+import router from '@/router'
 const API_URL = 'https://egw.int.paymenttools.net/api/v2'
 export default {
     data() {
-        return {}
+        return {
+            error: '',
+            loaded: false,
+        }
     },
     mounted() {
-        const request = {
-            orderId: '9999',
-            money: {
-                amount: '1.00',
-                currency: 'EUR',
-            },
-            transactionDateTime: new Date().toISOString(),
-            captureMode: 'AUTO',
-            redirectUrl: 'https://web3.staex.io/photo',
-            transactionInitiator: 'CONSUMER',
-            channel: 'ecom',
-            useCase: 'booking',
-        }
-        fetch(`${API_URL}/session`, {
-            method: 'POST',
+        fetch('/v1/session', {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 Accept: 'application/json',
-                Authorization: 
             },
-            body: JSON.stringify(request),
         })
-        const dropIn = new Paymenttools.DropIn('drop-in-container', {
-            sessionId: 'dbff4bc0-1d82-49df-b3f3-9fa433f8b83b',
-            language: 'de',
-            callback: (status) => {
-                console.log(status)
-                if (status === 'SUCCEEDED') {
+            .then(async (response) => {
+                switch (response.status) {
+                    case 201:
+                        this.error = ''
+                        const session = await response.json()
+                        console.log('session id ' + session.id)
+                        this.initPaymentToolsSession(session.id)
+                        break
+                    default:
+                        this.error = await responseToError(response)
+                        break
                 }
-            },
-        })
+            })
+            .catch((error) => {
+                this.error = error
+            })
+    },
+    methods: {
+        initPaymentToolsSession(sessionId) {
+            const dropIn = new Paymenttools.DropIn('drop-in-container', {
+                sessionId: sessionId,
+                language: 'en',
+                callback: (status) => {
+                    if (status === 'SUCCEEDED') {
+                        router.push({ name: 'photo' })
+                    }
+                },
+            })
+            this.loaded = true
+        },
     },
 }
 </script>
 
 <template>
-    <div id="drop-in-container"></div>
+    <p class="card-data">
+        <b>Card number: </b><span id="card-number">4999 9999 9999 0011</span>
+        &nbsp;<CopyButton id="card-number" /><br />
+        <b>Expiry date: </b><span id="card-expiry">03/30</span>
+        &nbsp;<CopyButton id="card-expiry" /><br />
+        <b>CVC: </b><span id="card-cvc">737</span>&nbsp;<CopyButton id="card-cvc" />
+    </p>
+    <div id="drop-in-container">
+        <div v-if="!loaded" id="loader-container">Please wait…<br/><span class="loader" /></div>
+    </div>
     <div class="button-container">
-        <a href="/photo" class="button-link-large">Get my photo anyway</a>
+        <a href="/photo" class="button-link-large">Buy!</a>
     </div>
 </template>
+
+<style scoped>
+.card-data {
+    font-size: normal;
+}
+
+.loader {
+    width: 32px !important;
+    height: 32px !important;
+}
+
+#loader-container {
+    text-align: center;
+    margin: 2rem;
+}
+</style>

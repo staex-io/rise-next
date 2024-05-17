@@ -3,7 +3,9 @@ import Picture from '@/components/Picture.vue'
 </script>
 
 <template>
+    <!--
     <h2>Partners</h2>
+    -->
     <ul class="partners">
         <li>
             <a href="https://www.vantagetowers.com/">
@@ -51,7 +53,16 @@ import Picture from '@/components/Picture.vue'
                     preset="160x160" />
             </a>
         </li>
+        <li>
+            <a href="https://chirpwireless.io/">
+                <Picture
+                    src="/images/chirp-logo.svg"
+                    alt="Chirp Wireless logo."
+                    preset="160x160" />
+            </a>
+        </li>
     </ul>
+    <!--
     <h2>Sponsors</h2>
     <ul class="partners">
         <li class="im-marienpark-bg">
@@ -59,7 +70,7 @@ import Picture from '@/components/Picture.vue'
                 <Picture
                     src="/images/im-marienpark-logo.png"
                     alt="Im Marienpark logo."
-                    preset="160x160" />
+                    preset="128x128" />
             </a>
         </li>
         <li>
@@ -67,14 +78,23 @@ import Picture from '@/components/Picture.vue'
                 <Picture
                     src="/images/drivery.png"
                     alt="The Drivery logo."
-                    preset="160x160" />
+                    preset="128x128" />
+            </a>
+        </li>
+        <li id="icp">
+            <a href="https://internetcomputer.org/">
+                <Picture
+                    src="/images/icp-logo.png"
+                    alt="ICP logo."
+                    preset="128x128" />
             </a>
         </li>
     </ul>
+    -->
 </template>
 
 <style scoped>
-ul.partners {
+ul.partners, ul.sponsors {
     list-style-type: none;
     padding: 0;
     margin-top: 1rem;
@@ -84,16 +104,28 @@ ul.partners {
     flex-wrap: wrap;
 }
 
-ul.partners > li {
+ul.partners > li, ul.sponsors > li {
     display: inline-block;
 }
 
-.partners img {
+.partners :deep(img) {
     max-width: 160px;
     max-height: 160px;
+    filter: grayscale(1);
 }
 
-.partners li {
+.sponsors :deep(img) {
+    max-width: 128px;
+    max-height: 128px;
+    filter: grayscale(1);
+}
+
+#icp :deep(img) {
+    max-width: 96px;
+    max-height: 96px;
+}
+
+.partners li, .sponsors li {
     display: inline-block;
     vertical-align: middle;
     margin: 0.25rem;
@@ -101,10 +133,14 @@ ul.partners > li {
 }
 
 h2 {
-    margin-top: 4rem !important;
+    margin-top: 2rem !important;
 }
 
 .im-marienpark-bg {
     background: rgb(0, 0, 0);
+}
+
+.icp-bg {
+    background: #3b00b9;
 }
 </style>
