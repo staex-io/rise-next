@@ -12,7 +12,6 @@ use chrono::{DateTime, Utc};
 use http_body_util::BodyExt;
 use http_body_util::Full;
 use hyper::header::HeaderValue;
-use hyper::header::AUTHORIZATION;
 use hyper::header::CONTENT_TYPE;
 use hyper::{Method, Request};
 use hyper_tls::HttpsConnector;
@@ -61,17 +60,27 @@ async fn session_get() -> Result<impl IntoResponse, Error> {
         .header(X_FORWARDED_AUTHORIZATION, authorization)
         .body(Full::from(body))?;
     let response = client.request(https_request).await?;
-    info!("response status {}", response.status());
+    let status = response.status();
+    if !status.is_success() {
+        let body = response.collect().await?.to_bytes();
+        let body = String::from_utf8(body.to_vec());
+        return Err(Error::internal(format!(
+            "paymenttools session request returned {}: {:?}",
+            status,
+            body
+        )));
+    }
     let body = response.collect().await?.to_bytes();
-    info!("body {:?}", String::from_utf8(body.to_vec()));
+    //info!("body {:?}", String::from_utf8(body.to_vec()));
     let session: SessionResponse = serde_json::from_slice(body.to_vec().as_slice())?;
     Ok((StatusCode::CREATED, Json(session)))
 }
 
 async fn get_access_token() -> Result<String, Error> {
-    let authorization = HeaderValue::from_str(get_authorization_header().as_str()).unwrap();
     let request = AuthorizationRequest {
         grant_type: "client_credentials".into(),
+        client_id: std::env::var("PAYMENTTOOLS_USERNAME").unwrap(),
+        client_secret: std::env::var("PAYMENTTOOLS_PASSWORD").unwrap(),
     };
     let body = serde_urlencoded::to_string(&request).unwrap();
     let https = HttpsConnector::new();
@@ -80,7 +89,6 @@ async fn get_access_token() -> Result<String, Error> {
         .method(Method::POST)
         .uri("https://auth.int.pci.paymenttools.net/realms/merchants/protocol/openid-connect/token")
         .header(CONTENT_TYPE, HeaderValue::from_static("application/x-www-form-urlencoded"))
-        .header(AUTHORIZATION, authorization)
         .body(Full::from(body))?;
     let response = client.request(https_request).await?;
     let status = response.status();
@@ -101,6 +109,8 @@ async fn get_access_token() -> Result<String, Error> {
 #[derive(Serialize)]
 struct AuthorizationRequest {
     grant_type: String,
+    client_id: String,
+    client_secret: String,
 }
 
 #[derive(Deserialize)]
@@ -144,7 +154,7 @@ fn current_date_pt() -> String {
     now
 }
 
-fn get_authorization_header() -> String {
+fn _get_authorization_header() -> String {
     let username = std::env::var("PAYMENTTOOLS_USERNAME").unwrap();
     let password = std::env::var("PAYMENTTOOLS_PASSWORD").unwrap();
     let mut authorization = String::new();
