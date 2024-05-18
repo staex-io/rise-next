@@ -12,6 +12,7 @@
     --staex-yellow: rgb(192, 192, 128);
     --staex-gray: rgb(192, 192, 192);
     --nexa-egg-yolk: rgb(245, 174, 0);
+    --nexa-font-weight: 700;
 }
 
 html {
@@ -143,14 +144,15 @@ button {
     border: none;
     outline: none;
     cursor: pointer;
-    font-weight: 500;
     font-size: 14pt;
+    font-weight: 500;
 }
 
 button.large {
     border-radius: 60px;
     padding: 20px 40px 20px 40px;
     font-size: 1.5rem;
+    font-weight: var(--nexa-font-weight);
     display: block;
     width: 100%;
 }
@@ -481,6 +483,7 @@ img, video {
     border: none;
     outline: none;
     text-decoration: none;
+    font-weight: var(--nexa-font-weight);
 }
 
 .button-link-large:link,
@@ -496,6 +499,7 @@ img, video {
     text-decoration: none;
     display: inline-block;
     font-size: 1.5rem;
+    font-weight: var(--nexa-font-weight);
     display: block;
 }
 

@@ -15,6 +15,7 @@ export default {
     <main>
         <RouterView />
     </main>
+    <!--
     <footer>
         <VueCookieAcceptDecline
             :debug="false"
@@ -37,4 +38,5 @@ export default {
             <template #acceptContent>We use cookies to improve user experience. <button>OK</button></template>
         </VueCookieAcceptDecline>
     </footer>
+    -->
 </template>
