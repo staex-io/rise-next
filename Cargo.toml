@@ -1,6 +1,6 @@
 [workspace]
-members = ["agent", "nexa-server", "streaming"]
-default-members = ["agent", "nexa-server", "streaming"]
+members = ["agent", "streaming"]
+default-members = ["agent", "streaming"]
 resolver = "2"
 
 [workspace.dependencies]
