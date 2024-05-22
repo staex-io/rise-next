@@ -1,5 +1,4 @@
 use std::process::ExitCode;
-use std::str::from_utf8;
 use std::str::FromStr;
 use std::sync::Arc;
 
@@ -57,14 +56,14 @@ async fn main() -> Result<ExitCode, Box<dyn std::error::Error>> {
     match cli.command {
         Commands::MakeSnapshot { input, output } => {
             let mut cmd = std::process::Command::new("ffmpeg");
-            cmd.args(format!("-sseof -3 -i {} -update 1 -q:v 1 {}", input, output).split(' '));
+            cmd.args(format!("-loglevel warning -y -sseof -3 -i {} -update 1 -q:v 1 {}", input, output).split(' '));
             let output = cmd.output().unwrap();
             if !output.status.success() {
                 eprintln!("Exit status is not success: {}", output.status);
                 eprintln!("There are logs from stdout:");
-                eprintln!("{:?}", from_utf8(&output.stdout));
+                eprintln!("{}", String::from_utf8_lossy(&output.stdout));
                 eprintln!("There are logs from stderr:");
-                eprintln!("{:?}", from_utf8(&output.stderr));
+                eprintln!("{}", String::from_utf8_lossy(&output.stderr));
                 return Ok(ExitCode::FAILURE);
             }
         }
@@ -97,6 +96,7 @@ async fn main() -> Result<ExitCode, Box<dyn std::error::Error>> {
                 .await?
                 .ok_or("failed to save new hash")?;
             eprintln!("Transaction hash is {:?}", res.transaction_hash);
+            eprintln!("https://sepolia-blockscout.lisk.com/tx/{:?}", res.transaction_hash);
 
             let res = contract.get().call().await?;
             assert_eq!(encoded, res, "on-chain hash should the same as computed");
